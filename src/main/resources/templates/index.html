@@ -19,12 +19,89 @@
         </div>
         <div class="col-lg-10">
             <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Dashboard</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div th:if="${lastError} != 0">
+                    <div id="error" class="col-lg-2 col-md-4">
+                        <div class="panel panel-red">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-warning fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div th:text="${lastError}"/>
+                                        <div>New Errors</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="errorLog.html">
+                                <div class="panel-footer">
+                                    <span class="pull-left">View Details</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${lastDebug} != 0">
+                    <div id="debug" class="col-lg-2 col-md-4">
+                        <div class="panel panel-yellow">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-info fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div th:text="${lastDebug}"/>
+                                        <div>New Debugs</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="debugLog.html">
+                                <div class="panel-footer">
+                                    <span class="pull-left">View Details</span>
+                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+
+                                    <div class="clearfix"></div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-line-chart fa-fw"></i> 学生日活量
+                            <div style="float: right">
+                                <select id='student_activity' class="selectpicker" >
+                                    <option>day</option>
+                                    <option>week</option>
+                                    <option>month</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div id="student_daily_activity_chart"></div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-lg-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <i class="fa fa-map-marker fa-fw"></i> 实际上课平台分布
                             <div style="float: right">
-                                <select id='class_tool_type_time' class="selectpicker" >
+                                <select id='class_tool_type_time' class="selectpicker">
                                     <option>day</option>
                                     <option>week</option>
                                     <option>month</option>
@@ -45,17 +122,36 @@
 
 <!--/*/ <th:block th:include="fragments/globalscript :: script"></th:block> /*/-->
 <script>
-$(function () {
+    $(function () {
 
-    var element = $('#class_tool_type_chart');
-    var url = "class_tools_daily_activity/";
-    var map = new HashMap();
-    map.set("ClassPlat","7");
-    map.set("Android","2");
-    map.set("IOS","3");
-    var duration = $('#class_tool_type_time').find("option:selected").val();
-    createHighStock(element,url,map,duration);
-});
+        var class_tool_element = $('#class_tool_type_chart');
+        var class_tool_url = "class_tools_daily_activity/";
+        var class_tool_map = new HashMap();
+        class_tool_map.set("ClassPlat", "7");
+        class_tool_map.set("Android", "2");
+        class_tool_map.set("IOS", "3");
+        var class_tool_duration = $('#class_tool_type_time').find("option:selected").val();
+        createHighStock(class_tool_element, class_tool_url, class_tool_map, class_tool_duration);
+        $('#class_tool_type_time').on('change', function () {
+            var class_tool_duration = $(this).find("option:selected").val();
+            createHighStock(class_tool_element, class_tool_url, class_tool_map, class_tool_duration);
+        });
+
+        var student_element = $('#student_daily_activity_chart');
+        var student_url = "class_tools_daily_activity/";
+        var student_map = new HashMap();
+        student_map.set("ClassPlat", "7");
+        student_map.set("Android", "2");
+        student_map.set("IOS", "3");
+        var student_duration = $('#student_activity').find("option:selected").val();
+        createHighStock(student_element, student_url, student_map, student_duration);
+        $('#student_activity').on('change', function () {
+            var student_duration = $(this).find("option:selected").val();
+            createHighStock(student_element, student_url, student_map, student_duration);
+        });
+
+
+    });
 </script>
 </body>
 </html>

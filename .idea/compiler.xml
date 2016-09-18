@@ -22,10 +22,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="data_monitor" />
         <module name="Data_Visualization" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="data_monitor" target="1.8" />
       <module name="Data_Visualization" target="1.8" />
     </bytecodeTargetLevel>
   </component>

@@ -9,12 +9,8 @@ import java.util.List;
 
 @Service
 public class ClassToolsDailyActivityServiceImpl implements ClassToolsDailyActivityService {
-    private ClassToolsDailyActivityRepository classToolsDailyActivityRepository;
-
     @Autowired
-    public void setClassToolsDailyActivityRepository(ClassToolsDailyActivityRepository classToolsDailyActivityRepository) {
-        this.classToolsDailyActivityRepository = classToolsDailyActivityRepository;
-    }
+    private ClassToolsDailyActivityRepository classToolsDailyActivityRepository;
 
     @Override
     public Iterable<ClassToolsDailyActivity> listAllDailyActivity() {

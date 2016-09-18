@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "ABC360_CLASS_TOOLS_DAY_TBL")
-public class ClassToolsDailyActivity implements Serializable {
+public class ClassToolsDailyActivity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;

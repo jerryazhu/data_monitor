@@ -1,9 +1,12 @@
 package com.qa.data.visualization.controllers;
 
 import com.qa.data.visualization.entities.ClassToolsDailyActivity;
+import com.qa.data.visualization.repositories.LastDebugRepository;
+import com.qa.data.visualization.repositories.LastErrorRepository;
 import com.qa.data.visualization.services.ClassToolsDailyActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,15 +17,19 @@ import java.util.List;
 
 @Controller
 public class IndexController {
-    private ClassToolsDailyActivityService classToolsDailyActivityService;
-
     @Autowired
-    public void setClassToolsDailyActivityService(ClassToolsDailyActivityService classToolsDailyActivityService) {
-        this.classToolsDailyActivityService = classToolsDailyActivityService;
-    }
+    private ClassToolsDailyActivityService classToolsDailyActivityService;
+    @Autowired
+    private LastErrorRepository lastErrorRepository;
+    @Autowired
+    private LastDebugRepository lastDebugRepository;
 
     @RequestMapping("/")
-    String index(){
+    String index(Model model){
+        long lastError = lastErrorRepository.count();
+        model.addAttribute("lastError",lastError);
+        long lastDebug = lastDebugRepository.count();
+        model.addAttribute("lastDebug",lastDebug);
         return "index";
     }
 

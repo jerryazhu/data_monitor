@@ -1,5 +1,4 @@
-function round(number, roundDigit)
-{
+function round(number, roundDigit) {
     if (number >= 0) {
         return parseInt((number * Math.pow(10, roundDigit) + 0.5)) / Math.pow(10, roundDigit);
     }
@@ -13,8 +12,7 @@ function round(number, roundDigit)
 function getLastDay(year, month) {
     var new_year = year;
     var new_month = month++;
-    if (month > 12)
-    {
+    if (month > 12) {
         new_month -= 12;
         new_year++;
     }
@@ -22,13 +20,13 @@ function getLastDay(year, month) {
     return (new Date(new_date.getTime() - 1000 * 60 * 60 * 24)).getDate();
 }
 
-function timeConverter(UNIX_timestamp){
+function timeConverter(UNIX_timestamp) {
     var a = new Date(UNIX_timestamp * 1000);
     var year = a.getFullYear();
-    var month = a.getMonth()+1;
+    var month = a.getMonth() + 1;
     var date = a.getDate();
     var hour = a.getHours();
     var min = a.getMinutes();
     var sec = a.getSeconds();
-    return year + ' '  + month + ' ' + date  + ' ' + hour + ':' + min + ':' + sec ;
+    return year + ' ' + month + ' ' + date + ' ' + hour + ':' + min + ':' + sec;
 }

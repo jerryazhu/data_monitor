@@ -1,9 +1,11 @@
 package com.qa.data.visualization.controllers;
 
 import com.qa.data.visualization.entities.ClassToolsDailyActivity;
+import com.qa.data.visualization.entities.StuMobileDailyActivity;
 import com.qa.data.visualization.entities.StuWebDailyActivity;
 import com.qa.data.visualization.repositories.LastDebugRepository;
 import com.qa.data.visualization.repositories.LastErrorRepository;
+import com.qa.data.visualization.repositories.StuMobileDailyActivityRepository;
 import com.qa.data.visualization.repositories.StuWebDailyActivityRepository;
 import com.qa.data.visualization.services.ClassToolsDailyActivityService;
 import com.qa.data.visualization.services.StuPCDailyActivityService;
@@ -17,7 +19,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class IndexController {
@@ -31,6 +36,8 @@ public class IndexController {
     private StuWebDailyActivityRepository stuWebDailyActiityRepository;
     @Autowired
     private StuPCDailyActivityService stuPCDailyActivityService;
+    @Autowired
+    private StuMobileDailyActivityRepository stuMobileDailyActivityRepository;
 
     @RequestMapping("/")
     String index(Model model) {
@@ -48,7 +55,7 @@ public class IndexController {
         List<ClassToolsDailyActivity> classToolsDailyActivityList = classToolsDailyActivityService.getDailyActivitiesByType(type);
         for (ClassToolsDailyActivity da : classToolsDailyActivityList) {
             Object[] array = new Object[2];
-            array[0] = Long.parseLong(da.getTime()) * 1000+3600*23*1000;
+            array[0] = Long.parseLong(da.getTime()) * 1000 + 3600 * 23 * 1000;
             array[1] = da.getCount();
             list.add(array);
         }
@@ -64,21 +71,36 @@ public class IndexController {
             for (StuWebDailyActivity da : stuWebDailyActivityList) {
                 Object[] array = new Object[2];
                 DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
-                array[0] = dfm.parse(da.getDay()).getTime()+3600*23*1000;
+                array[0] = dfm.parse(da.getDay()).getTime() + 3600 * 23 * 1000;
                 array[1] = da.getCount();
                 list.add(array);
             }
-        }
-        else if(type.equals("ClassPlat")){
+        } else if (type.equals("ClassPlat")) {
             LinkedHashMap<String, String> stuPCDailyActivityMap = stuPCDailyActivityService.getDailyActivityMap();
             for (Map.Entry<String, String> entry : stuPCDailyActivityMap.entrySet()) {
                 Object[] array = new Object[2];
                 DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
-                array[0] = dfm.parse(entry.getKey()).getTime()+3600*23*1000;
-                if(Long.parseLong(array[0].toString()) < System.currentTimeMillis()) {
+                array[0] = dfm.parse(entry.getKey()).getTime() + 3600 * 23 * 1000;
+                if (Long.parseLong(array[0].toString()) < System.currentTimeMillis()) {
                     array[1] = Integer.parseInt(entry.getValue());
                     list.add(array);
                 }
+            }
+        } else if (type.equals("Android")) {
+            List<StuMobileDailyActivity> stuMoblieDailyActivityList = stuMobileDailyActivityRepository.findByType(2);
+            for (StuMobileDailyActivity da : stuMoblieDailyActivityList) {
+                Object[] array = new Object[2];
+                array[0] = da.getDay() * 1000 + 3600 * 23 * 1000;
+                array[1] = da.getCount();
+                list.add(array);
+            }
+        } else {
+            List<StuMobileDailyActivity> stuMoblieDailyActivityList = stuMobileDailyActivityRepository.findByType(3);
+            for (StuMobileDailyActivity da : stuMoblieDailyActivityList) {
+                Object[] array = new Object[2];
+                array[0] = da.getDay() * 1000 + 3600 * 23 * 1000;
+                array[1] = da.getCount();
+                list.add(array);
             }
         }
         return list;

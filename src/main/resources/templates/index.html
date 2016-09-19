@@ -80,16 +80,16 @@
             </div>
             <div class="row">
                 <div class="col-lg-6">
+                    <div style="float: right">
+                        <select id='student_activity' class="selectpicker">
+                            <option>day</option>
+                            <option>week</option>
+                            <option>month</option>
+                        </select>
+                    </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <i class="fa fa-line-chart fa-fw"></i> 学生日活量
-                            <div style="float: right">
-                                <select id='student_activity' class="selectpicker">
-                                    <option>day</option>
-                                    <option>week</option>
-                                    <option>month</option>
-                                </select>
-                            </div>
                         </div>
                         <div class="panel-body">
                             <div id="student_daily_activity_chart"></div>
@@ -97,16 +97,16 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
+                    <div style="float: right">
+                        <select id='class_tool_type_time' class="selectpicker">
+                            <option>day</option>
+                            <option>week</option>
+                            <option>month</option>
+                        </select>
+                    </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <i class="fa fa-map-marker fa-fw"></i> 实际上课平台分布
-                            <div style="float: right">
-                                <select id='class_tool_type_time' class="selectpicker">
-                                    <option>day</option>
-                                    <option>week</option>
-                                    <option>month</option>
-                                </select>
-                            </div>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -116,6 +116,53 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <h2>Web端</h2>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> 学生终端分布
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="student_terminal_chart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> 学生浏览器分布
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="student_brower_chart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> 学生行为高峰分布
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="web_student_rush_hour_chart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -149,6 +196,47 @@
         $('#student_activity').on('change', function () {
             var student_duration = $(this).find("option:selected").val();
             createHighStock(student_element, student_url, student_map, student_duration);
+        });
+
+        var student_terminal_element = $('#student_terminal_chart');
+        var terminal_count_map = new HashMap();
+        var total =0;
+        $.getJSON('get_student_terminal', function (JSONObjects) {
+            $.each(JSONObjects, function (i, JSONObject) {
+                terminal_count_map.set(JSONObject.name, JSONObject.count);
+                total = total + JSONObject.count;
+            });
+            var student_terminal_map = new HashMap();
+            var firstLevelNames = ['Windows', 'Linux', 'Mac', 'iPhone', 'iPad', 'Android'];
+            $.each(firstLevelNames, function (i, name) {
+                var sub_map = new HashMap();
+                if(name=="Windows") {
+                    sub_map.set('drilldownName',"Windows Versions");
+                    var drilldownCategories = ['Windows XP', 'Windows Vista', 'Windows 7', 'Windows 8', 'Windows 10'];
+                    sub_map.set('drilldownCategories', drilldownCategories);
+                    var drilldownData = [];
+                    var firstLevelCount = 0;
+                    $.each(drilldownCategories, function (i, cate) {
+                        var cnt = terminal_count_map.get(cate)/total*100;
+                        drilldownData.push(round(cnt,2));
+                        firstLevelCount=firstLevelCount+round(cnt,2);
+                    });
+                    sub_map.set('drilldownData', drilldownData);
+                    sub_map.set('y', round(firstLevelCount,2));
+                }
+                else
+                {
+                    sub_map.set('drilldownName',name);
+                    sub_map.set('drilldownCategories', [name]);
+                    var cnt = terminal_count_map.get(name)/total*100;
+                    sub_map.set('drilldownData', [round(cnt,2)]);
+                    sub_map.set('y', round(cnt,2));
+                }
+                student_terminal_map.set(name,sub_map);
+            });
+            student_terminal_map.set('firstLevelSeriesName',"Terminals");
+            student_terminal_map.set('secondLevelSeriesName',"Versions");
+            createPieHighChart(student_terminal_element,student_terminal_map);
         });
 
 

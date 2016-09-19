@@ -2,11 +2,9 @@ package com.qa.data.visualization.controllers;
 
 import com.qa.data.visualization.entities.ClassToolsDailyActivity;
 import com.qa.data.visualization.entities.StuMobileDailyActivity;
+import com.qa.data.visualization.entities.StuTerminal;
 import com.qa.data.visualization.entities.StuWebDailyActivity;
-import com.qa.data.visualization.repositories.LastDebugRepository;
-import com.qa.data.visualization.repositories.LastErrorRepository;
-import com.qa.data.visualization.repositories.StuMobileDailyActivityRepository;
-import com.qa.data.visualization.repositories.StuWebDailyActivityRepository;
+import com.qa.data.visualization.repositories.*;
 import com.qa.data.visualization.services.ClassToolsDailyActivityService;
 import com.qa.data.visualization.services.StuPCDailyActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class IndexController {
@@ -38,6 +33,8 @@ public class IndexController {
     private StuPCDailyActivityService stuPCDailyActivityService;
     @Autowired
     private StuMobileDailyActivityRepository stuMobileDailyActivityRepository;
+    @Autowired
+    private StuTerminalRepository stuTerminalRepository;
 
     @RequestMapping("/")
     String index(Model model) {
@@ -102,6 +99,20 @@ public class IndexController {
                 array[1] = da.getCount();
                 list.add(array);
             }
+        }
+        return list;
+    }
+
+    @RequestMapping("get_student_terminal")
+    @ResponseBody
+    public ArrayList getStuTerminal() {
+        ArrayList<Object> list = new ArrayList<Object>();
+        Iterable<StuTerminal> stuTerminalList = stuTerminalRepository.findAll();
+        for (StuTerminal st : stuTerminalList) {
+            HashMap<String,Object> map = new HashMap<>();
+            map.put("name",st.getTerminal());
+            map.put("count",st.getCnt());
+            list.add(map);
         }
         return list;
     }

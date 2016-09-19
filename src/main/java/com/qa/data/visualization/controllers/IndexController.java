@@ -1,9 +1,6 @@
 package com.qa.data.visualization.controllers;
 
-import com.qa.data.visualization.entities.ClassToolsDailyActivity;
-import com.qa.data.visualization.entities.StuMobileDailyActivity;
-import com.qa.data.visualization.entities.StuTerminal;
-import com.qa.data.visualization.entities.StuWebDailyActivity;
+import com.qa.data.visualization.entities.*;
 import com.qa.data.visualization.repositories.*;
 import com.qa.data.visualization.services.ClassToolsDailyActivityService;
 import com.qa.data.visualization.services.StuPCDailyActivityService;
@@ -35,6 +32,8 @@ public class IndexController {
     private StuMobileDailyActivityRepository stuMobileDailyActivityRepository;
     @Autowired
     private StuTerminalRepository stuTerminalRepository;
+    @Autowired
+    private StuBrowserRepository stuBrowserRepository;
 
     @RequestMapping("/")
     String index(Model model) {
@@ -109,9 +108,23 @@ public class IndexController {
         ArrayList<Object> list = new ArrayList<Object>();
         Iterable<StuTerminal> stuTerminalList = stuTerminalRepository.findAll();
         for (StuTerminal st : stuTerminalList) {
-            HashMap<String,Object> map = new HashMap<>();
-            map.put("name",st.getTerminal());
-            map.put("count",st.getCnt());
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("name", st.getTerminal());
+            map.put("count", st.getCnt());
+            list.add(map);
+        }
+        return list;
+    }
+
+    @RequestMapping("get_student_browser")
+    @ResponseBody
+    public ArrayList getStuBrowser() {
+        ArrayList<Object> list = new ArrayList<Object>();
+        Iterable<StuBrowser> stuBrowserList = stuBrowserRepository.findAll();
+        for (StuBrowser sb : stuBrowserList) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("name", sb.getTerminal() + "___" + sb.getBrower());
+            map.put("count", sb.getCnt());
             list.add(map);
         }
         return list;

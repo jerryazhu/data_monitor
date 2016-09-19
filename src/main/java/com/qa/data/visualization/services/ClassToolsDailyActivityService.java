@@ -8,11 +8,12 @@ import java.util.List;
 public interface ClassToolsDailyActivityService {
     Iterable<ClassToolsDailyActivity> listAllDailyActivity();
 
-    ClassToolsDailyActivity getDailyActivityById(Integer id);
+    ClassToolsDailyActivity getDailyActivityById(Long id);
+
     List<ClassToolsDailyActivity> getDailyActivitiesByType(String type);
 
     ClassToolsDailyActivity saveDailyActivity(ClassToolsDailyActivity dailyActivity);
 
-    void deleteDailyActivity(Integer id);
+    void deleteDailyActivity(Long id);
 
 }

@@ -18,10 +18,11 @@ public class ClassToolsDailyActivityServiceImpl implements ClassToolsDailyActivi
     }
 
     @Override
-    public ClassToolsDailyActivity getDailyActivityById(Integer id) {
+    public ClassToolsDailyActivity getDailyActivityById(Long id) {
         return classToolsDailyActivityRepository.findOne(id);
     }
 
+    @Override
     public List<ClassToolsDailyActivity> getDailyActivitiesByType(String type) {
         return classToolsDailyActivityRepository.findByType(type);
     }
@@ -32,7 +33,7 @@ public class ClassToolsDailyActivityServiceImpl implements ClassToolsDailyActivi
     }
 
     @Override
-    public void deleteDailyActivity(Integer id) {
+    public void deleteDailyActivity(Long id) {
         classToolsDailyActivityRepository.delete(id);
     }
 }

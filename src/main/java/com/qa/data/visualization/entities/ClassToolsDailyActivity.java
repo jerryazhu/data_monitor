@@ -1,14 +1,13 @@
 package com.qa.data.visualization.entities;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "ABC360_CLASS_TOOLS_DAY_TBL")
-public class ClassToolsDailyActivity{
+public class ClassToolsDailyActivity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
     private String time;
     private String type;

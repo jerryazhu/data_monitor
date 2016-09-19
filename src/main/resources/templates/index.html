@@ -84,7 +84,7 @@
                         <div class="panel-heading">
                             <i class="fa fa-line-chart fa-fw"></i> 学生日活量
                             <div style="float: right">
-                                <select id='student_activity' class="selectpicker" >
+                                <select id='student_activity' class="selectpicker">
                                     <option>day</option>
                                     <option>week</option>
                                     <option>month</option>
@@ -138,11 +138,12 @@
         });
 
         var student_element = $('#student_daily_activity_chart');
-        var student_url = "class_tools_daily_activity/";
+        var student_url = "student_web_daily_activity/";
         var student_map = new HashMap();
-        student_map.set("ClassPlat", "7");
-        student_map.set("Android", "2");
-        student_map.set("IOS", "3");
+        student_map.set("Web", "Web");
+        student_map.set("ClassPlat", "ClassPlat");
+        student_map.set("Android", "Android");
+        student_map.set("iOS", "iOS");
         var student_duration = $('#student_activity').find("option:selected").val();
         createHighStock(student_element, student_url, student_map, student_duration);
         $('#student_activity').on('change', function () {

@@ -5,7 +5,7 @@
  * Homepage: https://github.com/flesler/hashmap
  */
 
-(function(factory) {
+(function (factory) {
     /* global define */
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
@@ -19,52 +19,57 @@
         // Browser globals (this is window)
         this.HashMap = factory();
     }
-}(function() {
+}(function () {
 
     function HashMap(other) {
         this.clear();
         switch (arguments.length) {
-            case 0: break;
-            case 1: this.copy(other); break;
-            default: multi(this, arguments); break;
+            case 0:
+                break;
+            case 1:
+                this.copy(other);
+                break;
+            default:
+                multi(this, arguments);
+                break;
         }
     }
 
     var proto = HashMap.prototype = {
-        constructor:HashMap,
+        constructor: HashMap,
 
-        get:function(key) {
+        get: function (key) {
             var data = this._data[this.hash(key)];
             return data && data[1];
         },
 
-        set:function(key, value) {
+        set: function (key, value) {
             // Store original key as well (for iteration)
             var hash = this.hash(key);
-            if ( !(hash in this._data) ) {
+            if (!(hash in this._data)) {
                 this._count++;
             }
             this._data[hash] = [key, value];
         },
 
-        multi:function() {
+        multi: function () {
             multi(this, arguments);
         },
 
-        copy:function(other) {
+        copy: function (other) {
             for (var hash in other._data) {
-                if ( !(hash in this._data) ) {
+                if (!(hash in this._data)) {
                     this._count++;
                 }
                 this._data[hash] = other._data[hash];
             }
         },
 
-        has:function(key) {
+        has: function (key) {
             return this.hash(key) in this._data;
         },
 
-        search:function(value) {
+        search: function (value) {
             for (var key in this._data) {
                 if (this._data[key][1] === value) {
                     return this._data[key][0];
@@ -74,15 +79,15 @@
             return null;
         },
 
-        remove:function(key) {
+        remove: function (key) {
             var hash = this.hash(key);
-            if ( hash in this._data ) {
+            if (hash in this._data) {
                 this._count--;
                 delete this._data[hash];
             }
         },
 
-        type:function(key) {
+        type: function (key) {
             var str = Object.prototype.toString.call(key);
             var type = str.slice(8, -1).toLowerCase();
             // Some browsers yield DOMWindow for null and undefined, works fine on Node
@@ -92,33 +97,37 @@
             return type;
         },
 
-        keys:function() {
+        keys: function () {
             var keys = [];
-            this.forEach(function(_, key) { keys.push(key); });
+            this.forEach(function (_, key) {
+                keys.push(key);
+            });
             return keys;
         },
 
-        values:function() {
+        values: function () {
             var values = [];
-            this.forEach(function(value) { values.push(value); });
+            this.forEach(function (value) {
+                values.push(value);
+            });
             return values;
         },
 
-        count:function() {
+        count: function () {
             return this._count;
         },
 
-        clear:function() {
+        clear: function () {
             // TODO: Would Object.create(null) make any difference
             this._data = {};
             this._count = 0;
         },
 
-        clone:function() {
+        clone: function () {
             return new HashMap(this);
         },
 
-        hash:function(key) {
+        hash: function (key) {
             switch (this.type(key)) {
                 case 'undefined':
                 case 'null':
@@ -151,7 +160,7 @@
             }
         },
 
-        forEach:function(func, ctx) {
+        forEach: function (func, ctx) {
             for (var key in this._data) {
                 var data = this._data[key];
                 func.call(ctx || this, data[1], data[0]);
@@ -163,9 +172,9 @@
 
     //- Add chaining to all methods that don't return something
 
-    ['set','multi','copy','remove','clear','forEach'].forEach(function(method) {
+    ['set', 'multi', 'copy', 'remove', 'clear', 'forEach'].forEach(function (method) {
         var fn = proto[method];
-        proto[method] = function() {
+        proto[method] = function () {
             fn.apply(this, arguments);
             return this;
         };
@@ -175,14 +184,14 @@
 
     function multi(map, args) {
         for (var i = 0; i < args.length; i += 2) {
-            map.set(args[i], args[i+1]);
+            map.set(args[i], args[i + 1]);
         }
     }
 
     function hide(obj, prop) {
         // Make non iterable if supported
         if (Object.defineProperty) {
-            Object.defineProperty(obj, prop, {enumerable:false});
+            Object.defineProperty(obj, prop, {enumerable: false});
         }
     }
 

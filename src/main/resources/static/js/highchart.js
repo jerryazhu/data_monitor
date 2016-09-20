@@ -1,3 +1,4 @@
+Highcharts.setOptions({global: { useUTC: false } });
 function createPieHighChart(element, map) {
     var colors = Highcharts.getOptions().colors;
     var categories = [];
@@ -96,4 +97,70 @@ function createPieHighChart(element, map) {
         }]
     });
 
+}
+
+function createScatterHighChart(element, data) {
+    element.highcharts({
+        chart: {
+            type: 'scatter',
+            zoomType: 'xy'
+        },
+        title: {
+            text: ''
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'datetime',
+            title: {
+                enabled: false,
+                text: ''
+            },
+            dateTimeLabelFormats: {
+                second: '%H:%M'
+            },
+            startOnTick: false,
+            endOnTick: true,
+            showLastLabel: false
+        },
+        yAxis: {
+            title: {
+                text: ''
+            }
+        },
+        tooltip: {
+            formatter: function () {
+                return Highcharts.dateFormat('%Y-%m-%d %H:%M',
+                        new Date(this.x))
+                    + '<br>' + this.y;
+            }
+        },
+        plotOptions: {
+            scatter: {
+                marker: {
+                    radius: 5,
+                    states: {
+                        hover: {
+                            enabled: true,
+                            lineColor: 'rgb(100,100,100)'
+                        }
+                    }
+                },
+                states: {
+                    hover: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                }
+            }
+        },
+        series: [{
+            name: '',
+            showInLegend: false,
+            color: 'rgba(223, 83, 83, .5)',
+            data: data
+        }]
+    });
 }

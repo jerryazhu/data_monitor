@@ -156,7 +156,7 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <div id="web_student_rush_hour_chart"></div>
+                            <div id="web_student_hot_spot_chart"></div>
                         </div>
                         <!-- /.panel-body -->
                     </div>
@@ -276,6 +276,10 @@
             createPieHighChart(student_browser_element, student_browser_map);
         });
 
+        $.getJSON('get_web_hot_spot', function (data) {
+            var hot_spot_element = $('#web_student_hot_spot_chart');
+            createScatterHighChart(hot_spot_element, data);
+        });
 
     });
 </script>

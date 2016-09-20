@@ -1,6 +1,10 @@
 package com.qa.data.visualization.services;
 
 
+import com.github.dandelion.datatables.core.ajax.DataSet;
+import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.qa.data.visualization.entities.LastWebStuAction;
+import com.qa.data.visualization.util.QueryUtils;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -10,7 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
-public class LastWebStuActionServiceImpl implements LastWebStuActionService {
+public class WebStuActionServiceImpl implements WebStuActionService {
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -24,6 +28,14 @@ public class LastWebStuActionServiceImpl implements LastWebStuActionService {
             map.put(result[2].toString(), result[1].toString());
         }
         return map;
+    }
+
+    public DataSet<LastWebStuAction> findLastActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
+        QueryUtils queryUtils = new QueryUtils(entityManager);
+        List<LastWebStuAction> actions = queryUtils.getRecordsWithDatatablesCriterias(LastWebStuAction.class, criterias);
+        Long count = queryUtils.getTotalCount(LastWebStuAction.class);
+        Long countFiltered = queryUtils.getFilteredCount(LastWebStuAction.class, criterias);
+        return new DataSet<LastWebStuAction>(actions, count, countFiltered);
     }
 
 }

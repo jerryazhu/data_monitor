@@ -1,4 +1,4 @@
-Highcharts.setOptions({global: { useUTC: false } });
+Highcharts.setOptions({global: {useUTC: false}});
 function createPieHighChart(element, map) {
     var colors = Highcharts.getOptions().colors;
     var categories = [];

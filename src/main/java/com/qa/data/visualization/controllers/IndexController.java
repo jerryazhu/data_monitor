@@ -3,8 +3,8 @@ package com.qa.data.visualization.controllers;
 import com.qa.data.visualization.entities.*;
 import com.qa.data.visualization.repositories.*;
 import com.qa.data.visualization.services.ClassToolsDailyActivityService;
-import com.qa.data.visualization.services.LastWebStuActionService;
 import com.qa.data.visualization.services.StuPCDailyActivityService;
+import com.qa.data.visualization.services.WebStuActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,7 +36,7 @@ public class IndexController {
     @Autowired
     private StuBrowserRepository stuBrowserRepository;
     @Autowired
-    private LastWebStuActionService lastWebStuActionService;
+    private WebStuActionService lastWebStuActionService;
 
     @RequestMapping("/")
     String index(Model model) {
@@ -46,6 +44,13 @@ public class IndexController {
         model.addAttribute("lastError", lastError);
         long lastDebug = lastDebugRepository.count();
         model.addAttribute("lastDebug", lastDebug);
+        model.addAttribute("templateName", "indexContent");
+        return "index";
+    }
+
+    @RequestMapping("/{templateName}")
+    String index(@PathVariable String templateName, Model model) {
+        model.addAttribute("templateName", templateName);
         return "index";
     }
 

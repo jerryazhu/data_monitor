@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:dt="http://www.thymeleaf.org/dandelion/datatables">
+<head></head>
+<body>
+<div th:fragment="stuWebActionContent">
+    <div class="span12">
+        <table id="stuWebActionTable" dt:table="true" dt:theme="bootstrap3" class="table table-striped" dt:url="@{/get_web_stu_action}" dt:serverside="true">
+            <thead>
+            <tr>
+                <th dt:property="time">time</th>
+                <th dt:property="operatorid" dt:filterable="true">operatorid</th>
+                <th dt:property="operatorname" dt:filterable="true">operatorname</th>
+                <th dt:property="controller" dt:filterable="true">controller</th>
+                <th dt:property="method" dt:filterable="true">method</th>
+                <th dt:property="notes" dt:filterable="true">notes</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+</body>
+</html>

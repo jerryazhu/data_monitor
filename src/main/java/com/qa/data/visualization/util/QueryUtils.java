@@ -141,8 +141,8 @@ public class QueryUtils {
                 return getTotalCount(entiteClass);
             }
         }
-        javax.persistence.Query query = this.entityManager.createQuery("SELECT p FROM " + entiteClass.getSimpleName() + " p" + getFilterQuery(criterias));
-        return Long.parseLong(String.valueOf(query.getResultList().size()));
+        javax.persistence.Query query = this.entityManager.createQuery("SELECT COUNT(id) FROM " + entiteClass.getSimpleName() + " p" + getFilterQuery(criterias));
+        return (Long) query.getSingleResult();
     }
 
     /**

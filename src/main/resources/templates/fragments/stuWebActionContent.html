@@ -4,19 +4,48 @@
 <head></head>
 <body>
 <div th:fragment="stuWebActionContent">
-    <div class="span12">
-        <table id="stuWebActionTable" dt:table="true" dt:theme="bootstrap3" class="table table-striped" dt:url="@{/get_web_stu_action}" dt:serverside="true">
-            <thead>
-            <tr>
-                <th dt:property="time">time</th>
-                <th dt:property="operatorid" dt:filterable="true">operatorid</th>
-                <th dt:property="operatorname" dt:filterable="true">operatorname</th>
-                <th dt:property="controller" dt:filterable="true">controller</th>
-                <th dt:property="method" dt:filterable="true">method</th>
-                <th dt:property="notes" dt:filterable="true">notes</th>
-            </tr>
-            </thead>
-        </table>
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                查找学生行为
+            </div>
+            <div class="panel-body">
+                <table id="stuWebActionTable" dt:table="true" dt:theme="bootstrap3" class="table table-striped"
+                       dt:url="@{/web/get_web_stu_action}"
+                       dt:serverside="true" dt:filterDelay="1000.0">
+                    <thead>
+                    <tr>
+                        <th dt:property="time">time</th>
+                        <th dt:property="operatorid" dt:filterable="true">operatorid</th>
+                        <th dt:property="operatorname" dt:filterable="true">operatorname</th>
+                        <th dt:property="controller" dt:filterable="true">controller</th>
+                        <th dt:property="method" dt:filterable="true">method</th>
+                        <th dt:property="notes" dt:filterable="true">notes</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                学生行为次数分布
+            </div>
+            <div class="panel-body">
+                <table id="stuWebActionGroupOrderBy" dt:table="true" dt:theme="bootstrap3" class="table table-striped"
+                       dt:url="@{/web/get_web_stu_action_group}"
+                       dt:serverside="true" dt:displaylength="50.0">
+                    <thead>
+                    <tr>
+                        <th dt:sortable="false" dt:property="controller">controller</th>
+                        <th dt:sortable="false" dt:property="method">method</th>
+                        <th dt:sortInitDirection="desc" dt:sortInitOrder="0" dt:property="cnt">count</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 </body>

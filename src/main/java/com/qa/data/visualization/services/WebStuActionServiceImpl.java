@@ -3,7 +3,8 @@ package com.qa.data.visualization.services;
 
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.qa.data.visualization.entities.LastWebStuAction;
+import com.qa.data.visualization.entities.WebStuAction;
+import com.qa.data.visualization.entities.WebStuActionGroupCount;
 import com.qa.data.visualization.util.QueryUtils;
 import org.springframework.stereotype.Service;
 
@@ -30,12 +31,20 @@ public class WebStuActionServiceImpl implements WebStuActionService {
         return map;
     }
 
-    public DataSet<LastWebStuAction> findLastActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
+    public DataSet<WebStuAction> findActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
         QueryUtils queryUtils = new QueryUtils(entityManager);
-        List<LastWebStuAction> actions = queryUtils.getRecordsWithDatatablesCriterias(LastWebStuAction.class, criterias);
-        Long count = queryUtils.getTotalCount(LastWebStuAction.class);
-        Long countFiltered = queryUtils.getFilteredCount(LastWebStuAction.class, criterias);
-        return new DataSet<LastWebStuAction>(actions, count, countFiltered);
+        List<WebStuAction> actions = queryUtils.getRecordsWithDatatablesCriterias(WebStuAction.class, criterias);
+        Long count = queryUtils.getTotalCount(WebStuAction.class);
+        Long countFiltered = queryUtils.getFilteredCount(WebStuAction.class, criterias);
+        return new DataSet<WebStuAction>(actions, count, countFiltered);
+    }
+
+    public DataSet<WebStuActionGroupCount> findGroupCountWithDatatablesCriterias(DatatablesCriterias criterias) {
+        QueryUtils queryUtils = new QueryUtils(entityManager);
+        List<WebStuActionGroupCount> actions = queryUtils.getRecordsWithDatatablesCriterias(WebStuActionGroupCount.class, criterias);
+        Long count = queryUtils.getTotalCount(WebStuActionGroupCount.class);
+        Long countFiltered = queryUtils.getFilteredCount(WebStuActionGroupCount.class, criterias);
+        return new DataSet<WebStuActionGroupCount>(actions, count, countFiltered);
     }
 
 }

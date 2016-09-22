@@ -50,8 +50,8 @@ public class IndexController {
 
     @RequestMapping("/{templateName}")
     String index(@PathVariable String templateName, Model model) {
-        model.addAttribute("templateName", templateName);
-        return "index";
+        //return "fragments/"+templateName+" :: "+templateName; see https://github.com/dandelion/dandelion/issues/28
+        return templateName;
     }
 
     @RequestMapping("class_tools_daily_activity/{type}")

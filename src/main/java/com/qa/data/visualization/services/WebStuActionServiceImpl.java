@@ -32,18 +32,18 @@ public class WebStuActionServiceImpl implements WebStuActionService {
     }
 
     public DataSet<WebStuAction> findActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        QueryUtils queryUtils = new QueryUtils(entityManager);
-        List<WebStuAction> actions = queryUtils.getRecordsWithDatatablesCriterias(WebStuAction.class, criterias);
-        Long count = queryUtils.getTotalCount(WebStuAction.class);
-        Long countFiltered = queryUtils.getFilteredCount(WebStuAction.class, criterias);
+        QueryUtils queryUtils = new QueryUtils(entityManager,WebStuAction.class,criterias);
+        List<WebStuAction> actions = queryUtils.getRecordsWithDatatablesCriterias();
+        Long count = queryUtils.getTotalCount();
+        Long countFiltered = queryUtils.getFilteredCount();
         return new DataSet<WebStuAction>(actions, count, countFiltered);
     }
 
     public DataSet<WebStuActionGroupCount> findGroupCountWithDatatablesCriterias(DatatablesCriterias criterias) {
-        QueryUtils queryUtils = new QueryUtils(entityManager);
-        List<WebStuActionGroupCount> actions = queryUtils.getRecordsWithDatatablesCriterias(WebStuActionGroupCount.class, criterias);
-        Long count = queryUtils.getTotalCount(WebStuActionGroupCount.class);
-        Long countFiltered = queryUtils.getFilteredCount(WebStuActionGroupCount.class, criterias);
+        QueryUtils queryUtils = new QueryUtils(entityManager,WebStuActionGroupCount.class,criterias);
+        List<WebStuActionGroupCount> actions = queryUtils.getRecordsWithDatatablesCriterias();
+        Long count = queryUtils.getTotalCount();
+        Long countFiltered = queryUtils.getFilteredCount();
         return new DataSet<WebStuActionGroupCount>(actions, count, countFiltered);
     }
 

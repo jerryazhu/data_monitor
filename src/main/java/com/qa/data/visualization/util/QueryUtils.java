@@ -13,13 +13,17 @@ import java.util.List;
 
 public class QueryUtils {
     private EntityManager entityManager;
+    private Class entiteClass;
+    private DatatablesCriterias criterias;
     private Long totalCount = 0L;
 
-    public QueryUtils(EntityManager entityManager) {
+    public <T> QueryUtils(EntityManager entityManager,Class<T> entiteClass, DatatablesCriterias criterias) {
         this.entityManager = entityManager;
+        this.entiteClass = entiteClass;
+        this.criterias = criterias;
     }
 
-    public static StringBuilder getFilterQuery(DatatablesCriterias criterias) {
+    public StringBuilder getFilterQuery() {
         StringBuilder queryBuilder = new StringBuilder();
         List<String> paramList = new ArrayList<String>();
 
@@ -86,14 +90,14 @@ public class QueryUtils {
         return queryBuilder;
     }
 
-    public <T> List<T> getRecordsWithDatatablesCriterias(Class<T> entiteClass, DatatablesCriterias criterias) {
-        totalCount = 0L;
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getRecordsWithDatatablesCriterias() {
         StringBuilder queryBuilder = new StringBuilder("SELECT p FROM " + entiteClass.getSimpleName() + " p");
 
         /**
          * Step 1: global and individual column filtering
          */
-        queryBuilder.append(getFilterQuery(criterias));
+        queryBuilder.append(getFilterQuery());
 
         /**
          * Step 2: sorting
@@ -114,7 +118,7 @@ public class QueryUtils {
             }
         }
 
-        TypedQuery<T> query = this.entityManager.createQuery(queryBuilder.toString(), entiteClass);
+        TypedQuery<T> query = this.entityManager.createQuery(queryBuilder.toString(),entiteClass);
 
         /**
          * Step 3: paging
@@ -125,30 +129,19 @@ public class QueryUtils {
         return query.getResultList();
     }
 
-    /**
-     * <p>
-     * Query used to return the number of filtered persons.
-     *
-     * @param criterias The DataTables criterias used to filter the persons. (maxResult,
-     *                  filtering, paging, ...)
-     * @return the number of filtered persons.
-     */
-    public <T> Long getFilteredCount(Class<T> entiteClass, DatatablesCriterias criterias) {
+    public Long getFilteredCount() {
         if (StringUtils.isBlank(criterias.getSearch()) && (!criterias.hasOneFilteredColumn())) {
             if (totalCount != 0L) {
                 return totalCount;
             } else {
-                return getTotalCount(entiteClass);
+                return getTotalCount();
             }
         }
-        javax.persistence.Query query = this.entityManager.createQuery("SELECT COUNT(id) FROM " + entiteClass.getSimpleName() + " p" + getFilterQuery(criterias));
+        javax.persistence.Query query = this.entityManager.createQuery("SELECT COUNT(id) FROM " + entiteClass.getSimpleName() + " p" + getFilterQuery());
         return (Long) query.getSingleResult();
     }
 
-    /**
-     * @return the total count of persons.
-     */
-    public <T> Long getTotalCount(Class<T> entiteClass) {
+    public Long getTotalCount() {
         javax.persistence.Query query = this.entityManager.createQuery("SELECT COUNT(id) FROM " + entiteClass.getSimpleName() + " p");
         totalCount = (Long) query.getSingleResult();
         return totalCount;

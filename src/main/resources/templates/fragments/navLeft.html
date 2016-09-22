@@ -22,7 +22,7 @@
                     <a href=""><i class="fa fa-table fa-fw"></i> Web端</a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a th:href="@{/stuWebActionContent}"><i class="fa fa-table fa-fw"></i> 学生行为日志</a>
+                            <a href="#" class="stuWebActionContent"><i class="fa fa-table fa-fw"></i> 学生行为日志</a>
                         </li>
                         <li>
                             <a th:href="teacherAction.html"><i class="fa fa-table fa-fw"></i> 教师行为日志</a>
@@ -71,6 +71,21 @@
         </div>
         <!-- /.sidebar-collapse -->
     </div>
+</div>
+
+<div th:fragment="navLeftScript">
+    <script>
+        $(function () {
+            $(".nav-second-level li a").each(function(index) {
+                $(this).unbind('click');
+                $(this).on("click", function () {
+                    $("#content").empty();
+                    var templateName = $(this).attr("class");
+                    $("#content").load("/"+templateName);
+                });
+            });
+        });
+        </script>
 </div>
 </body>
 </html>

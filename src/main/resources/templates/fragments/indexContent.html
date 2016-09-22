@@ -186,14 +186,14 @@
             var student_terminal_element = $('#student_terminal_chart');
             var terminal_count_map = new HashMap();
             var total = 0;
-            $.getJSON('get_student_terminal', function (JSONObjects) {
-                $.each(JSONObjects, function (i, JSONObject) {
-                    terminal_count_map.set(JSONObject.name, JSONObject.count);
-                    total = total + JSONObject.count;
+            $.getJSON('get_student_terminal', function (terminalJSONObjects) {
+                $.each(terminalJSONObjects, function (i, terminalJSONObject) {
+                    terminal_count_map.set(terminalJSONObject.name, terminalJSONObject.count);
+                    total = total + terminalJSONObject.count;
                 });
                 var student_terminal_map = new HashMap();
-                var firstLevelNames = ['Windows', 'Linux', 'Mac', 'iPhone', 'iPad', 'Android'];
-                $.each(firstLevelNames, function (i, name) {
+                var firstTerminalLevelNames = ['Windows', 'Linux', 'Mac', 'iPhone', 'iPad', 'Android'];
+                $.each(firstTerminalLevelNames, function (i, name) {
                     var sub_map = new HashMap();
                     if (name == "Windows") {
                         var drilldownCategories = ['Windows XP', 'Windows Vista', 'Windows 7', 'Windows 8', 'Windows 10'];
@@ -225,11 +225,11 @@
             var browser_count_map = new HashMap();
             var terminal_browser_map = new HashMap();
             var browser_total = 0;
-            $.getJSON('get_student_browser', function (JSONObjects) {
-                $.each(JSONObjects, function (i, JSONObject) {
-                    browser_count_map.set(JSONObject.name, JSONObject.count);
-                    browser_total = browser_total + JSONObject.count;
-                    var array = JSONObject.name.split("___");
+            $.getJSON('get_student_browser', function (browserJSONObjects) {
+                $.each(browserJSONObjects, function (i, browserJSONObject) {
+                    browser_count_map.set(browserJSONObject.name, browserJSONObject.count);
+                    browser_total = browser_total + browserJSONObject.count;
+                    var array = browserJSONObject.name.split("___");
                     var arr = [];
                     if (terminal_browser_map.has(array[0])) {
                         terminal_browser_map.get(array[0]).push(array[1]);
@@ -240,8 +240,8 @@
 
                 });
                 var student_browser_map = new HashMap();
-                var firstLevelNames = ['Windows XP', 'Windows 7', 'Windows 8', 'Windows 10', 'Linux', 'Mac', 'iPhone', 'iPad', 'Android'];
-                $.each(firstLevelNames, function (i, name) {
+                var firstBrowserLevelNames = ['Windows XP', 'Windows 7', 'Windows 8', 'Windows 10', 'Linux', 'Mac', 'iPhone', 'iPad', 'Android'];
+                $.each(firstBrowserLevelNames, function (i, name) {
                     var sub_map = new HashMap();
                     var drilldownCategories = terminal_browser_map.get(name);
                     sub_map.set('drilldownCategories', drilldownCategories);

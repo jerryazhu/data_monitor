@@ -17,13 +17,13 @@ import javax.servlet.http.HttpServletRequest;
 public class WebController {
 
     @Autowired
-    private WebActionService webStuActionService;
+    private WebActionService webActionService;
 
     @RequestMapping(value = "/get_web_stu_action")
     @ResponseBody
     public DatatablesResponse<WebStuAction> findAllStuForDataTables(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<WebStuAction> actions = webStuActionService.findStuActionsWithDatatablesCriterias(criterias);
+        DataSet<WebStuAction> actions = webActionService.findStuActionsWithDatatablesCriterias(criterias);
         return DatatablesResponse.build(actions, criterias);
     }
 
@@ -31,7 +31,7 @@ public class WebController {
     @ResponseBody
     public DatatablesResponse<WebStuActionGroupCount> findStuGroupCountForDataTables(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<WebStuActionGroupCount> actions = webStuActionService.findStuGroupCountWithDatatablesCriterias(criterias);
+        DataSet<WebStuActionGroupCount> actions = webActionService.findStuGroupCountWithDatatablesCriterias(criterias);
         return DatatablesResponse.build(actions, criterias);
     }
 
@@ -39,7 +39,7 @@ public class WebController {
     @ResponseBody
     public DatatablesResponse<WebTeaAction> findAllTeaForDataTables(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<WebTeaAction> actions = webStuActionService.findTeaActionsWithDatatablesCriterias(criterias);
+        DataSet<WebTeaAction> actions = webActionService.findTeaActionsWithDatatablesCriterias(criterias);
         return DatatablesResponse.build(actions, criterias);
     }
 
@@ -47,7 +47,7 @@ public class WebController {
     @ResponseBody
     public DatatablesResponse<WebTeaActionGroupCount> findTeaGroupCountForDataTables(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<WebTeaActionGroupCount> actions = webStuActionService.findTeaGroupCountWithDatatablesCriterias(criterias);
+        DataSet<WebTeaActionGroupCount> actions = webActionService.findTeaGroupCountWithDatatablesCriterias(criterias);
         return DatatablesResponse.build(actions, criterias);
     }
 
@@ -55,7 +55,7 @@ public class WebController {
     @ResponseBody
     public DatatablesResponse<WebUserAction> findAllUserForDataTables(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<WebUserAction> actions = webStuActionService.findUserActionsWithDatatablesCriterias(criterias);
+        DataSet<WebUserAction> actions = webActionService.findUserActionsWithDatatablesCriterias(criterias);
         return DatatablesResponse.build(actions, criterias);
     }
 
@@ -63,7 +63,7 @@ public class WebController {
     @ResponseBody
     public DatatablesResponse<WebUserActionGroupCount> findUserGroupCountForDataTables(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<WebUserActionGroupCount> actions = webStuActionService.findUserGroupCountWithDatatablesCriterias(criterias);
+        DataSet<WebUserActionGroupCount> actions = webActionService.findUserGroupCountWithDatatablesCriterias(criterias);
         return DatatablesResponse.build(actions, criterias);
     }
 
@@ -71,7 +71,7 @@ public class WebController {
     @ResponseBody
     public DatatablesResponse<WebErrorAction> findAllErrorForDataTables(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<WebErrorAction> actions = webStuActionService.findErrorActionsWithDatatablesCriterias(criterias);
+        DataSet<WebErrorAction> actions = webActionService.findErrorActionsWithDatatablesCriterias(criterias);
         return DatatablesResponse.build(actions, criterias);
     }
 
@@ -79,7 +79,31 @@ public class WebController {
     @ResponseBody
     public DatatablesResponse<WebDebugAction> findAllDebugForDataTables(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<WebDebugAction> actions = webStuActionService.findDebugActionsWithDatatablesCriterias(criterias);
+        DataSet<WebDebugAction> actions = webActionService.findDebugActionsWithDatatablesCriterias(criterias);
+        return DatatablesResponse.build(actions, criterias);
+    }
+
+    @RequestMapping(value = "/get_web_cron_action")
+    @ResponseBody
+    public DatatablesResponse<WebCronAction> findAllCronForDataTables(HttpServletRequest request) {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<WebCronAction> actions = webActionService.findCronActionsWithDatatablesCriterias(criterias);
+        return DatatablesResponse.build(actions, criterias);
+    }
+
+    @RequestMapping(value = "/get_web_role_action")
+    @ResponseBody
+    public DatatablesResponse<WebRoleAction> findAllRoleForDataTables(HttpServletRequest request) {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<WebRoleAction> actions = webActionService.findRoleActionsWithDatatablesCriterias(criterias);
+        return DatatablesResponse.build(actions, criterias);
+    }
+
+    @RequestMapping(value = "/get_web_property_action")
+    @ResponseBody
+    public DatatablesResponse<WebPropertyAction> findAllPropertyForDataTables(HttpServletRequest request) {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<WebPropertyAction> actions = webActionService.findPropertyActionsWithDatatablesCriterias(criterias);
         return DatatablesResponse.build(actions, criterias);
     }
 }

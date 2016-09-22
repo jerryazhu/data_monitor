@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html
+        xmlns:dt="http://www.thymeleaf.org/dandelion/datatables">
+<head></head>
+<body>
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            查找IOS学生行为
+        </div>
+        <div class="panel-body">
+            <table id="stuIosApiActionTable" dt:table="true" dt:theme="bootstrap3" class="table table-striped"
+                   dt:url="@{/mobile/get_ios_stu_api_action}"
+                   dt:serverside="true" dt:filterDelay="800.0">
+                <thead>
+                <tr>
+                    <th dt:sortInitDirection="desc" dt:property="time">time</th>
+                    <th dt:property="uid" dt:filterable="true">uid</th>
+                    <th dt:property="api_name" dt:filterable="true">api_name</th>
+                    <th dt:property="request_type" dt:filterable="true">request_type</th>
+                    <th dt:property="parameters" dt:filterable="true">parameters</th>
+                    <th dt:property="response_idx" dt:filterable="true">response_idx</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            行为次数分布
+        </div>
+        <div class="panel-body">
+            <table id="stuIOSApiActionGroupOrderBy" dt:table="true" dt:theme="bootstrap3" class="table table-striped"
+                   dt:url="@{/mobile/get_ios_api_stu_action_group}"
+                   dt:serverside="true" dt:displaylength="50.0">
+                <thead>
+                <tr>
+                    <th dt:sortable="false" dt:property="api_name">api_name</th>
+                    <th dt:sortInitDirection="desc" dt:sortInitOrder="0" dt:property="cnt">count</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

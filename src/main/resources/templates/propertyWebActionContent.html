@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html
+        xmlns:dt="http://www.thymeleaf.org/dandelion/datatables">
+<head></head>
+<body>
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            学生属性修改日志
+        </div>
+        <div class="panel-body">
+            <table id="propertyWebActionTable" dt:table="true" dt:theme="bootstrap3" class="table table-striped"
+                   dt:url="@{/web/get_web_property_action}"
+                   dt:serverside="true" dt:filterDelay="800.0">
+                <thead>
+                <tr>
+                    <th dt:sortInitDirection="desc" dt:property="time">time</th>
+                    <th dt:property="operatorid" dt:filterable="true">operatorid</th>
+                    <th dt:property="operatorname" dt:filterable="true">operatorname</th>
+                    <th dt:property="studentid" dt:filterable="true">studentid</th>
+                    <th dt:property="property" dt:filterable="true">property</th>
+                    <th dt:property="oldval" dt:filterable="true">oldval</th>
+                    <th dt:property="newval" dt:filterable="true">newval</th>
+                    <th dt:property="recordid" dt:filterable="true">recordid</th>
+                    <th dt:property="notes" dt:filterable="true">notes</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

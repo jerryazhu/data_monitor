@@ -3,8 +3,8 @@ package com.qa.data.visualization.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ABC360_WEB_DEBUG_HIS_TBL")
-public class WebDebugAction {
+@Table(name = "ABC360_WEB_ROLE_CHG_HIS_TBL")
+public class WebRoleAction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -12,17 +12,15 @@ public class WebDebugAction {
     private String time;
     private String operatorid;
     private String operatorname;
-    private String module;
-    private String controller;
-    private String method;
+    private String domain;
     private String detail;
 
-    public String getModule() {
-        return module;
+    public String getDomain() {
+        return domain;
     }
 
-    public void setModule(String module) {
-        this.module = module;
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public String getDetail() {
@@ -57,20 +55,5 @@ public class WebDebugAction {
         this.operatorname = operatorname;
     }
 
-    public String getController() {
-        return controller;
-    }
-
-    public void setController(String controller) {
-        this.controller = controller;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
 
 }

@@ -24,4 +24,10 @@ public interface WebActionService {
     DataSet<WebErrorAction> findErrorActionsWithDatatablesCriterias(DatatablesCriterias criterias);
 
     DataSet<WebDebugAction> findDebugActionsWithDatatablesCriterias(DatatablesCriterias criterias);
+
+    DataSet<WebCronAction> findCronActionsWithDatatablesCriterias(DatatablesCriterias criterias);
+
+    DataSet<WebRoleAction> findRoleActionsWithDatatablesCriterias(DatatablesCriterias criterias);
+
+    DataSet<WebPropertyAction> findPropertyActionsWithDatatablesCriterias(DatatablesCriterias criterias);
 }

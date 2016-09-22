@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html
+        xmlns:dt="http://www.thymeleaf.org/dandelion/datatables">
+<head></head>
+<body>
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            后台权限变更日志
+        </div>
+        <div class="panel-body">
+            <table id="roleWebActionTable" dt:table="true" dt:theme="bootstrap3" class="table table-striped"
+                   dt:url="@{/web/get_web_role_action}"
+                   dt:serverside="true" dt:filterDelay="800.0">
+                <thead>
+                <tr>
+                    <th dt:sortInitDirection="desc" dt:property="time">time</th>
+                    <th dt:property="domain" dt:filterable="true">domain</th>
+                    <th dt:property="operatorid" dt:filterable="true">operatorid</th>
+                    <th dt:property="operatorname" dt:filterable="true">operatorname</th>
+                    <th dt:property="detail" dt:filterable="true">detail</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

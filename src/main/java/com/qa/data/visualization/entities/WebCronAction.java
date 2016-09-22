@@ -3,8 +3,8 @@ package com.qa.data.visualization.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ABC360_WEB_DEBUG_HIS_TBL")
-public class WebDebugAction {
+@Table(name = "ABC360_WEB_CRONTAB_HIS_TBL")
+public class WebCronAction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

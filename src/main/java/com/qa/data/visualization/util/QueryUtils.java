@@ -2,6 +2,7 @@ package com.qa.data.visualization.util;
 
 import com.github.dandelion.core.util.StringUtils;
 import com.github.dandelion.datatables.core.ajax.ColumnDef;
+import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 
 import javax.persistence.EntityManager;
@@ -22,6 +23,13 @@ public class QueryUtils {
         this.entityManager = entityManager;
         this.entiteClass = entiteClass;
         this.criterias = criterias;
+    }
+
+    public <T> DataSet<T> getResultDataSet() {
+        List<T> actions = getRecordsWithDatatablesCriterias();
+        Long count = getTotalCount();
+        Long countFiltered = getFilteredCount();
+        return new DataSet<T>(actions, count, countFiltered);
     }
 
     public StringBuilder getFilterQuery() {

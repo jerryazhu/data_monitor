@@ -33,74 +33,68 @@ public class WebActionServiceImpl implements WebActionService {
     @Override
     public DataSet<WebStuAction> findStuActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
         QueryUtils queryUtils = new QueryUtils(entityManager, WebStuAction.class, criterias);
-        List<WebStuAction> actions = queryUtils.getRecordsWithDatatablesCriterias();
-        Long count = queryUtils.getTotalCount();
-        Long countFiltered = queryUtils.getFilteredCount();
-        return new DataSet<WebStuAction>(actions, count, countFiltered);
+        return queryUtils.getResultDataSet();
     }
 
     @Override
     public DataSet<WebStuActionGroupCount> findStuGroupCountWithDatatablesCriterias(DatatablesCriterias criterias) {
         QueryUtils queryUtils = new QueryUtils(entityManager, WebStuActionGroupCount.class, criterias);
-        List<WebStuActionGroupCount> actions = queryUtils.getRecordsWithDatatablesCriterias();
-        Long count = queryUtils.getTotalCount();
-        Long countFiltered = queryUtils.getFilteredCount();
-        return new DataSet<WebStuActionGroupCount>(actions, count, countFiltered);
+        return queryUtils.getResultDataSet();
     }
 
     @Override
     public DataSet<WebTeaAction> findTeaActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
         QueryUtils queryUtils = new QueryUtils(entityManager, WebTeaAction.class, criterias);
-        List<WebTeaAction> actions = queryUtils.getRecordsWithDatatablesCriterias();
-        Long count = queryUtils.getTotalCount();
-        Long countFiltered = queryUtils.getFilteredCount();
-        return new DataSet<WebTeaAction>(actions, count, countFiltered);
+        return queryUtils.getResultDataSet();
     }
 
     @Override
     public DataSet<WebTeaActionGroupCount> findTeaGroupCountWithDatatablesCriterias(DatatablesCriterias criterias) {
         QueryUtils queryUtils = new QueryUtils(entityManager, WebTeaActionGroupCount.class, criterias);
-        List<WebTeaActionGroupCount> actions = queryUtils.getRecordsWithDatatablesCriterias();
-        Long count = queryUtils.getTotalCount();
-        Long countFiltered = queryUtils.getFilteredCount();
-        return new DataSet<WebTeaActionGroupCount>(actions, count, countFiltered);
+        return queryUtils.getResultDataSet();
     }
 
     @Override
     public DataSet<WebUserAction> findUserActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
         QueryUtils queryUtils = new QueryUtils(entityManager, WebUserAction.class, criterias);
-        List<WebUserAction> actions = queryUtils.getRecordsWithDatatablesCriterias();
-        Long count = queryUtils.getTotalCount();
-        Long countFiltered = queryUtils.getFilteredCount();
-        return new DataSet<WebUserAction>(actions, count, countFiltered);
+        return queryUtils.getResultDataSet();
     }
 
 
     @Override
     public DataSet<WebUserActionGroupCount> findUserGroupCountWithDatatablesCriterias(DatatablesCriterias criterias) {
         QueryUtils queryUtils = new QueryUtils(entityManager, WebUserActionGroupCount.class, criterias);
-        List<WebUserActionGroupCount> actions = queryUtils.getRecordsWithDatatablesCriterias();
-        Long count = queryUtils.getTotalCount();
-        Long countFiltered = queryUtils.getFilteredCount();
-        return new DataSet<WebUserActionGroupCount>(actions, count, countFiltered);
+        return queryUtils.getResultDataSet();
     }
 
     @Override
     public DataSet<WebErrorAction> findErrorActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
         QueryUtils queryUtils = new QueryUtils(entityManager, WebErrorAction.class, criterias);
-        List<WebErrorAction> actions = queryUtils.getRecordsWithDatatablesCriterias();
-        Long count = queryUtils.getTotalCount();
-        Long countFiltered = queryUtils.getFilteredCount();
-        return new DataSet<WebErrorAction>(actions, count, countFiltered);
+        return queryUtils.getResultDataSet();
     }
 
     @Override
     public DataSet<WebDebugAction> findDebugActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
         QueryUtils queryUtils = new QueryUtils(entityManager, WebDebugAction.class, criterias);
-        List<WebDebugAction> actions = queryUtils.getRecordsWithDatatablesCriterias();
-        Long count = queryUtils.getTotalCount();
-        Long countFiltered = queryUtils.getFilteredCount();
-        return new DataSet<WebDebugAction>(actions, count, countFiltered);
+        return queryUtils.getResultDataSet();
+    }
+
+    @Override
+    public DataSet<WebCronAction> findCronActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
+        QueryUtils queryUtils = new QueryUtils(entityManager, WebCronAction.class, criterias);
+        return queryUtils.getResultDataSet();
+    }
+
+    @Override
+    public DataSet<WebRoleAction> findRoleActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
+        QueryUtils queryUtils = new QueryUtils(entityManager, WebRoleAction.class, criterias);
+        return queryUtils.getResultDataSet();
+    }
+
+    @Override
+    public DataSet<WebPropertyAction> findPropertyActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
+        QueryUtils queryUtils = new QueryUtils(entityManager, WebPropertyAction.class, criterias);
+        return queryUtils.getResultDataSet();
     }
 
 }

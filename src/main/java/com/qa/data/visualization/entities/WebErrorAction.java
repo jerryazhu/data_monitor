@@ -12,6 +12,10 @@ public class WebErrorAction {
     private String time;
     private String operatorid;
     private String operatorname;
+    private String module;
+    private String controller;
+    private String method;
+    private String detail;
 
     public String getModule() {
         return module;
@@ -28,11 +32,6 @@ public class WebErrorAction {
     public void setDetail(String detail) {
         this.detail = detail;
     }
-
-    private String module;
-    private String controller;
-    private String method;
-    private String detail;
 
     public String getTime() {
         return time;

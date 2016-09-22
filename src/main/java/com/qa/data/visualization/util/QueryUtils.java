@@ -16,6 +16,7 @@ public class QueryUtils {
     private Class entiteClass;
     private DatatablesCriterias criterias;
     private Long totalCount = 0L;
+    private int displayRecordsLength = 0;
 
     public <T> QueryUtils(EntityManager entityManager,Class<T> entiteClass, DatatablesCriterias criterias) {
         this.entityManager = entityManager;
@@ -126,15 +127,23 @@ public class QueryUtils {
         query.setFirstResult(criterias.getStart());
         query.setMaxResults(criterias.getLength());
 
-        return query.getResultList();
+        List<T> result = query.getResultList();
+        displayRecordsLength = result.size();
+
+        return result;
     }
 
     public Long getFilteredCount() {
         if (StringUtils.isBlank(criterias.getSearch()) && (!criterias.hasOneFilteredColumn())) {
-            if (totalCount != 0L) {
-                return totalCount;
-            } else {
-                return getTotalCount();
+            return totalCount;
+        }
+        if(criterias.getStart()==0){
+            if(criterias.getLength() > displayRecordsLength){
+                return (long) displayRecordsLength;
+            }
+            else
+            {
+                return (long) ((criterias.getStart() + criterias.getLength()) * 10);
             }
         }
         javax.persistence.Query query = this.entityManager.createQuery("SELECT COUNT(id) FROM " + entiteClass.getSimpleName() + " p" + getFilterQuery());

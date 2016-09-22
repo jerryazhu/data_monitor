@@ -14,7 +14,7 @@
                    dt:serverside="true" dt:filterDelay="800.0">
                 <thead>
                 <tr>
-                    <th dt:sortInitDirection="desc" dt:property="time">time</th>
+                    <th dt:sortInitDirection="desc" dt:property="time" dt:renderFunction="timeConvert">time</th>
                     <th dt:property="uid" dt:filterable="true">uid</th>
                     <th dt:property="api_name" dt:filterable="true">api_name</th>
                     <th dt:property="request_type" dt:filterable="true">request_type</th>
@@ -46,5 +46,10 @@
         </div>
     </div>
 </div>
+<script>
+    function timeConvert(data, type, full) {
+        return timeConverter(data);
+    }
+</script>
 </body>
 </html>

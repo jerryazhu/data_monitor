@@ -85,4 +85,22 @@ public class WebActionServiceImpl implements WebActionService {
         return new DataSet<WebUserActionGroupCount>(actions, count, countFiltered);
     }
 
+    @Override
+    public DataSet<WebErrorAction> findErrorActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
+        QueryUtils queryUtils = new QueryUtils(entityManager, WebErrorAction.class, criterias);
+        List<WebErrorAction> actions = queryUtils.getRecordsWithDatatablesCriterias();
+        Long count = queryUtils.getTotalCount();
+        Long countFiltered = queryUtils.getFilteredCount();
+        return new DataSet<WebErrorAction>(actions, count, countFiltered);
+    }
+
+    @Override
+    public DataSet<WebDebugAction> findDebugActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
+        QueryUtils queryUtils = new QueryUtils(entityManager, WebDebugAction.class, criterias);
+        List<WebDebugAction> actions = queryUtils.getRecordsWithDatatablesCriterias();
+        Long count = queryUtils.getTotalCount();
+        Long countFiltered = queryUtils.getFilteredCount();
+        return new DataSet<WebDebugAction>(actions, count, countFiltered);
+    }
+
 }

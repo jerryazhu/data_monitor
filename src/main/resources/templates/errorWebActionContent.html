@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html
+        xmlns:dt="http://www.thymeleaf.org/dandelion/datatables">
+<head></head>
+<body>
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Error日志
+        </div>
+        <div class="panel-body">
+            <table id="errorWebActionTable" dt:table="true" dt:theme="bootstrap3" class="table table-striped"
+                   dt:url="@{/web/get_web_error_action}"
+                   dt:serverside="true" dt:filterDelay="800.0">
+                <thead>
+                <tr>
+                    <th dt:sortInitDirection="desc" dt:property="time">time</th>
+                    <th dt:property="operatorid" dt:filterable="true">operatorid</th>
+                    <th dt:property="operatorname" dt:filterable="true">operatorname</th>
+                    <th dt:property="module" dt:filterable="true">module</th>
+                    <th dt:property="controller" dt:filterable="true">controller</th>
+                    <th dt:property="method" dt:filterable="true">method</th>
+                    <th dt:property="detail" dt:filterable="true">detail</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

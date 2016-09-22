@@ -141,7 +141,7 @@ public class QueryUtils {
             if (criterias.getLength() > displayRecordsLength) {
                 return (long) displayRecordsLength;
             } else {
-                return (long) ((criterias.getStart() + criterias.getLength()) * 10);
+                return totalCount;
             }
         }
         javax.persistence.Query query = this.entityManager.createQuery("SELECT COUNT(id) FROM " + entiteClass.getSimpleName() + " p" + getFilterQuery());

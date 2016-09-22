@@ -67,4 +67,19 @@ public class WebController {
         return DatatablesResponse.build(actions, criterias);
     }
 
+    @RequestMapping(value = "/get_web_error_action")
+    @ResponseBody
+    public DatatablesResponse<WebErrorAction> findAllErrorForDataTables(HttpServletRequest request) {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<WebErrorAction> actions = webStuActionService.findErrorActionsWithDatatablesCriterias(criterias);
+        return DatatablesResponse.build(actions, criterias);
+    }
+
+    @RequestMapping(value = "/get_web_debug_action")
+    @ResponseBody
+    public DatatablesResponse<WebDebugAction> findAllDebugForDataTables(HttpServletRequest request) {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<WebDebugAction> actions = webStuActionService.findDebugActionsWithDatatablesCriterias(criterias);
+        return DatatablesResponse.build(actions, criterias);
+    }
 }

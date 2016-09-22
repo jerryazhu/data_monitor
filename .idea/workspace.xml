@@ -2,25 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="167cf558-00b6-48f3-93b8-e73a6b49cffa" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/controllers/PCController.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/PCAPIStuActionGroupCount.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/PCStuAPIAction.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/services/PCActionService.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/services/PCActionServiceImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/templates/pc/stuPCAPIActionContent.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/controllers/IndexController.java" afterPath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/controllers/IndexController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/AndroidStuAPIAction.java" afterPath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/AndroidStuAPIAction.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/IosStuAPIAction.java" afterPath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/IosStuAPIAction.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebStuAction.java" afterPath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebStuAction.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebTeaAction.java" afterPath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebTeaAction.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebUserAction.java" afterPath="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebUserAction.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/templates/fragments/navLeft.html" afterPath="$PROJECT_DIR$/src/main/resources/templates/fragments/navLeft.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/resources/templates/cronWebActionContent.html" afterPath="$PROJECT_DIR$/src/main/resources/templates/web/cronWebActionContent.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/resources/templates/debugWebActionContent.html" afterPath="$PROJECT_DIR$/src/main/resources/templates/web/debugWebActionContent.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/resources/templates/errorWebActionContent.html" afterPath="$PROJECT_DIR$/src/main/resources/templates/web/errorWebActionContent.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/resources/templates/propertyWebActionContent.html" afterPath="$PROJECT_DIR$/src/main/resources/templates/web/propertyWebActionContent.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/resources/templates/roleWebActionContent.html" afterPath="$PROJECT_DIR$/src/main/resources/templates/web/roleWebActionContent.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/resources/templates/stuAndroidAPIActionContent.html" afterPath="$PROJECT_DIR$/src/main/resources/templates/mobile/stuAndroidAPIActionContent.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/resources/templates/stuIosAPIActionContent.html" afterPath="$PROJECT_DIR$/src/main/resources/templates/mobile/stuIosAPIActionContent.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/resources/templates/stuWebActionContent.html" afterPath="$PROJECT_DIR$/src/main/resources/templates/web/stuWebActionContent.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/resources/templates/teaWebActionContent.html" afterPath="$PROJECT_DIR$/src/main/resources/templates/web/teaWebActionContent.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/resources/templates/userWebActionContent.html" afterPath="$PROJECT_DIR$/src/main/resources/templates/web/userWebActionContent.html" />
     </list>
     <ignored path="Data_Visualization.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -47,21 +36,81 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="navLeft.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="navLeft.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/resources/templates/fragments/navLeft.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.83272725">
-              <caret line="67" column="52" selection-start-line="67" selection-start-column="52" selection-end-line="67" selection-end-column="52" />
+            <state vertical-scroll-proportion="-3.1553397">
+              <caret line="16" column="50" selection-start-line="16" selection-start-column="50" selection-end-line="16" selection-end-column="50" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="stuPCAPIActionContent.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/templates/pc/stuPCAPIActionContent.html">
+      <file leaf-file-name="WebStuAction.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebStuAction.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.823529">
-              <caret line="36" column="60" selection-start-line="36" selection-start-column="60" selection-end-line="36" selection-end-column="60" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="5" column="66" selection-start-line="5" selection-start-column="66" selection-end-line="5" selection-end-column="66" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="WebTeaAction.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebTeaAction.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="5" column="63" selection-start-line="5" selection-start-column="63" selection-end-line="5" selection-end-column="63" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="WebUserAction.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebUserAction.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="13" column="32" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AndroidStuAPIAction.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/AndroidStuAPIAction.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.03828484">
+              <caret line="5" column="63" selection-start-line="5" selection-start-column="63" selection-end-line="5" selection-end-column="63" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-4.4117646">
+              <caret line="6" column="40" selection-start-line="6" selection-start-column="40" selection-end-line="6" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="IOSAPIStuActionGroupCount.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/IOSAPIStuActionGroupCount.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="5" column="68" selection-start-line="5" selection-start-column="15" selection-end-line="5" selection-end-column="68" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="IosStuAPIAction.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/IosStuAPIAction.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="5" column="59" selection-start-line="5" selection-start-column="59" selection-end-line="5" selection-end-column="59" />
               <folding />
             </state>
           </provider>
@@ -77,16 +126,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="String.java" pinned="false" current-in-tab="false">
-        <entry file="jar://C:/Program Files/Java/jdk1.8.0_51/src.zip!/java/lang/String.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="2209" column="28" selection-start-line="2209" selection-start-column="18" selection-end-line="2209" selection-end-column="28" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="PCController.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/controllers/PCController.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -95,56 +134,6 @@
               <folding>
                 <element signature="imports" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PCAPIStuActionGroupCount.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/PCAPIStuActionGroupCount.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="23" column="23" selection-start-line="23" selection-start-column="15" selection-end-line="23" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="stuWebActionContent.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/templates/web/stuWebActionContent.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="13" column="63" selection-start-line="13" selection-start-column="63" selection-end-line="13" selection-end-column="63" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="teaWebActionContent.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/templates/web/teaWebActionContent.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="11" column="26" selection-start-line="11" selection-start-column="26" selection-end-line="11" selection-end-column="26" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="userWebActionContent.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/templates/web/userWebActionContent.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-3.764706">
-              <caret line="34" column="27" selection-start-line="34" selection-start-column="27" selection-end-line="34" selection-end-column="27" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="roleWebActionContent.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/templates/web/roleWebActionContent.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="19" column="89" selection-start-line="19" selection-start-column="89" selection-end-line="19" selection-end-column="89" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -175,15 +164,9 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/resources/templates/fragments/stuWebActionContent.html" />
-        <option value="$PROJECT_DIR$/src/main/resources/templates/index.html" />
-        <option value="$PROJECT_DIR$/src/main/resources/templates/fragments/indexContent.html" />
-        <option value="$PROJECT_DIR$/src/main/resources/templates/fragments/navTop.html" />
         <option value="$PROJECT_DIR$/src/main/resources/templates/stuWebActionContent.html" />
         <option value="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/services/WebStuActionServiceImpl.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebTeaAction.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebTeaActionGroupCount.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebUserAction.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebUSERActionGroupCount.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebUserActionGroupCount.java" />
         <option value="$PROJECT_DIR$/src/main/resources/templates/userWebActionContent.html" />
@@ -225,7 +208,13 @@
         <option value="$PROJECT_DIR$/src/main/resources/templates/stuPCAPIActionContent.html" />
         <option value="$PROJECT_DIR$/src/main/resources/templates/pc/stuPCAPIActionContent.html" />
         <option value="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/controllers/IndexController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebStuAction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebTeaAction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebUserAction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/AndroidStuAPIAction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/IosStuAPIAction.java" />
         <option value="$PROJECT_DIR$/src/main/resources/templates/fragments/navLeft.html" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>
@@ -1191,7 +1180,7 @@
       <workItem from="1474443477127" duration="4046000" />
       <workItem from="1474447642900" duration="3284000" />
       <workItem from="1474452021547" duration="913000" />
-      <workItem from="1474504380654" duration="19734000" />
+      <workItem from="1474504380654" duration="22313000" />
     </task>
     <servers />
   </component>
@@ -1207,11 +1196,11 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="157368000" />
+    <option name="totallyTimeSpent" value="159947000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1050" extended-state="7" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1225,7 +1214,7 @@
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.228125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.228125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1264,13 +1253,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/4.3.2.RELEASE/spring-webmvc-4.3.2.RELEASE-sources.jar!/org/springframework/web/servlet/mvc/method/AbstractHandlerMethodAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="84" column="0" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/4.3.2.RELEASE/spring-webmvc-4.3.2.RELEASE-sources.jar!/org/springframework/web/servlet/FrameworkServlet.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1296,14 +1278,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.67643744">
           <caret line="28" column="92" selection-start-line="28" selection-start-column="92" selection-end-line="28" selection-end-column="92" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="48" column="32" selection-start-line="48" selection-start-column="12" selection-end-line="48" selection-end-column="32" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1361,43 +1335,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebTeaAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="12" column="30" selection-start-line="12" selection-start-column="30" selection-end-line="12" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebUserActionGroupCount.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="30" selection-start-line="5" selection-start-column="30" selection-end-line="5" selection-end-column="30" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebUserAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="5" column="30" selection-start-line="5" selection-start-column="30" selection-end-line="5" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebErrorAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding>
-            <element signature="e#497#498#0" expanded="false" />
-            <element signature="e#541#542#0" expanded="false" />
-            <element signature="e#577#578#0" expanded="false" />
-            <element signature="e#610#611#0" expanded="false" />
-            <element signature="e#639#640#0" expanded="false" />
-            <element signature="e#683#684#0" expanded="false" />
-            <element signature="e#719#720#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1461,57 +1403,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/IosStuAPIAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="5" column="33" selection-start-line="5" selection-start-column="33" selection-end-line="5" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/AndroidStuAPIAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="32" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="32" />
-          <folding>
-            <element signature="e#518#519#0" expanded="false" />
-            <element signature="e#544#545#0" expanded="false" />
-            <element signature="e#582#583#0" expanded="false" />
-            <element signature="e#612#613#0" expanded="false" />
-            <element signature="e#648#649#0" expanded="false" />
-            <element signature="e#680#681#0" expanded="false" />
-            <element signature="e#730#731#0" expanded="false" />
-            <element signature="e#772#773#0" expanded="false" />
-            <element signature="e#807#808#0" expanded="false" />
-            <element signature="e#838#839#0" expanded="false" />
-            <element signature="e#886#887#0" expanded="false" />
-            <element signature="e#926#927#0" expanded="false" />
-            <element signature="e#965#966#0" expanded="false" />
-            <element signature="e#1000#1001#0" expanded="false" />
-            <element signature="e#1056#1057#0" expanded="false" />
-            <element signature="e#1104#1105#0" expanded="false" />
-            <element signature="e#1141#1142#0" expanded="false" />
-            <element signature="e#1174#1175#0" expanded="false" />
-            <element signature="e#1226#1227#0" expanded="false" />
-            <element signature="e#1270#1271#0" expanded="false" />
-            <element signature="e#1307#1308#0" expanded="false" />
-            <element signature="e#1340#1341#0" expanded="false" />
-            <element signature="e#1392#1393#0" expanded="false" />
-            <element signature="e#1436#1437#0" expanded="false" />
-            <element signature="e#1475#1476#0" expanded="false" />
-            <element signature="e#1510#1511#0" expanded="false" />
-            <element signature="e#1566#1567#0" expanded="false" />
-            <element signature="e#1614#1615#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/util/QueryUtils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="27" column="42" selection-start-line="27" selection-start-column="26" selection-end-line="27" selection-end-column="42" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1575,19 +1472,6 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="41" column="75" selection-start-line="41" selection-start-column="46" selection-end-line="41" selection-end-column="75" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/IOSAPIStuActionGroupCount.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="40" selection-start-line="6" selection-start-column="40" selection-end-line="6" selection-end-column="40" />
-          <folding>
-            <element signature="e#362#363#0" expanded="false" />
-            <element signature="e#393#394#0" expanded="false" />
-            <element signature="e#441#442#0" expanded="false" />
-            <element signature="e#481#482#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1745,10 +1629,74 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebStuAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="5" column="66" selection-start-line="5" selection-start-column="66" selection-end-line="5" selection-end-column="66" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebTeaAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="5" column="63" selection-start-line="5" selection-start-column="63" selection-end-line="5" selection-end-column="63" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebErrorAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6125574">
+          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/WebUserAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="13" column="32" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/IOSAPIStuActionGroupCount.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="5" column="68" selection-start-line="5" selection-start-column="15" selection-end-line="5" selection-end-column="68" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/IosStuAPIAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="5" column="59" selection-start-line="5" selection-start-column="59" selection-end-line="5" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/templates/fragments/navLeft.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.83272725">
-          <caret line="67" column="52" selection-start-line="67" selection-start-column="52" selection-end-line="67" selection-end-column="52" />
+        <state vertical-scroll-proportion="-3.1553397">
+          <caret line="16" column="50" selection-start-line="16" selection-start-column="50" selection-end-line="16" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.4117646">
+          <caret line="6" column="40" selection-start-line="6" selection-start-column="40" selection-end-line="6" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/qa/data/visualization/entities/AndroidStuAPIAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.03828484">
+          <caret line="5" column="63" selection-start-line="5" selection-start-column="63" selection-end-line="5" selection-end-column="63" />
           <folding />
         </state>
       </provider>

@@ -25,10 +25,10 @@
                             <a href="#" class="stuWebActionContent"><i class="fa fa-table fa-fw"></i> 学生行为日志</a>
                         </li>
                         <li>
-                            <a th:href="teacherAction.html"><i class="fa fa-table fa-fw"></i> 教师行为日志</a>
+                            <a href="#" class="teaWebActionContent"><i class="fa fa-table fa-fw"></i> 教师行为日志</a>
                         </li>
                         <li>
-                            <a th:href="userAction.html"><i class="fa fa-table fa-fw"></i> 后台管理日志</a>
+                            <a href="#" class="userWebActionContent"><i class="fa fa-table fa-fw"></i> 后台管理日志</a>
                         </li>
                         <li>
                             <a th:href="errorLog.html"><i class="fa fa-table fa-fw"></i> 错误日志</a>
@@ -76,16 +76,16 @@
 <div th:fragment="navLeftScript">
     <script>
         $(function () {
-            $(".nav-second-level li a").each(function(index) {
+            $(".nav-second-level li a").each(function (index) {
                 $(this).unbind('click');
                 $(this).on("click", function () {
                     $("#content").empty();
                     var templateName = $(this).attr("class");
-                    $("#content").load("/"+templateName);
+                    $("#content").load("/" + templateName);
                 });
             });
         });
-        </script>
+    </script>
 </div>
 </body>
 </html>

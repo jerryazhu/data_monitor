@@ -18,7 +18,7 @@ public class QueryUtils {
     private Long totalCount = 0L;
     private int displayRecordsLength = 0;
 
-    public <T> QueryUtils(EntityManager entityManager,Class<T> entiteClass, DatatablesCriterias criterias) {
+    public <T> QueryUtils(EntityManager entityManager, Class<T> entiteClass, DatatablesCriterias criterias) {
         this.entityManager = entityManager;
         this.entiteClass = entiteClass;
         this.criterias = criterias;
@@ -119,7 +119,7 @@ public class QueryUtils {
             }
         }
 
-        TypedQuery<T> query = this.entityManager.createQuery(queryBuilder.toString(),entiteClass);
+        TypedQuery<T> query = this.entityManager.createQuery(queryBuilder.toString(), entiteClass);
 
         /**
          * Step 3: paging
@@ -137,12 +137,10 @@ public class QueryUtils {
         if (StringUtils.isBlank(criterias.getSearch()) && (!criterias.hasOneFilteredColumn())) {
             return totalCount;
         }
-        if(criterias.getStart()==0){
-            if(criterias.getLength() > displayRecordsLength){
+        if (criterias.getStart() == 0) {
+            if (criterias.getLength() > displayRecordsLength) {
                 return (long) displayRecordsLength;
-            }
-            else
-            {
+            } else {
                 return (long) ((criterias.getStart() + criterias.getLength()) * 10);
             }
         }

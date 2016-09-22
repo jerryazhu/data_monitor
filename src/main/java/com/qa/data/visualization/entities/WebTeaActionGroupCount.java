@@ -3,8 +3,8 @@ package com.qa.data.visualization.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ABC360_WEB_STUDENT_ACTION_COUNT_LAST_TBL")
-public class WebStuActionGroupCount {
+@Table(name = "ABC360_WEB_TEACHER_ACTION_COUNT_LAST_TBL")
+public class WebTeaActionGroupCount {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

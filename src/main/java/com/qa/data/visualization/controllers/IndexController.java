@@ -4,7 +4,7 @@ import com.qa.data.visualization.entities.*;
 import com.qa.data.visualization.repositories.*;
 import com.qa.data.visualization.services.ClassToolsDailyActivityService;
 import com.qa.data.visualization.services.StuPCDailyActivityService;
-import com.qa.data.visualization.services.WebStuActionService;
+import com.qa.data.visualization.services.WebActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,7 +36,7 @@ public class IndexController {
     @Autowired
     private StuBrowserRepository stuBrowserRepository;
     @Autowired
-    private WebStuActionService lastWebStuActionService;
+    private WebActionService lastWebStuActionService;
 
     @RequestMapping("/")
     String index(Model model) {

@@ -1,13 +1,18 @@
 #!/bin/bash
+# this is config for daily build
+
 source /etc/profile
+
 SELF=$(cd $(dirname $0); pwd -P)/$(basename $0)
 CURRENTDIR=$(cd $(dirname $0); pwd -P)
 DATE=$(date +%y-%m-%d-%H-%M)
 APP_SOURCE_ROOTDIR=/home/git/data_monitor
 artifactIdLine=$(cat $APP_SOURCE_ROOTDIR/pom.xml | grep "artifactId" | head -n 1 | awk -F artifactId  '{print $2}')
-ARTIFACTID=${artifactIdLine:>:</}
+ARTIFACTID=${artifactIdLine#>}
+ARTIFACTID=${artifactIdLine%</}
 versionLine=$(cat $APP_SOURCE_ROOTDIR/pom.xml | grep "version" | head -n 1 | awk -F version  '{print $2}')
-VERSION=${versionLine:>:</}
+VERSION=${VERSION#>}
+VERSION=${VERSION%</}
 APP_NAME=$ARTIFACTID-$VERSION
 echo "APP_NAME:$APP_NAME"
 APP_BUILD_DIR=$CURRENTDIR/build

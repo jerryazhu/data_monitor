@@ -22,29 +22,29 @@
                     <a href=""><i class="fa fa-table fa-fw"></i> Web端</a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="#" class="web---stuWebActionContent"><i class="fa fa-table fa-fw"></i> 学生行为日志</a>
+                            <a href="#" name="web---stuWebActionContent"><i class="fa fa-table fa-fw"></i> 学生行为日志</a>
                         </li>
                         <li>
-                            <a href="#" class="web---teaWebActionContent"><i class="fa fa-table fa-fw"></i> 教师行为日志</a>
+                            <a href="#" name="web---teaWebActionContent"><i class="fa fa-table fa-fw"></i> 教师行为日志</a>
                         </li>
                         <li>
-                            <a href="#" class="web---userWebActionContent"><i class="fa fa-table fa-fw"></i> 后台管理日志</a>
+                            <a href="#" name="web---userWebActionContent"><i class="fa fa-table fa-fw"></i> 后台管理日志</a>
                         </li>
                         <li>
-                            <a href="#" class="web---errorWebActionContent"><i class="fa fa-table fa-fw"></i> 错误日志</a>
+                            <a href="#" name="web---errorWebActionContent"><i class="fa fa-table fa-fw"></i> 错误日志</a>
                         </li>
                         <li>
-                            <a href="#" class="web---debugWebActionContent"><i class="fa fa-table fa-fw"></i> 调试日志</a>
+                            <a href="#" name="web---debugWebActionContent"><i class="fa fa-table fa-fw"></i> 调试日志</a>
                         </li>
                         <li>
-                            <a href="#" class="web---cronWebActionContent"><i class="fa fa-table fa-fw"></i> 定时任务日志</a>
+                            <a href="#" name="web---cronWebActionContent"><i class="fa fa-table fa-fw"></i> 定时任务日志</a>
                         </li>
                         <li>
-                            <a href="#" class="web---roleWebActionContent"><i class="fa fa-table fa-fw"></i>
+                            <a href="#" name="web---roleWebActionContent"><i class="fa fa-table fa-fw"></i>
                                 后台权限变更日志</a>
                         </li>
                         <li>
-                            <a href="#" class="web---propertyWebActionContent"><i class="fa fa-table fa-fw"></i>
+                            <a href="#" name="web---propertyWebActionContent"><i class="fa fa-table fa-fw"></i>
                                 学员属性更改日志</a>
                         </li>
                     </ul>
@@ -53,10 +53,10 @@
                     <a href=""><i class="fa fa-table fa-fw"></i> 移动端</a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="#" class="mobile---stuAndroidAPIActionContent"><i class="fa fa-table fa-fw"></i>Android学生行为日志</a>
+                            <a href="#" name="mobile---stuAndroidAPIActionContent"><i class="fa fa-table fa-fw"></i>Android学生行为日志</a>
                         </li>
                         <li>
-                            <a href="#" class="mobile---stuIosAPIActionContent"><i class="fa fa-table fa-fw"></i>
+                            <a href="#" name="mobile---stuIosAPIActionContent"><i class="fa fa-table fa-fw"></i>
                                 IOS学生行为日志</a>
                         </li>
                     </ul>
@@ -65,7 +65,7 @@
                     <a href=""><i class="fa fa-table fa-fw"></i> PC端</a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="#" class="pc---stuPCAPIActionContent"><i class="fa fa-table fa-fw"></i> 学生行为日志</a>
+                            <a href="#" name="pc---stuPCAPIActionContent"><i class="fa fa-table fa-fw"></i> 学生行为日志</a>
                         </li>
                     </ul>
                 </li>
@@ -82,7 +82,7 @@
                 $(this).unbind('click');
                 $(this).on("click", function () {
                     $("#content").empty();
-                    var templateName = $(this).attr("class");
+                    var templateName = $(this).attr("name");
                     $("#content").load("/" + templateName);
                 });
             });

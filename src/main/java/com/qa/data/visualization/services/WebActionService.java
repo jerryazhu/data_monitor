@@ -2,7 +2,7 @@ package com.qa.data.visualization.services;
 
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.qa.data.visualization.entities.*;
+import com.qa.data.visualization.entities.web.*;
 
 import java.util.LinkedHashMap;
 

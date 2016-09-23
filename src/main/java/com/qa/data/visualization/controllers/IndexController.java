@@ -71,7 +71,7 @@ public class IndexController {
         return list;
     }
 
-    @RequestMapping("student_web_daily_activity/{type}")
+    @RequestMapping("student_daily_activity/{type}")
     @ResponseBody
     public ArrayList getStuWebDailyActivityByType(@PathVariable String type) throws ParseException {
         ArrayList<Object> list = new ArrayList<Object>();

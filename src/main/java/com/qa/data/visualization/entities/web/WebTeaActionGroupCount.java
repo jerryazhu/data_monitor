@@ -1,4 +1,4 @@
-package com.qa.data.visualization.entities;
+package com.qa.data.visualization.entities.web;
 
 import javax.persistence.*;
 

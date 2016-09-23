@@ -1,10 +1,10 @@
-package com.qa.data.visualization.entities;
+package com.qa.data.visualization.entities.web;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ABC360_WEB_DEBUG_HIS_TBL")
-public class WebDebugAction {
+@Table(name = "ABC360_WEB_STUDENT_ACTION_LAST_MONTH_WITH_TODAY_TBL")
+public class WebStuAction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -12,26 +12,9 @@ public class WebDebugAction {
     private String time;
     private String operatorid;
     private String operatorname;
-    private String module;
     private String controller;
     private String method;
-    private String detail;
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
-    }
-
-    public String getDetail() {
-        return detail;
-    }
-
-    public void setDetail(String detail) {
-        this.detail = detail;
-    }
+    private String notes;
 
     public String getTime() {
         return time;
@@ -73,4 +56,11 @@ public class WebDebugAction {
         this.method = method;
     }
 
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 }

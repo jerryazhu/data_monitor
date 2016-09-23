@@ -1,10 +1,10 @@
-package com.qa.data.visualization.entities;
+package com.qa.data.visualization.entities.web;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ABC360_WEB_ROLE_CHG_HIS_TBL")
-public class WebRoleAction {
+@Table(name = "ABC360_WEB_USER_ACTION_LAST_MONTH_WITH_TODAY_TBL")
+public class WebUserAction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -12,24 +12,9 @@ public class WebRoleAction {
     private String time;
     private String operatorid;
     private String operatorname;
-    private String domain;
-    private String detail;
-
-    public String getDomain() {
-        return domain;
-    }
-
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
-
-    public String getDetail() {
-        return detail;
-    }
-
-    public void setDetail(String detail) {
-        this.detail = detail;
-    }
+    private String controller;
+    private String method;
+    private String notes;
 
     public String getTime() {
         return time;
@@ -55,5 +40,27 @@ public class WebRoleAction {
         this.operatorname = operatorname;
     }
 
+    public String getController() {
+        return controller;
+    }
 
+    public void setController(String controller) {
+        this.controller = controller;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 }

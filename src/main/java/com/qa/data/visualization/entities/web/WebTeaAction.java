@@ -1,10 +1,10 @@
-package com.qa.data.visualization.entities;
+package com.qa.data.visualization.entities.web;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ABC360_WEB_USER_ACTION_LAST_MONTH_WITH_TODAY_TBL")
-public class WebUserAction {
+@Table(name = "ABC360_WEB_TEACHER_ACTION_LAST_MONTH_WITH_TODAY_TBL")
+public class WebTeaAction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

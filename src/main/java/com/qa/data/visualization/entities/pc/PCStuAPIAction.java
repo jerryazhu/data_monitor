@@ -1,10 +1,10 @@
-package com.qa.data.visualization.entities;
+package com.qa.data.visualization.entities.pc;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ABC360_APP_API_IOS_LAST_MONTH_WITH_TODAY_TBL")
-public class IosStuAPIAction {
+@Table(name = "ABC360_APP_API_CLASSPLAT_LAST_MONTH_WITH_TODAY_TBL")
+public class PCStuAPIAction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

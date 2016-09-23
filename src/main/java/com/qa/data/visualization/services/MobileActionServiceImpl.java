@@ -3,10 +3,10 @@ package com.qa.data.visualization.services;
 
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.qa.data.visualization.entities.AndroidAPIStuActionGroupCount;
-import com.qa.data.visualization.entities.AndroidStuAPIAction;
-import com.qa.data.visualization.entities.IOSAPIStuActionGroupCount;
-import com.qa.data.visualization.entities.IosStuAPIAction;
+import com.qa.data.visualization.entities.mobile.AndroidAPIStuActionGroupCount;
+import com.qa.data.visualization.entities.mobile.AndroidStuAPIAction;
+import com.qa.data.visualization.entities.mobile.IOSAPIStuActionGroupCount;
+import com.qa.data.visualization.entities.mobile.IosStuAPIAction;
 import com.qa.data.visualization.util.QueryUtils;
 import org.springframework.stereotype.Service;
 

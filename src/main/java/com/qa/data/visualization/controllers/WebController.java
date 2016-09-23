@@ -3,7 +3,7 @@ package com.qa.data.visualization.controllers;
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
-import com.qa.data.visualization.entities.*;
+import com.qa.data.visualization.entities.web.*;
 import com.qa.data.visualization.services.WebActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

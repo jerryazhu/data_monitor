@@ -48,7 +48,7 @@ public class IndexController {
         return "index";
     }
 
-    @RequestMapping("/{templateName}")
+    @RequestMapping("content/{templateName}")
     String index(@PathVariable String templateName, Model model) {
         //return "fragments/"+templateName+" :: "+templateName; see https://github.com/dandelion/dandelion/issues/28
         if (templateName.contains("---")) {

@@ -1,38 +1,34 @@
 #!/bin/bash
-# this is config for daily build
-
 source /etc/profile
-
 SELF=$(cd $(dirname $0); pwd -P)/$(basename $0)
 CURRENTDIR=$(cd $(dirname $0); pwd -P)
 DATE=$(date +%y-%m-%d-%H-%M)
 APP_SOURCE_ROOTDIR=/home/git/data_monitor
 artifactIdLine=$(cat $APP_SOURCE_ROOTDIR/pom.xml | grep "artifactId" | head -n 1 | awk -F artifactId  '{print $2}')
 ARTIFACTID=${artifactIdLine#>}
-ARTIFACTID=${artifactIdLine%</}
-versionLine=$(cat $APP_SOURCE_ROOTDIR/pom.xml | grep "version" | head -n 1 | awk -F version  '{print $2}')
-VERSION=${VERSION#>}
+ARTIFACTID=${ARTIFACTID%</}
+versionLine=$(cat $APP_SOURCE_ROOTDIR/pom.xml | grep "<version>" | head -n 1 | awk -F version  '{print $2}')
+VERSION=${versionLine#>}
 VERSION=${VERSION%</}
 APP_NAME=$ARTIFACTID-$VERSION
 echo "APP_NAME:$APP_NAME"
 APP_BUILD_DIR=$CURRENTDIR/build
 APP_BUILD_LOGFILE=$CURRENTDIR/log/log.log
 GIT_URL=https://github.com/lwfwind/data_monitor.git
-rm -rf $CURRENTDIR/log/
-rm -rf $APP_BUILD_DIR
-test -d $CURRENTDIR/log || mkdir -p $CURRENTDIR/log
-test -f $APP_BUILD_LOGFILE || touch $APP_BUILD_LOGFILE
-test -d $APP_BUILD_DIR || mkdir -p $APP_BUILD_DIR
 
 do_pre() {
 	echo "do pre start at $(date)" | tee -a $APP_BUILD_LOGFILE
+	rm -rf $CURRENTDIR/log/
+    rm -rf $APP_BUILD_DIR
+    test -d $CURRENTDIR/log || mkdir -p $CURRENTDIR/log
+    test -f $APP_BUILD_LOGFILE || touch $APP_BUILD_LOGFILE
+    test -d $APP_BUILD_DIR || mkdir -p $APP_BUILD_DIR
 	test -d $APP_SOURCE_ROOTDIR || mkdir -p $APP_SOURCE_ROOTDIR
 	cd $APP_SOURCE_ROOTDIR/
 	rm -rf $APP_BUILD_DIR/* | tee -a $APP_BUILD_LOGFILE
 	rm -rf $CURRENTDIR/log/*.*
 	echo "do pre end at $(date)" | tee -a $APP_BUILD_LOGFILE
 }
-
 
 do_git() {
 	echo "do git start at $(date)" | tee -a $APP_BUILD_LOGFILE
@@ -61,9 +57,9 @@ do_build() {
 do_sync() {
 	echo "do sync start at $(date)" | tee -a $APP_BUILD_LOGFILE
 	cp $APP_SOURCE_ROOTDIR/target/$APP_NAME.jar $APP_BUILD_DIR/$APP_NAME.jar
-	cp $APP_SOURCE_ROOTDIR/src/main/resources/application.properties APP_BUILD_DIR/application.properties
-	test -f $APP_BUILD_DIR/$APP_NAME.jar && echo "<br>Build Successfully"
-	test -f $APP_BUILD_DIR/$APP_NAME.jar || echo "<br>Build Failed"
+	cp $APP_SOURCE_ROOTDIR/src/main/resources/application.properties $APP_BUILD_DIR/
+	test -f $APP_BUILD_DIR/$APP_NAME.jar && echo "build success"
+	test -f $APP_BUILD_DIR/$APP_NAME.jar || echo "build failed"
 	test -f $APP_BUILD_DIR/$APP_NAME.jar || exit 1
 	echo "do sync end at $(date)" | tee -a $APP_BUILD_LOGFILE
 }
@@ -73,7 +69,7 @@ do_start() {
 	config=$*
 	cd $APP_BUILD_DIR
 	rm -f pid
-	nohup java -jar $APP_NAME.jar $config > /dev/null 2>&1 &
+	nohup java -jar $APP_BUILD_DIR/$APP_NAME.jar $config > /dev/null 2>&1 &
 	echo $! > pid
 	echo "start success"
 	echo "do launch end at $(date)" | tee -a $APP_BUILD_LOGFILE
@@ -121,13 +117,13 @@ main() {
 		arr=($@)
 		OPERATION=${arr[0]}
 		BRANCH=${arr[1]}
-	else if [ $# -eq 1 ]; then
+	elif [ $# -eq 1 ]; then
 		local all_parameters=$*
 		echo "--> parameters:$all_parameters" | tee -a $APP_BUILD_LOGFILE
 		arr=($@)
 		OPERATION=${arr[0]}
 		BRANCH=dev
-	else if [ $# -eq 0 ]; then
+	elif [ $# -eq 0 ]; then
 		OPERATION="all"
 		echo "--> parameters:all" | tee -a $APP_BUILD_LOGFILE
 		BRANCH=dev

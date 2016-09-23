@@ -44,8 +44,8 @@ public class QueryUtils {
 
             for (ColumnDef columnDef : criterias.getColumnDefs()) {
                 if (columnDef.isSearchable() && StringUtils.isBlank(columnDef.getSearch())) {
-                    paramList.add(" LOWER(p." + columnDef.getName()
-                            + ") LIKE '%?%'".replace("?", criterias.getSearch().toLowerCase()));
+                    paramList.add(" p." + columnDef.getName()
+                            + " LIKE '%?%'".replace("?", criterias.getSearch()));
                 }
             }
 
@@ -81,8 +81,8 @@ public class QueryUtils {
                     }
 
                     if (StringUtils.isNotBlank(columnDef.getSearch())) {
-                        paramList.add(" LOWER(p." + columnDef.getName()
-                                + ") LIKE '%?%'".replace("?", columnDef.getSearch().toLowerCase()));
+                        paramList.add(" p." + columnDef.getName()
+                                + " LIKE '%?%'".replace("?", columnDef.getSearch()));
                     }
                 }
             }

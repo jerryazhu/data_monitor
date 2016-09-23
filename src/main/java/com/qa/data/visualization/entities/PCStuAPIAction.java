@@ -3,7 +3,7 @@ package com.qa.data.visualization.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ABC360_APP_API_CLASSPLAT_LAST_MONTH_TBL")
+@Table(name = "ABC360_APP_API_CLASSPLAT_LAST_MONTH_WITH_TODAY_TBL")
 public class PCStuAPIAction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

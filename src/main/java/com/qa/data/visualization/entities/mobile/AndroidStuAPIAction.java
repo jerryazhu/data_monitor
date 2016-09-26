@@ -1,5 +1,8 @@
 package com.qa.data.visualization.entities.mobile;
 
+import com.qa.data.visualization.annotations.*;
+import com.qa.data.visualization.annotations.Index;
+
 import javax.persistence.*;
 
 @Entity
@@ -10,6 +13,8 @@ public class AndroidStuAPIAction {
     private Long id;
 
     private String time;
+    @Index
+    @Column(name = "uid")
     private String uid;
     private String client_ip;
     private String api_name;

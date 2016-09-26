@@ -4,10 +4,15 @@ import com.github.dandelion.core.util.StringUtils;
 import com.github.dandelion.datatables.core.ajax.ColumnDef;
 import com.github.dandelion.datatables.core.ajax.DataSet;
 import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.qa.data.visualization.annotations.Index;
+import com.qa.data.visualization.annotations.IndexOperator;
 
+import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,15 +40,68 @@ public class QueryUtils {
     public StringBuilder getFilterQuery() {
         StringBuilder queryBuilder = new StringBuilder();
         List<String> paramList = new ArrayList<String>();
+        List<String> indexColumnList = new ArrayList<String>();
+        List<String> unIndexColumnList = new ArrayList<String>();
+        HashMap<String,String> indexOperatorMap = new HashMap<>();
+        Field[] fields = this.entiteClass.getDeclaredFields();
+        for (Field field : fields) {
+            if(field.isAnnotationPresent(Index.class)){
+                if(field.isAnnotationPresent(Column.class)){
+                    Column column = field.getAnnotation(Column.class);
+                    indexColumnList.add(column.name());
+                    if(field.isAnnotationPresent(IndexOperator.class)) {
+                        IndexOperator indexOperator = field.getAnnotation(IndexOperator.class);
+                        indexOperatorMap.put(column.name(),indexOperator.value());
+                    }
+                }
+                else
+                {
+                    indexColumnList.add(field.getName());
+                    if(field.isAnnotationPresent(IndexOperator.class)) {
+                        IndexOperator indexOperator = field.getAnnotation(IndexOperator.class);
+                        indexOperatorMap.put(field.getName(),indexOperator.value());
+                    }
+                }
+
+            }
+            else
+            {
+                if(field.isAnnotationPresent(Column.class)){
+                    Column column = field.getAnnotation(Column.class);
+                    unIndexColumnList.add(column.name());
+                }
+                else
+                {
+                    unIndexColumnList.add(field.getName());
+                }
+            }
+        }
 
         /**
          * Step 1.1: global filtering
          */
         if (StringUtils.isNotBlank(criterias.getSearch()) && criterias.hasOneSearchableColumn()) {
             queryBuilder.append(" WHERE ");
-
             for (ColumnDef columnDef : criterias.getColumnDefs()) {
-                if (columnDef.isSearchable() && StringUtils.isBlank(columnDef.getSearch())) {
+                if (columnDef.isSearchable() && StringUtils.isBlank(columnDef.getSearch()) && indexColumnList.contains(columnDef.getName())) {
+                    if(indexOperatorMap.get(columnDef.getName()) != null) {
+                        if(indexOperatorMap.get(columnDef.getName()).equalsIgnoreCase("like")) {
+                            paramList.add(" p." + columnDef.getName()
+                                    + " like '?%'".replace("?", criterias.getSearch()));
+                        }
+                        else {
+                            paramList.add(" p." + columnDef.getName()
+                                    + " = '?'".replace("?", criterias.getSearch()));
+                        }
+                    }
+                    else {
+                        paramList.add(" p." + columnDef.getName()
+                                + " = '?'".replace("?", criterias.getSearch()));
+                    }
+                }
+            }
+            for (ColumnDef columnDef : criterias.getColumnDefs()) {
+                if (columnDef.isSearchable() && StringUtils.isBlank(columnDef.getSearch()) && unIndexColumnList.contains(columnDef.getName())) {
                     paramList.add(" p." + columnDef.getName()
                             + " LIKE '%?%'".replace("?", criterias.getSearch()));
                 }
@@ -63,23 +121,51 @@ public class QueryUtils {
          */
         if (criterias.hasOneSearchableColumn() && criterias.hasOneFilteredColumn()) {
             paramList = new ArrayList<String>();
-
             if (!queryBuilder.toString().contains("WHERE")) {
                 queryBuilder.append(" WHERE ");
             } else {
                 queryBuilder.append(" AND ");
             }
+            for (ColumnDef columnDef : criterias.getColumnDefs()) {
+                if (columnDef.isSearchable() && indexColumnList.contains(columnDef.getName())) {
+                    if (StringUtils.isNotBlank(columnDef.getSearch())) {
+                        if(indexOperatorMap.get(columnDef.getName()) != null) {
+                            if(indexOperatorMap.get(columnDef.getName()).equalsIgnoreCase("like")) {
+                                paramList.add(" p." + columnDef.getName()
+                                        + " like '?%'".replace("?", columnDef.getSearch()));
+                            }
+                            else {
+                                paramList.add(" p." + columnDef.getName()
+                                        + " = '?'".replace("?", columnDef.getSearch()));
+                            }
+                        }
+                        else {
+                            paramList.add(" p." + columnDef.getName()
+                                    + " = '?'".replace("?", columnDef.getSearch()));
+                        }
+                    }
+                }
+            }
 
             for (ColumnDef columnDef : criterias.getColumnDefs()) {
-                if (columnDef.isSearchable()) {
+                if (columnDef.isSearchable() && indexColumnList.contains(columnDef.getName())) {
                     if (StringUtils.isNotBlank(columnDef.getSearchFrom())) {
                         paramList.add("p." + columnDef.getName() + " >= " + columnDef.getSearchFrom());
                     }
-
                     if (StringUtils.isNotBlank(columnDef.getSearchTo())) {
                         paramList.add("p." + columnDef.getName() + " < " + columnDef.getSearchTo());
                     }
+                }
+            }
 
+            for (ColumnDef columnDef : criterias.getColumnDefs()) {
+                if (columnDef.isSearchable() && unIndexColumnList.contains(columnDef.getName())) {
+                    if (StringUtils.isNotBlank(columnDef.getSearchFrom())) {
+                        paramList.add("p." + columnDef.getName() + " >= " + columnDef.getSearchFrom());
+                    }
+                    if (StringUtils.isNotBlank(columnDef.getSearchTo())) {
+                        paramList.add("p." + columnDef.getName() + " < " + columnDef.getSearchTo());
+                    }
                     if (StringUtils.isNotBlank(columnDef.getSearch())) {
                         paramList.add(" p." + columnDef.getName()
                                 + " LIKE '%?%'".replace("?", columnDef.getSearch()));

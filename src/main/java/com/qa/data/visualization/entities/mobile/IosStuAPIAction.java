@@ -1,5 +1,7 @@
 package com.qa.data.visualization.entities.mobile;
 
+import com.qa.data.visualization.annotations.Index;
+
 import javax.persistence.*;
 
 @Entity
@@ -10,6 +12,7 @@ public class IosStuAPIAction {
     private Long id;
 
     private String time;
+    @Index
     private String uid;
     private String client_ip;
     private String api_name;

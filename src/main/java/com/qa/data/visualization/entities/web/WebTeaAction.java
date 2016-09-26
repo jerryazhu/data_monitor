@@ -1,5 +1,8 @@
 package com.qa.data.visualization.entities.web;
 
+import com.qa.data.visualization.annotations.*;
+import com.qa.data.visualization.annotations.Index;
+
 import javax.persistence.*;
 
 @Entity
@@ -10,9 +13,11 @@ public class WebTeaAction {
     private Long id;
 
     private String time;
+    @Index
     private String operatorid;
     private String operatorname;
     private String controller;
+    @Index
     private String method;
     private String notes;
 

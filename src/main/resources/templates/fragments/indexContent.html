@@ -14,53 +14,56 @@
     <!-- /.row -->
     <div class="row">
         <div th:if="${lastError} != 0">
-            <div id="error" class="col-lg-2 col-md-4">
-                <div class="panel panel-red">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <i class="fa fa-warning fa-5x"></i>
-                            </div>
-                            <div class="col-xs-9 text-right">
-                                <div th:text="${lastError}"/>
-                                <div>New Errors</div>
+            <div class="col-lg-2 col-md-4">
+                <div class="nav">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-warning fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div th:text="${lastError}"/>
+                                    <div>New Errors</div>
+                                </div>
                             </div>
                         </div>
+                        <a href="#" name="web---errorWebActionContent">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
                     </div>
-                    <a href="errorLog.html">
-                        <div class="panel-footer">
-                            <span class="pull-left">View Details</span>
-                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-
-                            <div class="clearfix"></div>
-                        </div>
-                    </a>
                 </div>
             </div>
         </div>
 
         <div th:if="${lastDebug} != 0">
-            <div id="debug" class="col-lg-2 col-md-4">
-                <div class="panel panel-yellow">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <i class="fa fa-info fa-5x"></i>
-                            </div>
-                            <div class="col-xs-9 text-right">
-                                <div th:text="${lastDebug}"/>
-                                <div>New Debugs</div>
+            <div class="col-lg-2 col-md-4">
+                <div class="nav">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-info fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div th:text="${lastDebug}"/>
+                                    <div>New Debugs</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <a href="debugLog.html">
-                        <div class="panel-footer">
-                            <span class="pull-left">View Details</span>
-                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <a href="#" name="web---debugWebActionContent">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
 
-                            <div class="clearfix"></div>
-                        </div>
-                    </a>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -154,8 +157,15 @@
 
 <div th:fragment="indexContentScript">
     <script>
-        $(function () {
-
+        $(document).ready(function () {
+            $(".nav a").each(function (index) {
+                $(this).unbind('click');
+                $(this).on("click", function () {
+                    $("#content").empty();
+                    var templateName = $(this).attr("name");
+                    $("#content").load("/content/" + templateName);
+                });
+            });
             var class_tool_element = $('#class_tool_type_chart');
             var class_tool_url = "class_tools_daily_activity/";
             var class_tool_map = new HashMap();

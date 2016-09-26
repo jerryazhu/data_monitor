@@ -1,6 +1,5 @@
 package com.qa.data.visualization.entities.mobile;
 
-import com.qa.data.visualization.annotations.*;
 import com.qa.data.visualization.annotations.Index;
 
 import javax.persistence.*;

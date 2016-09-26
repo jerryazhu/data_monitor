@@ -160,6 +160,7 @@ main() {
 				do_git $BRANCH
 				do_build 
 				do_sync
+				do_stop
 				do_start
 			;;
 			

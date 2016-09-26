@@ -5,8 +5,8 @@ import com.qa.data.visualization.annotations.Index;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ABC360_APP_API_CLASSPLAT_LAST_MONTH_WITH_TODAY_TBL")
-public class PCStuAPIAction {
+@Table(name = "ABC360_APP_API_CLASSPLAT_T_LAST_MONTH_WITH_TODAY_TBL")
+public class PCTeaAPIAction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

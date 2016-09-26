@@ -42,36 +42,30 @@ public class QueryUtils {
         List<String> paramList = new ArrayList<String>();
         List<String> indexColumnList = new ArrayList<String>();
         List<String> unIndexColumnList = new ArrayList<String>();
-        HashMap<String,String> indexOperatorMap = new HashMap<>();
+        HashMap<String, String> indexOperatorMap = new HashMap<>();
         Field[] fields = this.entiteClass.getDeclaredFields();
         for (Field field : fields) {
-            if(field.isAnnotationPresent(Index.class)){
-                if(field.isAnnotationPresent(Column.class)){
+            if (field.isAnnotationPresent(Index.class)) {
+                if (field.isAnnotationPresent(Column.class)) {
                     Column column = field.getAnnotation(Column.class);
                     indexColumnList.add(column.name());
-                    if(field.isAnnotationPresent(IndexOperator.class)) {
+                    if (field.isAnnotationPresent(IndexOperator.class)) {
                         IndexOperator indexOperator = field.getAnnotation(IndexOperator.class);
-                        indexOperatorMap.put(column.name(),indexOperator.value());
+                        indexOperatorMap.put(column.name(), indexOperator.value());
                     }
-                }
-                else
-                {
+                } else {
                     indexColumnList.add(field.getName());
-                    if(field.isAnnotationPresent(IndexOperator.class)) {
+                    if (field.isAnnotationPresent(IndexOperator.class)) {
                         IndexOperator indexOperator = field.getAnnotation(IndexOperator.class);
-                        indexOperatorMap.put(field.getName(),indexOperator.value());
+                        indexOperatorMap.put(field.getName(), indexOperator.value());
                     }
                 }
 
-            }
-            else
-            {
-                if(field.isAnnotationPresent(Column.class)){
+            } else {
+                if (field.isAnnotationPresent(Column.class)) {
                     Column column = field.getAnnotation(Column.class);
                     unIndexColumnList.add(column.name());
-                }
-                else
-                {
+                } else {
                     unIndexColumnList.add(field.getName());
                 }
             }
@@ -84,17 +78,15 @@ public class QueryUtils {
             queryBuilder.append(" WHERE ");
             for (ColumnDef columnDef : criterias.getColumnDefs()) {
                 if (columnDef.isSearchable() && StringUtils.isBlank(columnDef.getSearch()) && indexColumnList.contains(columnDef.getName())) {
-                    if(indexOperatorMap.get(columnDef.getName()) != null) {
-                        if(indexOperatorMap.get(columnDef.getName()).equalsIgnoreCase("like")) {
+                    if (indexOperatorMap.get(columnDef.getName()) != null) {
+                        if (indexOperatorMap.get(columnDef.getName()).equalsIgnoreCase("like")) {
                             paramList.add(" p." + columnDef.getName()
                                     + " like '?%'".replace("?", criterias.getSearch()));
-                        }
-                        else {
+                        } else {
                             paramList.add(" p." + columnDef.getName()
                                     + " = '?'".replace("?", criterias.getSearch()));
                         }
-                    }
-                    else {
+                    } else {
                         paramList.add(" p." + columnDef.getName()
                                 + " = '?'".replace("?", criterias.getSearch()));
                     }
@@ -129,17 +121,15 @@ public class QueryUtils {
             for (ColumnDef columnDef : criterias.getColumnDefs()) {
                 if (columnDef.isSearchable() && indexColumnList.contains(columnDef.getName())) {
                     if (StringUtils.isNotBlank(columnDef.getSearch())) {
-                        if(indexOperatorMap.get(columnDef.getName()) != null) {
-                            if(indexOperatorMap.get(columnDef.getName()).equalsIgnoreCase("like")) {
+                        if (indexOperatorMap.get(columnDef.getName()) != null) {
+                            if (indexOperatorMap.get(columnDef.getName()).equalsIgnoreCase("like")) {
                                 paramList.add(" p." + columnDef.getName()
                                         + " like '?%'".replace("?", columnDef.getSearch()));
-                            }
-                            else {
+                            } else {
                                 paramList.add(" p." + columnDef.getName()
                                         + " = '?'".replace("?", columnDef.getSearch()));
                             }
-                        }
-                        else {
+                        } else {
                             paramList.add(" p." + columnDef.getName()
                                     + " = '?'".replace("?", columnDef.getSearch()));
                         }

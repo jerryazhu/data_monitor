@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html
+        xmlns:dt="http://www.thymeleaf.org/dandelion/datatables">
+<head></head>
+<body>
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            查找上课平台API教师行为
+        </div>
+        <div class="panel-body">
+            <table id="stuPCApiActionTable" dt:table="true" dt:theme="bootstrap3" class="table table-striped"
+                   dt:url="@{/pc/get_pc_tea_api_action}"
+                   dt:serverside="true" dt:filterDelay="800.0">
+                <thead>
+                <tr>
+                    <th dt:sortInitDirection="desc" dt:property="time" dt:renderFunction="timeConvert">time</th>
+                    <th dt:property="uid" dt:filterable="true">uid</th>
+                    <th dt:property="api_name" dt:filterable="true">api_name</th>
+                    <th dt:property="request_type" dt:filterable="true">request_type</th>
+                    <th dt:property="parameters" dt:filterable="true">parameters</th>
+                    <th dt:property="response_idx" dt:filterable="true">response_idx</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    function timeConvert(data, type, full) {
+        return timeConverter(data);
+    }
+</script>
+</body>
+</html>

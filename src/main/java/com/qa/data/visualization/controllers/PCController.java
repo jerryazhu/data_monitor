@@ -5,6 +5,7 @@ import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
 import com.github.dandelion.datatables.core.ajax.DatatablesResponse;
 import com.qa.data.visualization.entities.pc.PCAPIStuActionGroupCount;
 import com.qa.data.visualization.entities.pc.PCStuAPIAction;
+import com.qa.data.visualization.entities.pc.PCTeaAPIAction;
 import com.qa.data.visualization.services.PCActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,5 +37,12 @@ public class PCController {
         return DatatablesResponse.build(actions, criterias);
     }
 
+    @RequestMapping(value = "/get_pc_tea_api_action")
+    @ResponseBody
+    public DatatablesResponse<PCTeaAPIAction> findPCTeaAPIActionsWithDatatablesCriterias(HttpServletRequest request) {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<PCTeaAPIAction> actions = pcActionService.findPCTeaAPIActionsWithDatatablesCriterias(criterias);
+        return DatatablesResponse.build(actions, criterias);
+    }
 
 }

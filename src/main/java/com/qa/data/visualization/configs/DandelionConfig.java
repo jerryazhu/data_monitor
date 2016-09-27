@@ -28,10 +28,6 @@ public class DandelionConfig {
     public FilterRegistrationBean filterRegistrationBean() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
         filterRegistrationBean.setFilter(new DandelionFilter());
-        List<String> urlPatterns=new ArrayList<String>();
-        urlPatterns.add("/table/*");
-        filterRegistrationBean.setUrlPatterns(urlPatterns);
-        filterRegistrationBean.setOrder(1);
         return filterRegistrationBean;
     }
 

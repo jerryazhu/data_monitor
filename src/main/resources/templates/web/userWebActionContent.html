@@ -1,50 +1,154 @@
 <!DOCTYPE html>
-<html
-        xmlns:dt="http://www.thymeleaf.org/dandelion/datatables">
-<head></head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
+</head>
 <body>
+
 <div class="row">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            查找后台管理行为
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                查找后台管理行为
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="dataTable_wrapper">
+                    <table class="table table-striped table-bordered table-hover" id="userWebActionTable">
+                        <thead>
+                        <tr>
+                            <th>time</th>
+                            <th>operatorid</th>
+                            <th>operatorname</th>
+                            <th>Controller</th>
+                            <th>Method</th>
+                            <th>notes</th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tr>
+                            <th></th>
+                            <th>operatorid</th>
+                            <th>operatorname</th>
+                            <th>Controller</th>
+                            <th>Method</th>
+                            <th>notes</th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <!-- /.panel-body -->
         </div>
-        <div class="panel-body">
-            <table id="userWebActionTable" dt:table="true" dt:theme="bootstrap3" class="table table-striped"
-                   dt:url="@{/web/get_web_user_action}"
-                   dt:serverside="true" dt:filterDelay="800.0">
-                <thead>
-                <tr>
-                    <th dt:sortInitDirection="desc" dt:property="time">time</th>
-                    <th dt:property="operatorid" dt:filterable="true">operatorid</th>
-                    <th dt:property="operatorname" dt:filterable="true">operatorname</th>
-                    <th dt:property="controller" dt:filterable="true">controller</th>
-                    <th dt:property="method" dt:filterable="true">method</th>
-                    <th dt:property="notes" dt:filterable="true">notes</th>
-                </tr>
-                </thead>
-            </table>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                后台管理行为次数分布
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="dataTable_wrapper">
+                    <table class="table table-striped table-bordered table-hover" id="userWebActionGroupOrderBy">
+                        <thead>
+                        <tr>
+                            <th>Controller</th>
+                            <th>Method</th>
+                            <th>Count</th>
+                        </tr>
+                        </thead>
+
+                    </table>
+                </div>
+            </div>
+            <!-- /.panel-body -->
         </div>
+        <!-- /.panel -->
     </div>
 </div>
-<div class="row">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            后台管理行为次数分布
-        </div>
-        <div class="panel-body">
-            <table id="userWebActionGroupOrderBy" dt:table="true" dt:theme="bootstrap3" class="table table-striped"
-                   dt:url="@{/web/get_web_user_action_group}"
-                   dt:serverside="true" dt:displaylength="50.0">
-                <thead>
-                <tr>
-                    <th dt:sortable="false" dt:property="controller">controller</th>
-                    <th dt:sortable="false" dt:property="method">method</th>
-                    <th dt:sortInitDirection="desc" dt:sortInitOrder="0" dt:property="cnt">count</th>
-                </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
-</div>
+<script th:src="@{/js/datatables/jquery.dataTables.js}"></script>
+<script th:src="@{/js/datatables/dataTables.bootstrap.min.js}"></script>
+<script>
+    $(document).ready(function () {
+
+        $('#userWebActionGroupOrderBy').DataTable({
+            lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"]],
+            order: [[2, "desc"]],
+            paging: true,
+            processing: true,
+            serverSide: true,
+            language: {
+                "lengthMenu": "Display _MENU_ records per page",
+                "zeroRecords": "Nothing found - sorry",
+                "info": "Showing page _PAGE_ of _PAGES_",
+                "infoEmpty": "No records available",
+                "infoFiltered": "(filtered from _MAX_ total records)"
+            },
+            "columns": [
+                {"data": "controller"},
+                {"data": "method"},
+                {"data": "cnt"}
+            ],
+            ajax: {
+                url: '/web/get_web_user_action_group',
+                type: 'GET'
+            }
+        });
+
+
+        var table = $('#userWebActionTable').DataTable({
+            destroy: true,
+            lengthMenu: [10, 25, 50, 100],
+            order: [[0, "desc"]],
+            autoWidth: true,
+            paging: true,
+            processing: true,
+            serverSide: true,
+            language: {
+                "lengthMenu": "Display _MENU_ records per page",
+                "zeroRecords": "Nothing found - sorry",
+                "info": "Showing page _PAGE_ of _PAGES_",
+                "infoEmpty": "No records available",
+                "infoFiltered": "(filtered from _MAX_ total records)"
+            },
+            "columns": [
+                {"data": "time"},
+                {"data": "operatorid"},
+                {"data": "operatorname"},
+                {"data": "controller"},
+                {"data": "method"},
+                {"data": "notes"}
+            ],
+            ajax: {
+                url: '/web/get_web_user_action',
+                type: 'GET'
+            }
+        });
+
+        // Setup - add a text input to each footer cell
+        $('#userWebActionTable tfoot th').each(function () {
+            var title = $(this).text();
+            if (title != "") {
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            }
+        });
+
+        // Apply the search
+        table.columns().every(function () {
+            var that = this;
+            $('input', this.footer()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that.search(this.value).draw();
+                }
+            });
+        });
+
+    });
+</script>
 </body>
 </html>

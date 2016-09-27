@@ -9,6 +9,9 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Configuration
 public class DandelionConfig {
     @Bean
@@ -25,6 +28,10 @@ public class DandelionConfig {
     public FilterRegistrationBean filterRegistrationBean() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
         filterRegistrationBean.setFilter(new DandelionFilter());
+        List<String> urlPatterns=new ArrayList<String>();
+        urlPatterns.add("/table/*");
+        filterRegistrationBean.setUrlPatterns(urlPatterns);
+        filterRegistrationBean.setOrder(1);
         return filterRegistrationBean;
     }
 

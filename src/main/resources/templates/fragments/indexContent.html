@@ -158,12 +158,12 @@
 <div th:fragment="indexContentScript">
     <script>
         $(document).ready(function () {
-            $(".warn a").each(function (index) {
+            $("div.warn a").each(function (index) {
                 $(this).unbind('click');
                 $(this).on("click", function () {
                     $("#content").empty();
                     var templateName = $(this).attr("name");
-                    $("#content").load("/content/" + templateName);
+                    $("#content").load("/table/" + templateName);
                 });
             });
             var class_tool_element = $('#class_tool_type_chart');

@@ -1,6 +1,6 @@
 package com.qa.data.visualization.entities.pc;
 
-import com.qa.data.visualization.annotations.Index;
+import com.qa.data.visualization.datatable.annotations.SqlIndex;
 
 import javax.persistence.*;
 
@@ -12,7 +12,7 @@ public class PCTeaAPIAction {
     private Long id;
 
     private String time;
-    @Index
+    @SqlIndex
     private String uid;
     private String client_ip;
     private String api_name;

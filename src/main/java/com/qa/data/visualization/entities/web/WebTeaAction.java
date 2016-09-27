@@ -1,8 +1,10 @@
 package com.qa.data.visualization.entities.web;
 
-import com.qa.data.visualization.annotations.Index;
+
+import com.qa.data.visualization.datatable.annotations.SqlIndex;
 
 import javax.persistence.*;
+
 
 @Entity
 @Table(name = "ABC360_WEB_TEACHER_ACTION_LAST_MONTH_WITH_TODAY_TBL")
@@ -12,11 +14,11 @@ public class WebTeaAction {
     private Long id;
 
     private String time;
-    @Index
+    @SqlIndex
     private String operatorid;
     private String operatorname;
     private String controller;
-    @Index
+    @SqlIndex
     private String method;
     private String notes;
 

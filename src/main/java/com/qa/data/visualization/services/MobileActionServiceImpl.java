@@ -1,13 +1,13 @@
 package com.qa.data.visualization.services;
 
 
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.qa.data.visualization.datatable.DataSet;
+import com.qa.data.visualization.datatable.DatatablesCriterias;
+import com.qa.data.visualization.datatable.Query;
 import com.qa.data.visualization.entities.mobile.AndroidAPIStuActionGroupCount;
 import com.qa.data.visualization.entities.mobile.AndroidStuAPIAction;
 import com.qa.data.visualization.entities.mobile.IOSAPIStuActionGroupCount;
 import com.qa.data.visualization.entities.mobile.IosStuAPIAction;
-import com.qa.data.visualization.util.QueryUtils;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -20,28 +20,28 @@ public class MobileActionServiceImpl implements MobileActionService {
 
     @Override
     public DataSet<AndroidStuAPIAction> findAndroidStuAPIActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        QueryUtils queryUtils = new QueryUtils(entityManager, AndroidStuAPIAction.class, criterias);
-        return queryUtils.getResultDataSet();
+        Query query = new Query(entityManager, AndroidStuAPIAction.class, criterias);
+        return query.getResultDataSet();
     }
 
     @Override
     public DataSet<IosStuAPIAction> findIosStuAPIActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        QueryUtils queryUtils = new QueryUtils(entityManager, IosStuAPIAction.class, criterias);
+        Query query = new Query(entityManager, IosStuAPIAction.class, criterias);
         ;
-        return queryUtils.getResultDataSet();
+        return query.getResultDataSet();
     }
 
     @Override
     public DataSet<AndroidAPIStuActionGroupCount> findAndroidAPIStuActionGroupCount(DatatablesCriterias criterias) {
-        QueryUtils queryUtils = new QueryUtils(entityManager, AndroidAPIStuActionGroupCount.class, criterias);
+        Query query = new Query(entityManager, AndroidAPIStuActionGroupCount.class, criterias);
         ;
-        return queryUtils.getResultDataSet();
+        return query.getResultDataSet();
     }
 
     @Override
     public DataSet<IOSAPIStuActionGroupCount> findIOSAPIStuActionGroupCount(DatatablesCriterias criterias) {
-        QueryUtils queryUtils = new QueryUtils(entityManager, IOSAPIStuActionGroupCount.class, criterias);
+        Query query = new Query(entityManager, IOSAPIStuActionGroupCount.class, criterias);
         ;
-        return queryUtils.getResultDataSet();
+        return query.getResultDataSet();
     }
 }

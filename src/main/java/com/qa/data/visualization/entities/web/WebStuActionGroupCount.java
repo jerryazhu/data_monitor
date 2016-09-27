@@ -11,7 +11,7 @@ public class WebStuActionGroupCount {
 
     private String controller;
     private String method;
-    private Integer cnt;
+    private String cnt;
 
     public String getController() {
         return controller;
@@ -29,11 +29,11 @@ public class WebStuActionGroupCount {
         this.method = method;
     }
 
-    public Integer getCnt() {
+    public String getCnt() {
         return cnt;
     }
 
-    public void setCnt(Integer cnt) {
+    public void setCnt(String cnt) {
         this.cnt = cnt;
     }
 

@@ -1,12 +1,11 @@
 package com.qa.data.visualization.services;
 
-
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
+import com.qa.data.visualization.datatable.DataSet;
+import com.qa.data.visualization.datatable.DatatablesCriterias;
+import com.qa.data.visualization.datatable.Query;
 import com.qa.data.visualization.entities.pc.PCAPIStuActionGroupCount;
 import com.qa.data.visualization.entities.pc.PCStuAPIAction;
 import com.qa.data.visualization.entities.pc.PCTeaAPIAction;
-import com.qa.data.visualization.util.QueryUtils;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -19,20 +18,20 @@ public class PCActionServiceImpl implements PCActionService {
 
     @Override
     public DataSet<PCStuAPIAction> findPCStuAPIActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        QueryUtils queryUtils = new QueryUtils(entityManager, PCStuAPIAction.class, criterias);
-        return queryUtils.getResultDataSet();
+        Query query = new Query(entityManager, PCStuAPIAction.class, criterias);
+        return query.getResultDataSet();
     }
 
     @Override
     public DataSet<PCAPIStuActionGroupCount> findPCAPIStuActionGroupCount(DatatablesCriterias criterias) {
-        QueryUtils queryUtils = new QueryUtils(entityManager, PCAPIStuActionGroupCount.class, criterias);
-        return queryUtils.getResultDataSet();
+        Query query = new Query(entityManager, PCAPIStuActionGroupCount.class, criterias);
+        return query.getResultDataSet();
     }
 
     @Override
     public DataSet<PCTeaAPIAction> findPCTeaAPIActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        QueryUtils queryUtils = new QueryUtils(entityManager, PCTeaAPIAction.class, criterias);
-        return queryUtils.getResultDataSet();
+        Query query = new Query(entityManager, PCTeaAPIAction.class, criterias);
+        return query.getResultDataSet();
     }
 
 }

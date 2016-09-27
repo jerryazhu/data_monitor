@@ -1,6 +1,6 @@
 package com.qa.data.visualization.entities.web;
 
-import com.qa.data.visualization.annotations.Index;
+import com.qa.data.visualization.datatable.annotations.SqlIndex;
 
 import javax.persistence.*;
 
@@ -12,11 +12,11 @@ public class WebStuAction {
     private Long id;
 
     private String time;
-    @Index
+    @SqlIndex
     private String operatorid;
     private String operatorname;
     private String controller;
-    @Index
+    @SqlIndex
     private String method;
     private String notes;
 

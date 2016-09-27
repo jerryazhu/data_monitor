@@ -1,11 +1,8 @@
-package com.qa.data.visualization.util;
+package com.qa.data.visualization.datatable;
 
-import com.github.dandelion.core.util.StringUtils;
-import com.github.dandelion.datatables.core.ajax.ColumnDef;
-import com.github.dandelion.datatables.core.ajax.DataSet;
-import com.github.dandelion.datatables.core.ajax.DatatablesCriterias;
-import com.qa.data.visualization.annotations.Index;
-import com.qa.data.visualization.annotations.IndexOperator;
+import com.qa.data.visualization.datatable.annotations.SqlIndex;
+import com.qa.data.visualization.datatable.annotations.SqlIndexOperator;
+import com.qa.data.visualization.datatable.util.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
@@ -17,14 +14,14 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class QueryUtils {
+public class Query {
     private EntityManager entityManager;
     private Class entiteClass;
     private DatatablesCriterias criterias;
     private Long totalCount = 0L;
     private int displayRecordsLength = 0;
 
-    public <T> QueryUtils(EntityManager entityManager, Class<T> entiteClass, DatatablesCriterias criterias) {
+    public <T> Query(EntityManager entityManager, Class<T> entiteClass, DatatablesCriterias criterias) {
         this.entityManager = entityManager;
         this.entiteClass = entiteClass;
         this.criterias = criterias;
@@ -45,18 +42,18 @@ public class QueryUtils {
         HashMap<String, String> indexOperatorMap = new HashMap<>();
         Field[] fields = this.entiteClass.getDeclaredFields();
         for (Field field : fields) {
-            if (field.isAnnotationPresent(Index.class)) {
+            if (field.isAnnotationPresent(SqlIndex.class)) {
                 if (field.isAnnotationPresent(Column.class)) {
                     Column column = field.getAnnotation(Column.class);
                     indexColumnList.add(column.name());
-                    if (field.isAnnotationPresent(IndexOperator.class)) {
-                        IndexOperator indexOperator = field.getAnnotation(IndexOperator.class);
+                    if (field.isAnnotationPresent(SqlIndexOperator.class)) {
+                        SqlIndexOperator indexOperator = field.getAnnotation(SqlIndexOperator.class);
                         indexOperatorMap.put(column.name(), indexOperator.value());
                     }
                 } else {
                     indexColumnList.add(field.getName());
-                    if (field.isAnnotationPresent(IndexOperator.class)) {
-                        IndexOperator indexOperator = field.getAnnotation(IndexOperator.class);
+                    if (field.isAnnotationPresent(SqlIndexOperator.class)) {
+                        SqlIndexOperator indexOperator = field.getAnnotation(SqlIndexOperator.class);
                         indexOperatorMap.put(field.getName(), indexOperator.value());
                     }
                 }

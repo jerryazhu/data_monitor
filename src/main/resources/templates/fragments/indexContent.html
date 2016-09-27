@@ -15,7 +15,7 @@
     <div class="row">
         <div th:if="${lastError} != 0">
             <div class="col-lg-2 col-md-4">
-                <div class="nav">
+                <div class="warn">
                     <div class="panel panel-red">
                         <div class="panel-heading">
                             <div class="row">
@@ -42,7 +42,7 @@
 
         <div th:if="${lastDebug} != 0">
             <div class="col-lg-2 col-md-4">
-                <div class="nav">
+                <div class="warn">
                     <div class="panel panel-yellow">
                         <div class="panel-heading">
                             <div class="row">
@@ -158,7 +158,7 @@
 <div th:fragment="indexContentScript">
     <script>
         $(document).ready(function () {
-            $(".nav a").each(function (index) {
+            $(".warn a").each(function (index) {
                 $(this).unbind('click');
                 $(this).on("click", function () {
                     $("#content").empty();

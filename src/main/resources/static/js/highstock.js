@@ -1,3 +1,68 @@
+function createSimpleHighStock(element, url, seriesName, duration){
+    $.ajax({
+        type: "post",
+        url: url,
+        data: "",
+        datatype: "json",
+        success: function (returnData) {
+            var seriesOptions = [];
+            if(duration=="month"){
+                seriesOptions = [{
+                    name : seriesName,
+                    data : returnData,
+                    tooltip: {
+                        valueDecimals: 0
+                    },
+                    dataGrouping: {
+                        approximation: "sum",
+                        enabled: true,
+                        forced: true,
+                        units: [['month',[1]]]
+                    }
+                }];
+            }
+            else {
+                seriesOptions = [{
+                    name : seriesName,
+                    data : returnData,
+                    tooltip: {
+                        valueDecimals: 0
+                    }
+                }];
+            }
+            element.highcharts('StockChart', {
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        second: '%Y-%m-%d<br/>%H:%M:%S',
+                        minute: '%Y-%m-%d<br/>%H:%M',
+                        hour: '%Y-%m-%d<br/>%H:%M',
+                        day: '%Y<br/>%m-%d',
+                        week: '%Y<br/>%m-%d',
+                        month: '%Y-%m',
+                        year: '%Y'
+                    }
+                },
+                rangeSelector : {
+                    selected : 4
+                },
+
+                title : {
+                    text : ''
+                },
+                navigator: {
+                    enabled: false
+                },
+                series : seriesOptions
+            });
+
+        },
+        error: function (errorMsg) {
+            console.log(errorMsg);
+        }
+    });
+}
+
 function createHighStock(element, url, map, duration) {
     var seriesOptions = [],
         tooltipOptions = "",

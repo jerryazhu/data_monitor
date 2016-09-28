@@ -27,21 +27,18 @@ public class MobileActionServiceImpl implements MobileActionService {
     @Override
     public DataSet<IosStuAPIAction> findIosStuAPIActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
         Query query = new Query(entityManager, IosStuAPIAction.class, criterias);
-        ;
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<AndroidAPIStuActionGroupCount> findAndroidAPIStuActionGroupCount(DatatablesCriterias criterias) {
         Query query = new Query(entityManager, AndroidAPIStuActionGroupCount.class, criterias);
-        ;
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<IOSAPIStuActionGroupCount> findIOSAPIStuActionGroupCount(DatatablesCriterias criterias) {
         Query query = new Query(entityManager, IOSAPIStuActionGroupCount.class, criterias);
-        ;
         return query.getResultDataSet();
     }
 }

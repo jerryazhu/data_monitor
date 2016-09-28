@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div style="float: right">
+            <select id='reg_total' class="selectpicker" >
+                <option>month</option>
+                <option>day</option>
+            </select>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-map-marker fa-fw"></i> 注册学生趋势(总)
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="student_reg_stock" style="height:400px"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.selectpicker').selectpicker();
+        var reg_his_element = $('#student_reg_stock');
+        var reg_his_url = "/reg/get_reg_daily_activity/";
+        var seriesName = "注册量";
+        var reg_his_duration = $('#reg_total').find("option:selected").val();
+        createSimpleHighStock(reg_his_element, reg_his_url,seriesName, reg_his_duration);
+        $('#reg_total').on('change', function(){
+            var reg_his_duration = $(this).find("option:selected").val();
+            createSimpleHighStock(reg_his_element, reg_his_url,seriesName, reg_his_duration);
+        });
+
+    });
+</script>
+</body>
+</html>

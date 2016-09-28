@@ -225,12 +225,12 @@ public class Query {
                 return totalCount;
             }
         }
-        javax.persistence.Query query = this.entityManager.createQuery("SELECT COUNT(id) FROM " + entiteClass.getSimpleName() + " p" + getFilterQuery());
+        javax.persistence.Query query = this.entityManager.createQuery("SELECT COUNT(*) FROM " + entiteClass.getSimpleName() + " p" + getFilterQuery());
         return (Long) query.getSingleResult();
     }
 
     public Long getTotalCount() {
-        javax.persistence.Query query = this.entityManager.createQuery("SELECT COUNT(id) FROM " + entiteClass.getSimpleName() + " p");
+        javax.persistence.Query query = this.entityManager.createQuery("SELECT COUNT(*) FROM " + entiteClass.getSimpleName() + " p");
         totalCount = (Long) query.getSingleResult();
         return totalCount;
     }

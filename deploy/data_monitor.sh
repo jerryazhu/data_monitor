@@ -150,6 +150,11 @@ main() {
 			'stop')
 				do_stop
 			;;
+
+			'restart')
+				do_stop
+				do_start
+			;;
 			
 			'status')
 				do_check

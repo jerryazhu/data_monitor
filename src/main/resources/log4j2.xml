@@ -7,6 +7,9 @@
         <File name="Aspect" fileName="target/aspect.log" append="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
         </File>
+        <File name="AppSelf" fileName="target/app.log" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
         <RollingFile name="RollingFile" fileName="target/all.log"
                      filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
             <PatternLayout pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
@@ -16,6 +19,9 @@
     <loggers>
         <Logger name="com.qa.data.visualization.aspect" level="debug" additivity="true">
             <AppenderRef ref="Aspect"/>
+        </Logger>
+        <Logger name="com.qa.data.visualization" level="debug" additivity="true">
+            <AppenderRef ref="AppSelf"/>
         </Logger>
         <root level="debug">
             <appender-ref ref="RollingFile"/>

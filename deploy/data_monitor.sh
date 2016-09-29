@@ -69,7 +69,7 @@ do_start() {
 	config=$*
 	cd $APP_BUILD_DIR
 	rm -f pid
-	nohup java -jar $APP_BUILD_DIR/$APP_NAME.jar $config > $APP_BUILD_DIR/$APP_NAME.log 2>&1 &
+	nohup java -jar $APP_BUILD_DIR/$APP_NAME.jar $config 2>&1 &
 	echo $! > pid
 	echo "start success"
 	echo "do launch end at $(date)" | tee -a $APP_BUILD_LOGFILE

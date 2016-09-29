@@ -81,6 +81,8 @@
 <div th:fragment="navLeftScript">
     <script>
         $(function () {
+            $('#side-menu').metisMenu();
+
             $(".nav-second-level li a").each(function (index) {
                 $(this).unbind('click');
                 $(this).on("click", function () {

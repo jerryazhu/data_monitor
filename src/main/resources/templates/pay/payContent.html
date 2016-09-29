@@ -14,7 +14,7 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <i class="fa fa-map-marker fa-fw"></i> 注册学生趋势(总)
+                <i class="fa fa-map-marker fa-fw"></i> 付费趋势(总)
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
@@ -29,8 +29,8 @@
     $(document).ready(function () {
         $('.selectpicker').selectpicker();
         var pay_his_element = $('#student_pay_stock');
-        var pay_his_url = "/reg/get_reg_daily_activity/";
-        var seriesName = "注册量";
+        var pay_his_url = "/pay/get_pay_daily_activity/";
+        var seriesName = "付费";
         var pay_his_duration = $('#pay_total').find("option:selected").val();
         createSimpleHighStock(pay_his_element, pay_his_url,seriesName, pay_his_duration);
         $('#pay_total').on('change', function(){

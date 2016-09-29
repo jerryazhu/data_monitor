@@ -18,8 +18,13 @@ public class PayServiceImpl implements PayService {
     @SuppressWarnings("unchecked")
     public LinkedHashMap<String, String> getDailyActivityMap() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select concat(year,'-',month,'-',day) as time,sum(cnt) as count from ABC360_REG_CITY_DAILY_TBL\n" +
-                "where concat(year,'-',month,'-',day) > '2012-01-01'\n" +
+        Query q = entityManager.createNativeQuery("select concat(year,'-',month,'-',day) as time,sum(tmoney) from (\n" +
+                "\tselect year,month,day,tmoney,orderid,IFNULL(si.study_aim,0) as study_aim \n" +
+                "\tfrom ABC360_PAY_CITY_RECORD_TBL pcr\n" +
+                "\tleft join ebk_student_info si on pcr.sid = si.sid \n" +
+                "\twhere (study_aim in (0,1,2,3,4) or study_aim is null)\n" +
+                "\tand concat(year,'-',month,'-',day) > '2012-01-01'\n" +
+                ") A\n" +
                 "group by year,month,day");
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {

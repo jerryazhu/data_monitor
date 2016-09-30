@@ -1,13 +1,14 @@
 package com.qa.data.visualization.controllers;
 
-import com.qa.data.visualization.datatable.DataSet;
-import com.qa.data.visualization.datatable.DatatablesCriterias;
-import com.qa.data.visualization.datatable.DatatablesResponse;
+
 import com.qa.data.visualization.entities.mobile.AndroidAPIStuActionGroupCount;
 import com.qa.data.visualization.entities.mobile.AndroidStuAPIAction;
 import com.qa.data.visualization.entities.mobile.IOSAPIStuActionGroupCount;
 import com.qa.data.visualization.entities.mobile.IosStuAPIAction;
 import com.qa.data.visualization.services.MobileActionService;
+import com.web.spring.datatable.DataSet;
+import com.web.spring.datatable.DatatablesCriterias;
+import com.web.spring.datatable.DatatablesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

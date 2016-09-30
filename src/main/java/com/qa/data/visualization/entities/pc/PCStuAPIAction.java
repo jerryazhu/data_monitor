@@ -1,6 +1,7 @@
 package com.qa.data.visualization.entities.pc;
 
-import com.qa.data.visualization.datatable.annotations.SqlIndex;
+
+import com.web.spring.datatable.annotations.SqlIndex;
 
 import javax.persistence.*;
 

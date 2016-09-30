@@ -1,12 +1,5 @@
 package com.qa.data.visualization.controllers;
 
-import com.qa.data.visualization.datatable.DataSet;
-import com.qa.data.visualization.datatable.DatatablesCriterias;
-import com.qa.data.visualization.datatable.DatatablesResponse;
-import com.qa.data.visualization.entities.pc.PCAPIStuActionGroupCount;
-import com.qa.data.visualization.entities.pc.PCStuAPIAction;
-import com.qa.data.visualization.entities.pc.PCTeaAPIAction;
-import com.qa.data.visualization.services.PCActionService;
 import com.qa.data.visualization.services.RegService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

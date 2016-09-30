@@ -1,9 +1,9 @@
 package com.qa.data.visualization.services;
 
 
-import com.qa.data.visualization.datatable.DataSet;
-import com.qa.data.visualization.datatable.DatatablesCriterias;
 import com.qa.data.visualization.entities.web.*;
+import com.web.spring.datatable.DataSet;
+import com.web.spring.datatable.DatatablesCriterias;
 
 import java.util.LinkedHashMap;
 

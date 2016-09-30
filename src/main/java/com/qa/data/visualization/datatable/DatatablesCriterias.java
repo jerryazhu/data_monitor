@@ -40,9 +40,7 @@ public class DatatablesCriterias implements Serializable {
     }
 
     /**
-     * <p>
      * Map all request parameters into a wrapper POJO that eases SQL querying.
-     * </p>
      *
      * @param request The request sent by Datatables containing all parameters.
      * @return a wrapper POJO.

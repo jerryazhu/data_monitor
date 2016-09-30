@@ -89,9 +89,7 @@ public final class DTConstants {
     public static final String DT_FN_STATELOADED_CBK = "stateLoaded";
 
     /**
-     * <p>
      * Suppress default constructor for noninstantiability.
-     * </p>
      */
     private DTConstants() {
         throw new AssertionError();

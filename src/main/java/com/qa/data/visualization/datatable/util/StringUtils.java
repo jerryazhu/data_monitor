@@ -20,17 +20,12 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Checks if a String is whitespace, empty ("") or null.
-     * </p>
-     * <p>
-     * <pre>
      * StringUtils.isBlank(null)      = true
      * StringUtils.isBlank("")        = true
      * StringUtils.isBlank(" ")       = true
      * StringUtils.isBlank("bob")     = false
      * StringUtils.isBlank("  bob  ") = false
-     * </pre>
      *
      * @param str the String to check, may be null
      * @return <code>true</code> if the String is null, empty or whitespace
@@ -50,17 +45,12 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Checks if a String is not empty (""), not null and not whitespace only.
-     * </p>
-     * <p>
-     * <pre>
      * StringUtils.isNotBlank(null)      = false
      * StringUtils.isNotBlank("")        = false
      * StringUtils.isNotBlank(" ")       = false
      * StringUtils.isNotBlank("bob")     = true
      * StringUtils.isNotBlank("  bob  ") = true
-     * </pre>
      *
      * @param str the String to check, may be null
      * @return <code>true</code> if the String is not empty and not null and not
@@ -72,17 +62,12 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Capitalizes a String changing the first letter to title case as per
      * {@link Character#toTitleCase(char)}. No other letters are changed.
-     * </p>
-     * <p>
-     * <pre>
      * StringUtils.capitalize(null)  = null
      * StringUtils.capitalize("")    = ""
      * StringUtils.capitalize("cat") = "Cat"
      * StringUtils.capitalize("cAt") = "CAt"
-     * </pre>
      *
      * @param str the String to capitalize, may be null
      * @return the capitalized String, <code>null</code> if null String input
@@ -102,17 +87,12 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Uncapitalizes a String changing the first letter to title case as per
      * {@link Character#toLowerCase(char)}. No other letters are changed.
-     * </p>
-     * <p>
-     * <pre>
      * StringUtils.uncapitalize(null)  = null
      * StringUtils.uncapitalize("")    = ""
      * StringUtils.uncapitalize("Cat") = "cat"
      * StringUtils.uncapitalize("CAT") = "cAT"
-     * </pre>
      *
      * @param str the String to uncapitalize, may be null
      * @return the uncapitalized String, <code>null</code> if null String input
@@ -161,18 +141,11 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Checks if the String contains any character in the given set of
      * characters.
-     * </p>
-     * <p>
-     * <p>
      * A <code>null</code> String will return <code>false</code>. A
      * <code>null</code> or zero length search array will return
      * <code>false</code>.
-     * </p>
-     * <p>
-     * <pre>
      * StringUtils.containsAny(null, *)                = false
      * StringUtils.containsAny("", *)                  = false
      * StringUtils.containsAny(*, null)                = false
@@ -180,7 +153,6 @@ public final class StringUtils {
      * StringUtils.containsAny("zzabyycdxx",['z','a']) = true
      * StringUtils.containsAny("zzabyycdxx",['b','y']) = true
      * StringUtils.containsAny("aba", ['z'])           = false
-     * </pre>
      *
      * @param str         the String to check, may be null
      * @param searchChars the chars to search for, may be null
@@ -230,14 +202,10 @@ public final class StringUtils {
      * Check that the given CharSequence is neither {@code null} nor of length 0.
      * Note: Will return {@code true} for a CharSequence that purely consists of
      * whitespace.
-     * <p>
-     * <p>
-     * <pre>
      * StringUtils.hasLength(null) = false
      * StringUtils.hasLength("") = false
      * StringUtils.hasLength(" ") = true
      * StringUtils.hasLength("Hello") = true
-     * </pre>
      *
      * @param str the CharSequence to check (may be {@code null})
      * @return {@code true} if the CharSequence is not null and has length
@@ -259,7 +227,6 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Escapes the characters in a <code>String</code> using XML entities.
      *
      * @param src the <code>String</code> to escape, may be null
@@ -305,7 +272,6 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Escapes the characters in a {@code String} using XML entities only if the
      * passed boolean is {@code true}.
      *
@@ -329,15 +295,8 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Counts how many times the substring appears in the larger string.
-     * </p>
-     * <p>
-     * <p>
      * A {@code null} or empty ("") String input returns {@code 0}.
-     * </p>
-     * <p>
-     * <pre>
      * StringUtils.countMatches(null, *)       = 0
      * StringUtils.countMatches("", *)         = 0
      * StringUtils.countMatches("abba", null)  = 0
@@ -345,7 +304,6 @@ public final class StringUtils {
      * StringUtils.countMatches("abba", "a")   = 2
      * StringUtils.countMatches("abba", "ab")  = 1
      * StringUtils.countMatches("abba", "xxx") = 0
-     * </pre>
      *
      * @param str the CharSequence to check, may be null
      * @param sub the substring to count, may be null
@@ -379,10 +337,8 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * First convert the supplied {@link Properties} into a {@link Map} and then
      * call {@link #substitute(String, Map)}.
-     * </p>
      *
      * @param source             the string containing possible variable references
      * @param variablesAndValues the {@link Map} to use to resolve the variables' values.
@@ -409,20 +365,12 @@ public final class StringUtils {
     }
 
     /**
-     * <p>
      * Substitute all variable referenced in the specified {@code source} with
      * the syntax {@code %VARIABLE_NAME%}.
-     * </p>
-     * <p>
-     * <p>
      * All variables (and associated values) must be supplied in a {@link Map}
      * where all keys are the variable names and values are their associated
      * value.
-     * </p>
-     * <p>
-     * <p>
      * To include a literal "%" character in the source String, just double it.
-     * </p>
      *
      * @param source             the string containing possible variable references
      * @param variablesAndValues the {@link Map} to use to resolve the variables' values.
@@ -517,7 +465,6 @@ public final class StringUtils {
     /**
      * Tokenize the given String into a String array via a StringTokenizer. Trims
      * tokens and omits empty tokens.
-     * <p>
      * The given delimiters string is supposed to consist of any number of
      * delimiter characters. Each of those characters can be used to separate
      * tokens. A delimiter is always a single character; for multi-character
@@ -536,7 +483,6 @@ public final class StringUtils {
 
     /**
      * Tokenize the given String into a String array via a StringTokenizer.
-     * <p>
      * The given delimiters string is supposed to consist of any number of
      * delimiter characters. Each of those characters can be used to separate
      * tokens. A delimiter is always a single character; for multi-character
@@ -593,15 +539,11 @@ public final class StringUtils {
      * Check whether the given CharSequence has actual text. More specifically,
      * returns {@code true} if the string not {@code null}, its length is greater
      * than 0, and it contains at least one non-whitespace character.
-     * <p>
-     * <p>
-     * <pre class="code">
      * StringUtils.hasText(null) = false
      * StringUtils.hasText("") = false
      * StringUtils.hasText(" ") = false
      * StringUtils.hasText("12345") = true
      * StringUtils.hasText(" 12345 ") = true
-     * </pre>
      *
      * @param str the CharSequence to check (may be {@code null})
      * @return {@code true} if the CharSequence is not {@code null}, its length

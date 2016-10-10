@@ -47,6 +47,8 @@ public class IndexController {
     private AndroidAppService androidAppService;
     @Autowired
     private IosSystemService iosSystemService;
+    @Autowired
+    private IosAppService iosAppService;
     @RequestMapping("/")
     String index(Model model) {
         long lastError = lastErrorRepository.count();
@@ -212,13 +214,26 @@ public class IndexController {
     }
     @RequestMapping("get_ios_system")
     @ResponseBody
-    public ArrayList getIosApp(){
+    public ArrayList getIosSystem(){
         ArrayList<Object> list=new ArrayList<Object>();
         LinkedHashMap<String,String> iosSystem=iosSystemService.getIosSystem();
         for(Map.Entry<String,String> entry:iosSystem.entrySet()){
             HashMap<String,Object> map=new HashMap<>();
             String[] a=entry.getKey().split(" ");
             map.put("name",a[0]+" "+a[1]+" "+a[2].substring(0,1)+"::"+entry.getKey());
+            map.put("count",Integer.parseInt(entry.getValue()));
+            list.add(map);
+        }
+        return list;
+    }
+    @RequestMapping("get_ios_app")
+    @ResponseBody
+    public ArrayList getIosApp(){
+        ArrayList<Object> list=new ArrayList<Object>();
+        LinkedHashMap<String,String> iosSystem=iosAppService.getIosApp();
+        for(Map.Entry<String,String> entry:iosSystem.entrySet()){
+            HashMap<String,Object> map=new HashMap<>();
+            map.put("name",entry.getKey());
             map.put("count",Integer.parseInt(entry.getValue()));
             list.add(map);
         }

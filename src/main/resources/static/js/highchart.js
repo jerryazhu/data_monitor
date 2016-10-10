@@ -1,6 +1,13 @@
 Highcharts.setOptions({global: {useUTC: false}});
 function createPieHighChart(element, map) {
-    var colors = Highcharts.getOptions().colors;
+    var colors;
+    if(map.size > 5){
+        colors = Highcharts.getOptions().colors.slice(0);
+    }
+    else {
+        colors = Highcharts.getOptions().colors.slice(0);
+        colors.shuffle();
+    }
     var categories = [];
     var data = [];
     var index = 0;

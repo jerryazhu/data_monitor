@@ -29,7 +29,7 @@
     $(document).ready(function () {
         $('.selectpicker').selectpicker();
         var reg_his_element = $('#student_reg_stock');
-        var reg_his_url = "/reg/get_reg_daily_activity/";
+        var reg_his_url = "/reg/get_reg_daily_activity";
         var seriesName = "注册量";
         var reg_his_duration = $('#reg_total').find("option:selected").val();
         createSimpleHighStock(reg_his_element, reg_his_url,seriesName, reg_his_duration);

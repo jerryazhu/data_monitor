@@ -5,6 +5,7 @@ import com.qa.data.visualization.services.RegService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigDecimal;
@@ -22,7 +23,7 @@ public class PayController {
     @Autowired
     private PayService payService;
 
-    @RequestMapping(value = "/get_pay_daily_activity")
+    @RequestMapping(value = "/get_pay_daily_activity", method = RequestMethod.POST)
     @ResponseBody
     public ArrayList findRegDailyActivity() throws ParseException {
         ArrayList<Object> list = new ArrayList<Object>();

@@ -5,6 +5,8 @@ import com.qa.data.visualization.repositories.*;
 import com.qa.data.visualization.services.*;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +54,9 @@ public class IndexController {
         long lastDebug = lastDebugRepository.count();
         model.addAttribute("lastDebug", lastDebug);
         model.addAttribute("templateName", "indexContent");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+        model.addAttribute("username", name);
         return "index";
     }
 

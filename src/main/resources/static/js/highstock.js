@@ -1,9 +1,15 @@
 function createSimpleHighStock(element, url, seriesName, duration){
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
     $.ajax({
         type: "post",
         url: url,
         data: "",
         datatype: "json",
+        beforeSend: function (request)
+        {
+            request.setRequestHeader(header, token);
+        },
         success: function (returnData) {
             var seriesOptions = [];
             if(duration=="month"){

@@ -24,6 +24,8 @@ public class IndexController {
     @Autowired
     private ClassToolsDailyActivityService classToolsDailyActivityService;
     @Autowired
+    private ClassModeDailyActivityRepository classModeDailyActivityRepository;
+    @Autowired
     private LastErrorRepository lastErrorRepository;
     @Autowired
     private LastDebugRepository lastDebugRepository;
@@ -81,6 +83,44 @@ public class IndexController {
             array[0] = Long.parseLong(da.getTime()) * 1000;
             array[1] = da.getCount();
             list.add(array);
+        }
+        return list;
+    }
+
+    @RequestMapping("class_mode_daily_activity/{mode}")
+    @ResponseBody
+    public ArrayList getClassModeDailyActivityByType(@PathVariable String mode) throws ParseException {
+        ArrayList<Object> list = new ArrayList<Object>();
+        Iterable<ClassModeDailyActivity> classModeDailyActivityList = classModeDailyActivityRepository.findAll();
+        for (ClassModeDailyActivity da : classModeDailyActivityList) {
+            if(mode.equals("QQ")) {
+                Object[] array = new Object[2];
+                DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
+                array[0] = dfm.parse(da.getTime()).getTime();
+                array[1] = da.getQQ();
+                list.add(array);
+            }
+            if(mode.equals("Skype")) {
+                Object[] array = new Object[2];
+                DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
+                array[0] = dfm.parse(da.getTime()).getTime();
+                array[1] = da.getSkype();
+                list.add(array);
+            }
+            if(mode.equals("ClassPlat")) {
+                Object[] array = new Object[2];
+                DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
+                array[0] = dfm.parse(da.getTime()).getTime();
+                array[1] = da.getClassPlat();
+                list.add(array);
+            }
+            if(mode.equals("Total")) {
+                Object[] array = new Object[2];
+                DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
+                array[0] = dfm.parse(da.getTime()).getTime();
+                array[1] = da.getTotal();
+                list.add(array);
+            }
         }
         return list;
     }

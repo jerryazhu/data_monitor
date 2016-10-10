@@ -105,7 +105,27 @@
             </div>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-lg-6">
+            <div style="float: right">
+                <select id='class_mode_time' class="selectpicker" >
+                    <option>day</option>
+                    <option>week</option>
+                    <option>month</option>
+                </select>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-map-marker fa-fw"></i> 上课方式选择分布
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div id="class_mode_chart" style="height:400px"></div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+        </div>
+    </div>
     <div class="row">
         <h2>Web端</h2>
     </div>
@@ -233,6 +253,19 @@
             $('#class_tool_type_time').on('change', function () {
                 var class_tool_duration = $(this).find("option:selected").val();
                 createHighStock(class_tool_element, class_tool_url, class_tool_map, class_tool_duration);
+            });
+
+            var class_mode_element = $('#class_mode_chart');
+            var class_mode_url = "class_mode_daily_activity/";
+            var class_mode_map = new HashMap();
+            class_mode_map.set("QQ", "QQ");
+            class_mode_map.set("Skype", "Skype");
+            class_mode_map.set("ClassPlat", "ClassPlat");
+            var class_mode_duration = $('#class_mode_time').find("option:selected").val();
+            createHighStock(class_mode_element, class_mode_url, class_mode_map, class_mode_duration);
+            $('#class_mode_time').on('change', function () {
+                var class_mode_duration = $(this).find("option:selected").val();
+                createHighStock(class_mode_element, class_mode_url, class_mode_map, class_mode_duration);
             });
 
             var student_element = $('#student_daily_activity_chart');

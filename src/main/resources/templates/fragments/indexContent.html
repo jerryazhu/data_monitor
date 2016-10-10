@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-</head>
+<head></head>
 <body>
 <div th:fragment="indexContent">
 
@@ -437,6 +436,34 @@
                 ios_system_map.set('firstLevelSeriesName', "System");
                 ios_system_map.set('secondLevelSeriesName', "Versions");
                 createPieHighChart(ios_system_element, ios_system_map);
+            });
+
+            var ios_app_element=$('#ios_app');
+            var ios_app_count_map=new HashMap();
+            var firstIosAppName=new Array();
+            var ios_app_total=0;
+            $.getJSON('get_ios_app',function (iosAppJSONObjects) {
+                $.each(iosAppJSONObjects,function (i,iosAppJSONObject) {
+                    ios_app_count_map.set(iosAppJSONObject.name,iosAppJSONObject.count);
+                    ios_app_total=ios_app_total+iosAppJSONObject.count;
+                    firstIosAppName.push(iosAppJSONObject.name);
+                });
+                var ios_app_map=new HashMap();
+
+                $.each(firstIosAppName, function (i, name) {
+                    var sub_map = new HashMap();
+                    sub_map.set('drilldownCategories', name);
+                    var drilldownData = [];
+                    var firstLevelCount = 0;
+                    var cnt = ios_app_count_map.get(name) / ios_app_total * 100;
+                    drilldownData.push(round(cnt, 2));
+                    firstLevelCount = firstLevelCount + round(cnt, 2);
+                    sub_map.set('drilldownData', drilldownData);
+                    sub_map.set('y', round(firstLevelCount, 2));
+                    ios_app_map.set(name, sub_map);
+                });
+                ios_app_map.set('firstLevelSeriesName', "App");
+                creteSimplePieHighChart(ios_app_element,ios_app_map);
             });
 
             var student_browser_element = $('#student_browser_chart');

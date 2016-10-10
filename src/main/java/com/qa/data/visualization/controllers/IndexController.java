@@ -2,9 +2,8 @@ package com.qa.data.visualization.controllers;
 
 import com.qa.data.visualization.entities.*;
 import com.qa.data.visualization.repositories.*;
-import com.qa.data.visualization.services.ClassToolsDailyActivityService;
-import com.qa.data.visualization.services.StuPCDailyActivityService;
-import com.qa.data.visualization.services.WebActionService;
+import com.qa.data.visualization.services.*;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.awt.event.ItemEvent;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,7 +37,14 @@ public class IndexController {
     private StuBrowserRepository stuBrowserRepository;
     @Autowired
     private WebActionService lastWebStuActionService;
-
+    @Autowired
+    private BrandService brandService;
+    @Autowired
+    private AndroidSystemService androidSystemService;
+    @Autowired
+    private AndroidAppService androidAppService;
+    @Autowired
+    private IosSystemService iosSystemService;
     @RequestMapping("/")
     String index(Model model) {
         long lastError = lastErrorRepository.count();
@@ -128,7 +135,6 @@ public class IndexController {
         }
         return list;
     }
-
     @RequestMapping("get_student_browser")
     @ResponseBody
     public ArrayList getStuBrowser() {
@@ -159,6 +165,59 @@ public class IndexController {
         }
         return list;
     }
+    @RequestMapping("get_brand")
+    @ResponseBody
+    public ArrayList getBrand(){
+        ArrayList<Object> list=new ArrayList<Object>();
+        LinkedHashMap<String, String> stuBrand= brandService.getBrand();
+        for(Map.Entry<String,String> entry :stuBrand.entrySet()){
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("name",entry.getKey());
+            map.put("count",Integer.parseInt(entry.getValue()));
+            list.add(map);
+        }
+        return list;
+    }
 
+    @RequestMapping("get_android_system")
+    @ResponseBody
+    public ArrayList getAndroidSystem(){
+        ArrayList<Object> list=new ArrayList<Object>();
+        LinkedHashMap<String,String> androidSystem=androidSystemService.getAndroidSystem();
+        for(Map.Entry<String,String> entry:androidSystem.entrySet()){
+            HashMap<String,Object> map=new HashMap<>();
+            map.put("name",entry.getKey().substring(0,1)+entry.getKey());
+            map.put("count",Integer.parseInt(entry.getValue()));
+            list.add(map);
+        }
+        return list;
+    }
+    @RequestMapping("get_android_app")
+    @ResponseBody
+    public ArrayList getAndroidApp(){
+        ArrayList<Object> list=new ArrayList<Object>();
+        LinkedHashMap<String,String> androidApp=androidAppService.getAndroidApp();
+        for(Map.Entry<String,String> entry:androidApp.entrySet()){
+            HashMap<String,Object> map=new HashMap<>();
+            map.put("name",entry.getKey().substring(0,1)+entry.getKey());
+            map.put("count",Integer.parseInt(entry.getValue()));
+            list.add(map);
+        }
+        return list;
+    }
+    @RequestMapping("get_ios_system")
+    @ResponseBody
+    public ArrayList getIosApp(){
+        ArrayList<Object> list=new ArrayList<Object>();
+        LinkedHashMap<String,String> iosSystem=iosSystemService.getIosSystem();
+        for(Map.Entry<String,String> entry:iosSystem.entrySet()){
+            HashMap<String,Object> map=new HashMap<>();
+            String[] a=entry.getKey().split(" ");
+            map.put("name",a[0]+" "+a[1]+" "+a[2].substring(0,1)+"::"+entry.getKey());
+            map.put("count",Integer.parseInt(entry.getValue()));
+            list.add(map);
+        }
+        return list;
+    }
 
 }

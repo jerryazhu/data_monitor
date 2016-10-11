@@ -85,25 +85,6 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-6">
-            <div style="float: right">
-                <select id='class_tool_type_time' class="selectpicker">
-                    <option>day</option>
-                    <option>week</option>
-                    <option>month</option>
-                </select>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <i class="fa fa-map-marker fa-fw"></i> 实际上课平台分布
-                </div>
-                <!-- /.panel-heading -->
-                <div class="panel-body">
-                    <div id="class_tool_type_chart" style="height:400px"></div>
-                </div>
-                <!-- /.panel-body -->
-            </div>
-        </div>
     </div>
     <div class="row">
         <div class="col-lg-6">
@@ -121,6 +102,25 @@
                 <!-- /.panel-heading -->
                 <div class="panel-body">
                     <div id="class_mode_chart" style="height:400px"></div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div style="float: right">
+                <select id='class_tool_type_time' class="selectpicker">
+                    <option>day</option>
+                    <option>week</option>
+                    <option>month</option>
+                </select>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-map-marker fa-fw"></i> 实际上课平台分布
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div id="class_tool_type_chart" style="height:400px"></div>
                 </div>
                 <!-- /.panel-body -->
             </div>
@@ -307,84 +307,139 @@
 //            });
 
             var student_terminal_element = $('#student_terminal_chart');
-            var terminal_count_map = new HashMap();
-            var total = 0;
-            $.getJSON('get_student_terminal', function (terminalJSONObjects) {
-                $.each(terminalJSONObjects, function (i, terminalJSONObject) {
-                    terminal_count_map.set(terminalJSONObject.name, terminalJSONObject.count);
-                    total = total + terminalJSONObject.count;
+            student_terminal_element.waypoint(function(direction) {
+                var terminal_count_map = new HashMap();
+                var total = 0;
+                $.getJSON('get_student_terminal', function (terminalJSONObjects) {
+                    $.each(terminalJSONObjects, function (i, terminalJSONObject) {
+                        terminal_count_map.set(terminalJSONObject.name, terminalJSONObject.count);
+                        total = total + terminalJSONObject.count;
+                    });
+                    var student_terminal_map = new HashMap();
+                    var firstTerminalLevelNames = ['Windows', 'Linux', 'Mac', 'iPhone', 'iPad', 'Android'];
+                    $.each(firstTerminalLevelNames, function (i, name) {
+                        var sub_map = new HashMap();
+                        if (name == "Windows") {
+                            var drilldownCategories = ['Windows XP', 'Windows Vista', 'Windows 7', 'Windows 8', 'Windows 10'];
+                            sub_map.set('drilldownCategories', drilldownCategories);
+                            var drilldownData = [];
+                            var firstLevelCount = 0;
+                            $.each(drilldownCategories, function (i, cate) {
+                                var cnt = terminal_count_map.get(cate) / total * 100;
+                                drilldownData.push(round(cnt, 2));
+                                firstLevelCount = firstLevelCount + round(cnt, 2);
+                            });
+                            sub_map.set('drilldownData', drilldownData);
+                            sub_map.set('y', round(firstLevelCount, 2));
+                        }
+                        else {
+                            sub_map.set('drilldownCategories', [name]);
+                            var cnt = terminal_count_map.get(name) / total * 100;
+                            sub_map.set('drilldownData', [round(cnt, 2)]);
+                            sub_map.set('y', round(cnt, 2));
+                        }
+                        student_terminal_map.set(name, sub_map);
+                    });
+                    student_terminal_map.set('firstLevelSeriesName', "Terminals");
+                    student_terminal_map.set('secondLevelSeriesName', "Versions");
+                    createPieHighChart(student_terminal_element, student_terminal_map);
                 });
-                var student_terminal_map = new HashMap();
-                var firstTerminalLevelNames = ['Windows', 'Linux', 'Mac', 'iPhone', 'iPad', 'Android'];
-                $.each(firstTerminalLevelNames, function (i, name) {
-                    var sub_map = new HashMap();
-                    if (name == "Windows") {
-                        var drilldownCategories = ['Windows XP', 'Windows Vista', 'Windows 7', 'Windows 8', 'Windows 10'];
+                this.destroy();
+            }, {
+                offset: 'bottom-in-view'
+            });
+
+            var student_browser_element = $('#student_browser_chart');
+            student_browser_element.waypoint(function(direction) {
+                var browser_count_map = new HashMap();
+                var terminal_browser_map = new HashMap();
+                var browser_total = 0;
+                $.getJSON('get_student_browser', function (browserJSONObjects) {
+                    $.each(browserJSONObjects, function (i, browserJSONObject) {
+                        browser_count_map.set(browserJSONObject.name, browserJSONObject.count);
+                        browser_total = browser_total + browserJSONObject.count;
+                        var array = browserJSONObject.name.split("___");
+                        var arr = [];
+                        if (terminal_browser_map.has(array[0])) {
+                            terminal_browser_map.get(array[0]).push(array[1]);
+                        } else {
+                            arr.push(array[1]);
+                            terminal_browser_map.set(array[0], arr);
+                        }
+
+                    });
+                    var student_browser_map = new HashMap();
+                    var firstBrowserLevelNames = ['Windows XP', 'Windows 7', 'Windows 8', 'Windows 10', 'Linux', 'Mac', 'iPhone', 'iPad', 'Android'];
+                    $.each(firstBrowserLevelNames, function (i, name) {
+                        var sub_map = new HashMap();
+                        var drilldownCategories = terminal_browser_map.get(name);
                         sub_map.set('drilldownCategories', drilldownCategories);
                         var drilldownData = [];
                         var firstLevelCount = 0;
                         $.each(drilldownCategories, function (i, cate) {
-                            var cnt = terminal_count_map.get(cate) / total * 100;
+                            var cnt = browser_count_map.get(name + "___" + cate) / browser_total * 100;
                             drilldownData.push(round(cnt, 2));
                             firstLevelCount = firstLevelCount + round(cnt, 2);
                         });
                         sub_map.set('drilldownData', drilldownData);
                         sub_map.set('y', round(firstLevelCount, 2));
-                    }
-                    else {
-                        sub_map.set('drilldownCategories', [name]);
-                        var cnt = terminal_count_map.get(name) / total * 100;
-                        sub_map.set('drilldownData', [round(cnt, 2)]);
-                        sub_map.set('y', round(cnt, 2));
-                    }
-                    student_terminal_map.set(name, sub_map);
+                        student_browser_map.set(name, sub_map);
+                    });
+                    student_browser_map.set('firstLevelSeriesName', "Browsers");
+                    student_browser_map.set('secondLevelSeriesName', "Versions");
+                    createPieHighChart(student_browser_element, student_browser_map);
                 });
-                student_terminal_map.set('firstLevelSeriesName', "Terminals");
-                student_terminal_map.set('secondLevelSeriesName', "Versions");
-                createPieHighChart(student_terminal_element, student_terminal_map);
+                this.destroy();
+            }, {
+                offset: 'bottom-in-view'
             });
 
             var android_system_element=$('#android_system');
-            var android_system_count_map=new HashMap();
-            var android_system_big=new HashMap();
-            var firstAndroidSystemName=new Array();
-            var android_system_total=0;
-            $.getJSON('get_android_system',function (androidSystemJSONObjects) {
-                $.each(androidSystemJSONObjects,function (i,androidSystemJSONObject) {
-                    android_system_count_map.set(androidSystemJSONObject.name,androidSystemJSONObject.count);
-                    android_system_total=android_system_total+androidSystemJSONObject.count;
-                    var array=androidSystemJSONObject.name.slice(0,1);
-                    var array2=androidSystemJSONObject.name.slice(1,20);
+            android_system_element.waypoint(function(direction) {
+                var android_system_count_map=new HashMap();
+                var android_system_big=new HashMap();
+                var firstAndroidSystemName=new Array();
+                var android_system_total=0;
+                $.getJSON('get_android_system',function (androidSystemJSONObjects) {
+                    $.each(androidSystemJSONObjects,function (i,androidSystemJSONObject) {
+                        android_system_count_map.set(androidSystemJSONObject.name,androidSystemJSONObject.count);
+                        android_system_total=android_system_total+androidSystemJSONObject.count;
+                        var array=androidSystemJSONObject.name.slice(0,1);
+                        var array2=androidSystemJSONObject.name.slice(1,20);
 
-                    var arr=[];
-                    if(android_system_big.has(array)){
-                        android_system_big.get(array).push(array2);
-                    }else{
-                        arr.push(array2);
-                        firstAndroidSystemName.push(array);
-                        android_system_big.set(array,arr);
-                    }
-                });
-                var android_system_map=new HashMap();
-
-                $.each(firstAndroidSystemName, function (i, name) {
-                    var sub_map = new HashMap();
-                    var drilldownCategories = android_system_big.get(name);
-                    sub_map.set('drilldownCategories', drilldownCategories);
-                    var drilldownData = [];
-                    var firstLevelCount = 0;
-                    $.each(drilldownCategories, function (i, cate) {
-                        var cnt = android_system_count_map.get(name+cate) / android_system_total * 100;
-                        drilldownData.push(round(cnt, 2));
-                        firstLevelCount = firstLevelCount + round(cnt, 2);
+                        var arr=[];
+                        if(android_system_big.has(array)){
+                            android_system_big.get(array).push(array2);
+                        }else{
+                            arr.push(array2);
+                            firstAndroidSystemName.push(array);
+                            android_system_big.set(array,arr);
+                        }
                     });
-                     sub_map.set('drilldownData', drilldownData);
-                     sub_map.set('y', round(firstLevelCount, 2));
-                    android_system_map.set(name, sub_map);
+                    var android_system_map=new HashMap();
+
+                    $.each(firstAndroidSystemName, function (i, name) {
+                        var sub_map = new HashMap();
+                        var drilldownCategories = android_system_big.get(name);
+                        sub_map.set('drilldownCategories', drilldownCategories);
+                        var drilldownData = [];
+                        var firstLevelCount = 0;
+                        $.each(drilldownCategories, function (i, cate) {
+                            var cnt = android_system_count_map.get(name+cate) / android_system_total * 100;
+                            drilldownData.push(round(cnt, 2));
+                            firstLevelCount = firstLevelCount + round(cnt, 2);
+                        });
+                         sub_map.set('drilldownData', drilldownData);
+                         sub_map.set('y', round(firstLevelCount, 2));
+                        android_system_map.set(name, sub_map);
+                    });
+                    android_system_map.set('firstLevelSeriesName', "System");
+                    android_system_map.set('secondLevelSeriesName', "Versions");
+                    createPieHighChart(android_system_element, android_system_map);
                 });
-                android_system_map.set('firstLevelSeriesName', "System");
-                android_system_map.set('secondLevelSeriesName', "Versions");
-                createPieHighChart(android_system_element, android_system_map);
+                this.destroy();
+            }, {
+                offset: 'bottom-in-view'
             });
 
             var android_app_element=$('#android_app');
@@ -428,47 +483,53 @@
                 createPieHighChart(android_app_element, android_app_map);
             });
 
-            var ios_system_element=$('#ios_system');
-            var ios_system_count_map=new HashMap();
-            var ios_system_big=new HashMap();
-            var firstIosSystemName=new Array();
-            var ios_system_total=0;
-            $.getJSON('get_ios_system',function (iosSystemJSONObjects) {
-                $.each(iosSystemJSONObjects,function (i,iosSystemJSONObject) {
-                    ios_system_count_map.set(iosSystemJSONObject.name,iosSystemJSONObject.count);
-                    ios_system_total=ios_system_total+iosSystemJSONObject.count;
-                    var wholeName=iosSystemJSONObject.name.split("::");
-                    var array=wholeName[0];
-                    var array2=wholeName[1];
-                    var arr=[];
-                    if(ios_system_big.has(array)){
-                        ios_system_big.get(array).push(array2);
-                    }else{
-                        arr.push(array2);
-                        firstIosSystemName.push(array);
-                        ios_system_big.set(array,arr);
-                    }
-                });
-                var ios_system_map=new HashMap();
 
-                $.each(firstIosSystemName, function (i, name) {
-                    var sub_map = new HashMap();
-                    var drilldownCategories = ios_system_big.get(name);
-                    sub_map.set('drilldownCategories', drilldownCategories);
-                    var drilldownData = [];
-                    var firstLevelCount = 0;
-                    $.each(drilldownCategories, function (i, cate) {
-                        var cnt = ios_system_count_map.get(name+"::"+cate) / ios_system_total * 100;
-                        drilldownData.push(round(cnt, 2));
-                        firstLevelCount = firstLevelCount + round(cnt, 2);
+            var ios_system_element=$('#ios_system');
+            ios_system_element.waypoint(function(direction) {
+                var ios_system_count_map=new HashMap();
+                var ios_system_big=new HashMap();
+                var firstIosSystemName=new Array();
+                var ios_system_total=0;
+                $.getJSON('get_ios_system',function (iosSystemJSONObjects) {
+                    $.each(iosSystemJSONObjects,function (i,iosSystemJSONObject) {
+                        ios_system_count_map.set(iosSystemJSONObject.name,iosSystemJSONObject.count);
+                        ios_system_total=ios_system_total+iosSystemJSONObject.count;
+                        var wholeName=iosSystemJSONObject.name.split("::");
+                        var array=wholeName[0];
+                        var array2=wholeName[1];
+                        var arr=[];
+                        if(ios_system_big.has(array)){
+                            ios_system_big.get(array).push(array2);
+                        }else{
+                            arr.push(array2);
+                            firstIosSystemName.push(array);
+                            ios_system_big.set(array,arr);
+                        }
                     });
-                    sub_map.set('drilldownData', drilldownData);
-                    sub_map.set('y', round(firstLevelCount, 2));
-                    ios_system_map.set(name, sub_map);
+                    var ios_system_map=new HashMap();
+
+                    $.each(firstIosSystemName, function (i, name) {
+                        var sub_map = new HashMap();
+                        var drilldownCategories = ios_system_big.get(name);
+                        sub_map.set('drilldownCategories', drilldownCategories);
+                        var drilldownData = [];
+                        var firstLevelCount = 0;
+                        $.each(drilldownCategories, function (i, cate) {
+                            var cnt = ios_system_count_map.get(name+"::"+cate) / ios_system_total * 100;
+                            drilldownData.push(round(cnt, 2));
+                            firstLevelCount = firstLevelCount + round(cnt, 2);
+                        });
+                        sub_map.set('drilldownData', drilldownData);
+                        sub_map.set('y', round(firstLevelCount, 2));
+                        ios_system_map.set(name, sub_map);
+                    });
+                    ios_system_map.set('firstLevelSeriesName', "System");
+                    ios_system_map.set('secondLevelSeriesName', "Versions");
+                    createPieHighChart(ios_system_element, ios_system_map);
                 });
-                ios_system_map.set('firstLevelSeriesName', "System");
-                ios_system_map.set('secondLevelSeriesName', "Versions");
-                createPieHighChart(ios_system_element, ios_system_map);
+                this.destroy();
+            }, {
+                offset: 'bottom-in-view'
             });
 
             var ios_app_element=$('#ios_app');
@@ -499,45 +560,7 @@
                 creteSimplePieHighChart(ios_app_element,ios_app_map);
             });
 
-            var student_browser_element = $('#student_browser_chart');
-            var browser_count_map = new HashMap();
-            var terminal_browser_map = new HashMap();
-            var browser_total = 0;
-            $.getJSON('get_student_browser', function (browserJSONObjects) {
-                $.each(browserJSONObjects, function (i, browserJSONObject) {
-                    browser_count_map.set(browserJSONObject.name, browserJSONObject.count);
-                    browser_total = browser_total + browserJSONObject.count;
-                    var array = browserJSONObject.name.split("___");
-                    var arr = [];
-                    if (terminal_browser_map.has(array[0])) {
-                        terminal_browser_map.get(array[0]).push(array[1]);
-                    } else {
-                        arr.push(array[1]);
-                        terminal_browser_map.set(array[0], arr);
-                    }
 
-                });
-                var student_browser_map = new HashMap();
-                var firstBrowserLevelNames = ['Windows XP', 'Windows 7', 'Windows 8', 'Windows 10', 'Linux', 'Mac', 'iPhone', 'iPad', 'Android'];
-                $.each(firstBrowserLevelNames, function (i, name) {
-                    var sub_map = new HashMap();
-                    var drilldownCategories = terminal_browser_map.get(name);
-                    sub_map.set('drilldownCategories', drilldownCategories);
-                    var drilldownData = [];
-                    var firstLevelCount = 0;
-                    $.each(drilldownCategories, function (i, cate) {
-                        var cnt = browser_count_map.get(name + "___" + cate) / total * 100;
-                        drilldownData.push(round(cnt, 2));
-                        firstLevelCount = firstLevelCount + round(cnt, 2);
-                    });
-                    sub_map.set('drilldownData', drilldownData);
-                    sub_map.set('y', round(firstLevelCount, 2));
-                    student_browser_map.set(name, sub_map);
-                });
-                student_browser_map.set('firstLevelSeriesName', "Browsers");
-                student_browser_map.set('secondLevelSeriesName', "Versions");
-                createPieHighChart(student_browser_element, student_browser_map);
-            });
 
             $.getJSON('get_web_hot_spot', function (data) {
                 var hot_spot_element = $('#web_student_hot_spot_chart');

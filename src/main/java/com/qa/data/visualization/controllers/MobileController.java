@@ -1,10 +1,7 @@
 package com.qa.data.visualization.controllers;
 
 
-import com.qa.data.visualization.entities.mobile.AndroidAPIStuActionGroupCount;
-import com.qa.data.visualization.entities.mobile.AndroidStuAPIAction;
-import com.qa.data.visualization.entities.mobile.IOSAPIStuActionGroupCount;
-import com.qa.data.visualization.entities.mobile.IosStuAPIAction;
+import com.qa.data.visualization.entities.mobile.*;
 import com.qa.data.visualization.services.MobileActionService;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
@@ -54,6 +51,17 @@ public class MobileController {
         DataSet<IOSAPIStuActionGroupCount> actions = mobileActionService.findIOSAPIStuActionGroupCount(criterias);
         return DatatablesResponse.build(actions, criterias);
     }
+
+//    @RequestMapping(value = "/get_android_model")
+//    @ResponseBody
+//    public DatatablesResponse<AndroidModel> findAndroidModel(HttpServletRequest request){
+//        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+//        DataSet<AndroidModel> actions=mobileActionService.findAndroidModel(criterias);
+//        return DatatablesResponse.build(actions,criterias);
+//    }
+//    @RequestMapping(value = "/get_android_model_cnt")
+//    @ResponseBody
+//    public
 
 
 }

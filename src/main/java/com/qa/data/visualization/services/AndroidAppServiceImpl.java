@@ -20,7 +20,10 @@ public class AndroidAppServiceImpl implements AndroidAppService{
     @SuppressWarnings("unchecked")
     public LinkedHashMap<String, String> getAndroidApp() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select s.app_version as name,count(s.app_version) as count from (select max(time),uid,app_version from ABC360_ANDROID_APP_DEVICE_TBL group by uid ) s group by s.app_version  ");
+        Query q = entityManager.createNativeQuery("select app_version as name,count(app_version) as count from ABC360_ANDROID_APP_DEVICE_TBL a inner JOIN\n" +
+                "(select uid,max(time) as time from ABC360_ANDROID_APP_DEVICE_TBL group by uid) b\n" +
+                "on a.time = b.time and a.uid = b.uid \n" +
+                "GROUP BY (app_version) ");
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             map.put(result[0].toString(), result[1].toString());

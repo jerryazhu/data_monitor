@@ -4,6 +4,7 @@ import com.qa.data.visualization.entities.mobile.*;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public interface MobileActionService {
@@ -15,5 +16,5 @@ public interface MobileActionService {
 
     DataSet<IOSAPIStuActionGroupCount> findIOSAPIStuActionGroupCount(DatatablesCriterias criterias);
 
-    List getAndroidModel();
+    DataSet<AndroidModel> getAndroidModel(DatatablesCriterias criterias);
 }

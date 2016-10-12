@@ -98,7 +98,6 @@
 //            }
 //        });
 
-        var timestamp = (new Date()).valueOf();
         var table = $('#androidDevicesTable').DataTable({
             destroy: true,
             lengthMenu: [10, 25, 50, 100],
@@ -126,7 +125,11 @@
                 {
                     "targets": 0,
                     "render": function ( data, type, row, meta ) {
-                       return timeConverter(parseInt(data) / 1000);
+                        if(data.length==13){
+                            return timeConverter(parseInt(data) / 1000);
+                        }else{
+                            return "未知时间";
+                        }
                     }
                 }
             ],

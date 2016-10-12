@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -41,10 +42,8 @@ public class MobileActionServiceImpl implements MobileActionService {
         return query.getResultDataSet();
     }
     @Override
-    @SuppressWarnings("unchecked")
-    public List getAndroidModel() {
-        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        javax.persistence.Query q = entityManager.createNativeQuery("select time,SUBSTRING(time FROM 0 FOR 10) from ABC360_ANDROID_APP_DEVICE_TBL where LENGTH(time)=13 and SUBSTRING(time FROM 0 FOR 10)<UNIX_TIMESTAMP(NOW()) order by time desc ");
-        return q.getResultList();
+    public DataSet<AndroidModel> getAndroidModel(DatatablesCriterias criterias) {
+        Query query = new Query(entityManager, AndroidModel.class, criterias);
+        return query.getResultDataSet();
     }
 }

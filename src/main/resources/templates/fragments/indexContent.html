@@ -172,6 +172,23 @@
         </div>
     </div>
     <div class="row">
+        <h2>PC端</h2>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-bar-chart-o fa-fw"></i> PC系统分布
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div id="pc_system"></div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <h2>移动端(android)</h2>
     </div>
     <div class="row">
@@ -281,30 +298,6 @@
                 var student_duration = $(this).find("option:selected").val();
                 createHighStock(student_element, student_url, student_map, student_duration);
             });
-
-//            var android_devices_brand_bread_element=$('#android_devices_brand_bread');
-//            var android_devices_brand_bread_count_map=new HashMap();
-//            var android_devices_brand_bread_total=0;
-//            var android_devices_brand_bread_name=new Array();
-//            $.getJSON('get_brand',function(brandJSONObjects){
-//                $.each(brandJSONObjects,function(i, brandJSONObject){
-//                    android_devices_brand_bread_name[i]=brandJSONObject.name;
-//                    android_devices_brand_bread_count_map.set(brandJSONObject.name,brandJSONObject.count);
-//                    android_devices_brand_bread_total=android_devices_brand_bread_total+brandJSONObject.count;
-//                });
-//                android_devices_brand_bread_name=android_devices_brand_bread_name.slice(0,11);
-//                var android_devices_brand_bread_map=new HashMap();
-//                $.each(android_devices_brand_bread_name,function(i,name){
-//                    var sub_map=new HashMap();
-//                    sub_map.set('drilldownCategories', [name]);
-//                    var cnt = android_devices_brand_bread_count_map.get(name) / android_devices_brand_bread_total * 100;
-//                    sub_map.set('drilldownData', [round(cnt, 2)]);
-//                    sub_map.set('y', round(cnt, 2));
-//                    android_devices_brand_bread_map.set(name, sub_map);
-//                });
-//                android_devices_brand_bread_map.set('android_devices_brand_other_name', "Versions");
-//                createPieHighChart(android_devices_brand_bread_element, android_devices_brand_bread_map);
-//            });
 
             var student_terminal_element = $('#student_terminal_chart');
             student_terminal_element.waypoint(function(direction) {
@@ -429,8 +422,8 @@
                             drilldownData.push(round(cnt, 2));
                             firstLevelCount = firstLevelCount + round(cnt, 2);
                         });
-                         sub_map.set('drilldownData', drilldownData);
-                         sub_map.set('y', round(firstLevelCount, 2));
+                        sub_map.set('drilldownData', drilldownData);
+                        sub_map.set('y', round(firstLevelCount, 2));
                         android_system_map.set(name, sub_map);
                     });
                     android_system_map.set('firstLevelSeriesName', "System");
@@ -560,7 +553,33 @@
                 creteSimplePieHighChart(ios_app_element,ios_app_map);
             });
 
+            var pc_system_element=$('#pc_system');
+            var pc_system_count_map=new HashMap();
+            var firstPCSystemName=new Array();
+            var pc_system_total=0;
+            $.getJSON('get_pc_system',function (pcSystemJSONObjects) {
+                $.each(pcSystemJSONObjects,function (i,pcSystemJSONObject) {
+                    pc_system_count_map.set(pcSystemJSONObject.name,pcSystemJSONObject.count);
+                    pc_system_total=pc_system_total+pcSystemJSONObject.count;
+                    firstPCSystemName.push(pcSystemJSONObject.name);
+                });
+                var pc_system_map=new HashMap();
 
+                $.each(firstPCSystemName, function (i, name) {
+                    var sub_map = new HashMap();
+                    sub_map.set('drilldownCategories', name);
+                    var drilldownData = [];
+                    var firstLevelCount = 0;
+                    var cnt = pc_system_count_map.get(name) / pc_system_total * 100;
+                    drilldownData.push(round(cnt, 2));
+                    firstLevelCount = firstLevelCount + round(cnt, 2);
+                    sub_map.set('drilldownData', drilldownData);
+                    sub_map.set('y', round(firstLevelCount, 2));
+                    pc_system_map.set(name, sub_map);
+                });
+                pc_system_map.set('firstLevelSeriesName', "App");
+                creteSimplePieHighChart(pc_system_element,pc_system_map);
+            });
 
             $.getJSON('get_web_hot_spot', function (data) {
                 var hot_spot_element = $('#web_student_hot_spot_chart');

@@ -1,25 +1,28 @@
 package com.qa.data.visualization.controllers;
 
 
+import com.qa.data.visualization.auth.entities.User;
 import com.qa.data.visualization.entities.mobile.*;
 import com.qa.data.visualization.services.MobileActionService;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;
-import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/mobile")
 public class MobileController {
-
+    @PersistenceContext
+    private EntityManager entityManager;
     @Autowired
     private MobileActionService mobileActionService;
     @RequestMapping(value = "/get_android_stu_api_action")
@@ -54,28 +57,56 @@ public class MobileController {
         return DatatablesResponse.build(actions, criterias);
     }
 
-    @RequestMapping(value = "get_android_model")
+    @RequestMapping(value = "/get_android_model")
     @ResponseBody
     public DatatablesResponse<AndroidModel> getAndroidModel(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
         DataSet<AndroidModel> dataSet = mobileActionService.getAndroidModel(criterias);
-/*        List<AndroidModel> filterRows = new ArrayList<>();
-        int ignoreCount = 0;
-        for(int i=0;i<dataSet.getRows().size();i++){
-            if(dataSet.getRows().get(i).getTime().length()==13){
-                filterRows.add(dataSet.getRows().get(i));
-            }
-            else
-            {
-                ignoreCount++;
-            }
-        }
-        DataSet<AndroidModel> dataSetFiltered = new DataSet<AndroidModel>(filterRows, dataSet.getTotalRecords()-ignoreCount, dataSet.getTotalDisplayRecords()-ignoreCount);*/
         return DatatablesResponse.build(dataSet, criterias);
     }
-//    @RequestMapping(value = "/get_android_model_cnt")
-//    @ResponseBody
-//    public
+    @RequestMapping(value = "/get_android_model_cnt")
+    @ResponseBody
+    public DatatablesResponse<AndroidModelCnt> getAndroidModelCnt(HttpServletRequest request){
+        String queryBuilder="select model as model,count(model) as count from ABC360_ANDROID_APP_DEVICE_TBL a inner JOIN\n" +
+                "(select uid,max(time) as time from ABC360_ANDROID_APP_DEVICE_TBL  where LENGTH(time)=13 and time<UNIX_TIMESTAMP(now())*1000 group by uid) b\n" +
+                "on a.time = b.time and a.uid = b.uid \n" +
+                "GROUP BY (model) order by count desc";
+        System.out.println("sql语句为"+queryBuilder);
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        Query query = this.entityManager.createNativeQuery(queryBuilder);
+        Long a= Long.valueOf(query.hashCode());
+        query.setFirstResult(criterias.getStart());
+        if(criterias.getLength()==-1){
+            query.setMaxResults(query.getMaxResults());
+        }else{
+            query.setMaxResults(criterias.getLength());
+        }
+        List<Object[]> result = query.getResultList();
+        List<AndroidModelCnt> result1=new ArrayList<AndroidModelCnt>();
+        for(int i=0;i<result.size();i++){
+            Object[] objects=result.get(i);
+            AndroidModelCnt amc=new AndroidModelCnt();
+            amc.setModel(objects[0].toString());
+            amc.setCount(objects[1].toString());
+            result1.add(amc);
+        }
+        Long b=Long.valueOf(result.size());
+        DataSet<AndroidModelCnt> dataSet=new DataSet<AndroidModelCnt>(result1,a, a);
+        return DatatablesResponse.build(dataSet,criterias);
+    }
+//    public ArrayList getAndroidModelCnt(){
+//        ArrayList<Object> list=new ArrayList<Object>();
+//        System.out.print("进入get");
+//        LinkedHashMap<String,String> androidModelCnt=androidModelCntService.getAndroidModelCnt();
+//        System.out.print("完成SQL");
+//        for(Map.Entry<String,String> entry:androidModelCnt.entrySet()){
+//            HashMap<String,Object> map=new HashMap<>();
+//            map.put("name",entry.getKey());
+//            map.put("count",Integer.parseInt(entry.getValue()));
+//            list.add(map);
+//        }
+//        return list;
+//    }
 
 
 }

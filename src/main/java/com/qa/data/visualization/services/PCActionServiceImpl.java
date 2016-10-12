@@ -5,7 +5,7 @@ import com.qa.data.visualization.entities.pc.PCStuAPIAction;
 import com.qa.data.visualization.entities.pc.PCTeaAPIAction;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
-import com.web.spring.datatable.Query;
+import com.web.spring.datatable.TableQuery;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -18,19 +18,19 @@ public class PCActionServiceImpl implements PCActionService {
 
     @Override
     public DataSet<PCStuAPIAction> findPCStuAPIActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, PCStuAPIAction.class, criterias);
+        TableQuery query = new TableQuery(entityManager, PCStuAPIAction.class, criterias);
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<PCAPIStuActionGroupCount> findPCAPIStuActionGroupCount(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, PCAPIStuActionGroupCount.class, criterias);
+        TableQuery query = new TableQuery(entityManager, PCAPIStuActionGroupCount.class, criterias);
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<PCTeaAPIAction> findPCTeaAPIActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, PCTeaAPIAction.class, criterias);
+        TableQuery query = new TableQuery(entityManager, PCTeaAPIAction.class, criterias);
         return query.getResultDataSet();
     }
 

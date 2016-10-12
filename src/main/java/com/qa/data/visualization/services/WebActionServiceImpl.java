@@ -3,7 +3,7 @@ package com.qa.data.visualization.services;
 import com.qa.data.visualization.entities.web.*;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
-import com.web.spring.datatable.Query;
+import com.web.spring.datatable.TableQuery;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -30,68 +30,68 @@ public class WebActionServiceImpl implements WebActionService {
 
     @Override
     public DataSet<WebStuAction> findStuActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, WebStuAction.class, criterias);
+        TableQuery query = new TableQuery(entityManager, WebStuAction.class, criterias);
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<WebStuActionGroupCount> findStuGroupCountWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, WebStuActionGroupCount.class, criterias);
+        TableQuery query = new TableQuery(entityManager, WebStuActionGroupCount.class, criterias);
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<WebTeaAction> findTeaActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, WebTeaAction.class, criterias);
+        TableQuery query = new TableQuery(entityManager, WebTeaAction.class, criterias);
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<WebTeaActionGroupCount> findTeaGroupCountWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, WebTeaActionGroupCount.class, criterias);
+        TableQuery query = new TableQuery(entityManager, WebTeaActionGroupCount.class, criterias);
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<WebUserAction> findUserActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, WebUserAction.class, criterias);
+        TableQuery query = new TableQuery(entityManager, WebUserAction.class, criterias);
         return query.getResultDataSet();
     }
 
 
     @Override
     public DataSet<WebUserActionGroupCount> findUserGroupCountWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, WebUserActionGroupCount.class, criterias);
+        TableQuery query = new TableQuery(entityManager, WebUserActionGroupCount.class, criterias);
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<WebErrorAction> findErrorActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, WebErrorAction.class, criterias);
+        TableQuery query = new TableQuery(entityManager, WebErrorAction.class, criterias);
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<WebDebugAction> findDebugActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, WebDebugAction.class, criterias);
+        TableQuery query = new TableQuery(entityManager, WebDebugAction.class, criterias);
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<WebCronAction> findCronActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, WebCronAction.class, criterias);
+        TableQuery query = new TableQuery(entityManager, WebCronAction.class, criterias);
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<WebRoleAction> findRoleActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, WebRoleAction.class, criterias);
+        TableQuery query = new TableQuery(entityManager, WebRoleAction.class, criterias);
         return query.getResultDataSet();
     }
 
     @Override
     public DataSet<WebPropertyAction> findPropertyActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
-        Query query = new Query(entityManager, WebPropertyAction.class, criterias);
+        TableQuery query = new TableQuery(entityManager, WebPropertyAction.class, criterias);
         return query.getResultDataSet();
     }
 

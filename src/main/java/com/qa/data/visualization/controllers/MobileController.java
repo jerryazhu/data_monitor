@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -57,15 +58,20 @@ public class MobileController {
     @ResponseBody
     public DatatablesResponse<AndroidModel> getAndroidModel(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<AndroidModel> actions = mobileActionService.getAndroidModel(criterias);
-//        DataSet<AndroidModel> actions2=null;
-//        DataRow dr=actions2.NewRow();
-//        for(int i=0;i<actions.getRows().size();i++){
-//            if(actions.getRows().get(i).getTime().length()==13){
-//                actions2.getRows().add(actions.getRows().get(i));
-//            }
-//        }
-        return DatatablesResponse.build(actions, criterias);
+        DataSet<AndroidModel> dataSet = mobileActionService.getAndroidModel(criterias);
+/*        List<AndroidModel> filterRows = new ArrayList<>();
+        int ignoreCount = 0;
+        for(int i=0;i<dataSet.getRows().size();i++){
+            if(dataSet.getRows().get(i).getTime().length()==13){
+                filterRows.add(dataSet.getRows().get(i));
+            }
+            else
+            {
+                ignoreCount++;
+            }
+        }
+        DataSet<AndroidModel> dataSetFiltered = new DataSet<AndroidModel>(filterRows, dataSet.getTotalRecords()-ignoreCount, dataSet.getTotalDisplayRecords()-ignoreCount);*/
+        return DatatablesResponse.build(dataSet, criterias);
     }
 //    @RequestMapping(value = "/get_android_model_cnt")
 //    @ResponseBody

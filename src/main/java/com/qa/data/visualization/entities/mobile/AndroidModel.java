@@ -1,5 +1,8 @@
 package com.qa.data.visualization.entities.mobile;
 
+import com.web.spring.datatable.annotations.SqlCondition;
+import com.web.spring.datatable.annotations.SqlIndex;
+
 import javax.persistence.*;
 
 @Entity
@@ -8,7 +11,10 @@ public class AndroidModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @SqlIndex
+    @SqlCondition("LENGTH(time)=13 and time<UNIX_TIMESTAMP(now())*1000")
     private String time;
+    @SqlIndex
     private String uid;
     private String model;
     private String os_version;

@@ -53,6 +53,8 @@ public class IndexController {
     private IosAppService iosAppService;
     @Autowired
     private PCSystemService pcSystemService;
+    @Autowired
+    private PCAppService pcAppService;
     @RequestMapping("/")
     String index(Model model) {
         long lastError = lastErrorRepository.count();
@@ -289,11 +291,29 @@ public class IndexController {
         LinkedHashMap<String,String> pcSystem=pcSystemService.getPCSystem();
         for(Map.Entry<String,String> entry:pcSystem.entrySet()){
             HashMap<String,Object> map=new HashMap<>();
-            map.put("name",entry.getKey());
+            String[] a=entry.getKey().split(" ");
+            String b=a[1];
+            for(int i=2;i<a.length;i++){
+                b=b+a[i];
+            }
+            map.put("name",b);
             map.put("count",Integer.parseInt(entry.getValue()));
             list.add(map);
         }
         return list;
     }
 
+    @RequestMapping("get_pc_app")
+    @ResponseBody
+    public ArrayList getPcApp(){
+        ArrayList<Object> list=new ArrayList<Object>();
+        LinkedHashMap<String,String> pcApp=pcAppService.getPCApp();
+        for(Map.Entry<String,String> entry:pcApp.entrySet()){
+            HashMap<String,Object> map=new HashMap<>();
+            map.put("name",entry.getKey().substring(0,1)+entry.getKey());
+            map.put("count",Integer.parseInt(entry.getValue()));
+            list.add(map);
+        }
+        return list;
+    }
 }

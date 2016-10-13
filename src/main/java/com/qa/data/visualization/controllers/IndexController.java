@@ -291,7 +291,12 @@ public class IndexController {
         LinkedHashMap<String,String> pcSystem=pcSystemService.getPCSystem();
         for(Map.Entry<String,String> entry:pcSystem.entrySet()){
             HashMap<String,Object> map=new HashMap<>();
-            map.put("name",entry.getKey());
+            String[] a=entry.getKey().split(" ");
+            String b=a[1];
+            for(int i=2;i<a.length;i++){
+                b=b+a[i];
+            }
+            map.put("name",b);
             map.put("count",Integer.parseInt(entry.getValue()));
             list.add(map);
         }

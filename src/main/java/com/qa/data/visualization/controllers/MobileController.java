@@ -74,7 +74,7 @@ public class MobileController {
         System.out.println("sql语句为"+queryBuilder);
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
         Query query = this.entityManager.createNativeQuery(queryBuilder);
-        Long a= Long.valueOf(query.hashCode());
+        Long a= Long.valueOf(query.getMaxResults());
         query.setFirstResult(criterias.getStart());
         if(criterias.getLength()==-1){
             query.setMaxResults(query.getMaxResults());

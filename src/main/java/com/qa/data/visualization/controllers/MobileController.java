@@ -8,6 +8,7 @@ import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -71,13 +72,12 @@ public class MobileController {
                 "(select uid,max(time) as time from ABC360_ANDROID_APP_DEVICE_TBL  where LENGTH(time)=13 and time<UNIX_TIMESTAMP(now())*1000 group by uid) b\n" +
                 "on a.time = b.time and a.uid = b.uid \n" +
                 "GROUP BY (model) order by count desc";
-        System.out.println("sql语句为"+queryBuilder);
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
         Query query = this.entityManager.createNativeQuery(queryBuilder);
-        Long a= Long.valueOf(query.getMaxResults());
+        Long max=Long.valueOf(query.getResultList().size());
         query.setFirstResult(criterias.getStart());
         if(criterias.getLength()==-1){
-            query.setMaxResults(query.getMaxResults());
+            query.setMaxResults(query.getResultList().size());
         }else{
             query.setMaxResults(criterias.getLength());
         }
@@ -90,23 +90,7 @@ public class MobileController {
             amc.setCount(objects[1].toString());
             result1.add(amc);
         }
-        Long b=Long.valueOf(result.size());
-        DataSet<AndroidModelCnt> dataSet=new DataSet<AndroidModelCnt>(result1,a, a);
+        DataSet<AndroidModelCnt> dataSet=new DataSet<AndroidModelCnt>(result1,max, max);
         return DatatablesResponse.build(dataSet,criterias);
     }
-//    public ArrayList getAndroidModelCnt(){
-//        ArrayList<Object> list=new ArrayList<Object>();
-//        System.out.print("进入get");
-//        LinkedHashMap<String,String> androidModelCnt=androidModelCntService.getAndroidModelCnt();
-//        System.out.print("完成SQL");
-//        for(Map.Entry<String,String> entry:androidModelCnt.entrySet()){
-//            HashMap<String,Object> map=new HashMap<>();
-//            map.put("name",entry.getKey());
-//            map.put("count",Integer.parseInt(entry.getValue()));
-//            list.add(map);
-//        }
-//        return list;
-//    }
-
-
 }

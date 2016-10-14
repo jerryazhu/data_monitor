@@ -7,6 +7,7 @@ import com.qa.data.visualization.services.MobileActionService;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;
+import com.web.spring.datatable.TableQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -68,29 +69,13 @@ public class MobileController {
     @RequestMapping(value = "/get_android_model_cnt")
     @ResponseBody
     public DatatablesResponse<AndroidModelCnt> getAndroidModelCnt(HttpServletRequest request){
-        String queryBuilder="select SQL_NO_CACHE model as model,count(model) as count from ( select * from ABC360_ANDROID_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*10*1000)) a inner JOIN\n" +
+        String customSQL="select model as model,count(model) as count from ( select * from ABC360_ANDROID_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*10*1000)) a inner JOIN\n" +
                 "(select uid,max(time) as time from ABC360_ANDROID_APP_DEVICE_TBL where LENGTH(time)=13 and time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*10*1000) group by uid) b\n" +
                 "on a.time = b.time and a.uid = b.uid\n" +
                 "GROUP BY (model) order by count desc";
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        Query query = this.entityManager.createNativeQuery(queryBuilder);
-        Long max=Long.valueOf(query.getResultList().size());
-        query.setFirstResult(criterias.getStart());
-        if(criterias.getLength()==-1){
-            query.setMaxResults(query.getResultList().size());
-        }else{
-            query.setMaxResults(criterias.getLength());
-        }
-        List<Object[]> result = query.getResultList();
-        List<AndroidModelCnt> result1=new ArrayList<AndroidModelCnt>();
-        for(int i=0;i<result.size();i++){
-            Object[] objects=result.get(i);
-            AndroidModelCnt amc=new AndroidModelCnt();
-            amc.setModel(objects[0].toString());
-            amc.setCount(objects[1].toString());
-            result1.add(amc);
-        }
-        DataSet<AndroidModelCnt> dataSet=new DataSet<AndroidModelCnt>(result1,max, max);
+        TableQuery query = new TableQuery(entityManager, AndroidModelCnt.class, criterias, customSQL);
+        DataSet<AndroidModelCnt> dataSet=query.getResultDataSet();
         return DatatablesResponse.build(dataSet,criterias);
     }
 }

@@ -17,13 +17,13 @@
         </RollingFile>
     </appenders>
     <loggers>
-        <Logger name="com.qa.data.visualization.aspect" level="debug" additivity="true">
+        <Logger name="com.qa.data.visualization.aspect" level="info" additivity="true">
             <AppenderRef ref="Aspect"/>
         </Logger>
-        <Logger name="com.qa.data.visualization" level="debug" additivity="true">
+        <Logger name="com.qa.data.visualization" level="info" additivity="true">
             <AppenderRef ref="AppSelf"/>
         </Logger>
-        <root level="debug">
+        <root level="info">
             <appender-ref ref="RollingFile"/>
             <appender-ref ref="Console"/>
         </root>

@@ -20,10 +20,10 @@ public class IosSystemServiceImpl implements IosSystemService {
     @SuppressWarnings("unchecked")
     public LinkedHashMap<String, String> getIosSystem() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select os_version as name,count(os_version) as count from ABC360_IOS_APP_DEVICE_TBL a inner JOIN\n" +
-                "(select uid,max(time) as time from ABC360_IOS_APP_DEVICE_TBL group by uid) b\n" +
+        Query q = entityManager.createNativeQuery("select os_version as name,count(os_version) as count from ( select * from ABC360_IOS_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())- 3600*24*10)) a inner JOIN\n" +
+                "(select uid,max(time) as time from ABC360_IOS_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())- 3600*24*10) group by uid) b\n" +
                 "on a.time = b.time and a.uid = b.uid \n" +
-                "GROUP BY (os_version)");
+                " GROUP BY (os_version)");
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             map.put(result[0].toString(), result[1].toString());

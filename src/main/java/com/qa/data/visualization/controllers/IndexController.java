@@ -263,8 +263,14 @@ public class IndexController {
         LinkedHashMap<String,String> iosSystem=iosSystemService.getIosSystem();
         for(Map.Entry<String,String> entry:iosSystem.entrySet()){
             HashMap<String,Object> map=new HashMap<>();
-            String[] a=entry.getKey().split(" ");
-            map.put("name",a[0]+" "+a[1]+" "+a[2].substring(0,1)+"::"+entry.getKey());
+            String[] bigSystemAll=entry.getKey().split(" ");
+            String system=bigSystemAll[bigSystemAll.length-1];
+            String[] bigSystem=system.split("\\.");
+            if(bigSystemAll.length>2){
+                map.put("name",bigSystemAll[0]+" "+bigSystemAll[1]+" "+bigSystem[0]+"::"+entry.getKey());
+            }else{
+                map.put("name",bigSystemAll[0]+" "+bigSystem[0]+"::"+entry.getKey());
+            }
             map.put("count",Integer.parseInt(entry.getValue()));
             list.add(map);
         }

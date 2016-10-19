@@ -20,8 +20,8 @@ public class PCSystemServiceImpl implements PCSystemService {
     @SuppressWarnings("unchecked")
     public LinkedHashMap<String, String> getPCSystem() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select os as name,count(os) as count from ebk_pc_stu_client a inner JOIN\n" +
-                "(select sid,max(login_time) as Login_time from ebk_pc_stu_client where os!='Unknow os' group by sid) b\n" +
+        Query q = entityManager.createNativeQuery("select os as name,count(os) as count from (select * from ebk_pc_stu_client where os!='Unknow os' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*10)) a inner JOIN\n" +
+                "(select sid,max(login_time) as Login_time from ebk_pc_stu_client where os!='Unknow os' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*10) group by sid) b\n" +
                 "on a.login_time = b.login_time and a.sid = b.sid \n" +
                 "GROUP BY (os)");
         List<Object[]> list = q.getResultList();

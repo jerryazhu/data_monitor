@@ -20,8 +20,8 @@ public class PCAppServiceImpl implements PCAppService {
     @SuppressWarnings("unchecked")
     public LinkedHashMap<String, String> getPCApp() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select version as name,count(version) as count from ebk_pc_stu_client a inner JOIN\n" +
-                "(select sid,max(login_time) as Login_time from ebk_pc_stu_client where version!='UnKnow version' group by sid) b\n" +
+        Query q = entityManager.createNativeQuery("select version as name,count(version) as count from (select * from ebk_pc_stu_client where version !='UnKnow version' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*10)) a inner JOIN\n" +
+                "(select sid,max(login_time) as Login_time from ebk_pc_stu_client where version !='UnKnow version' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*10) group by sid) b\n" +
                 "on a.login_time = b.login_time and a.sid = b.sid \n" +
                 "GROUP BY (version)");
         List<Object[]> list = q.getResultList();

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+<div class="row">
+    <h2>PC端</h2>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> PC系统分布
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="pc_system"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> PC软件版本分布
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="pc_app"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+</div>
+
+    <script>
+        $(document).ready(function () {
+            var pc_system_element=$('#pc_system');
+            var pc_system_count_map=new HashMap();
+            var firstPCSystemName=new Array();
+            var pc_system_total=0;
+            $.getJSON('get_pc_system',function (pcSystemJSONObjects) {
+                $.each(pcSystemJSONObjects,function (i,pcSystemJSONObject) {
+                    pc_system_count_map.set(pcSystemJSONObject.name,pcSystemJSONObject.count);
+                    pc_system_total=pc_system_total+pcSystemJSONObject.count;
+                    firstPCSystemName.push(pcSystemJSONObject.name);
+                });
+                var pc_system_map=new HashMap();
+
+                $.each(firstPCSystemName, function (i, name) {
+                    var sub_map = new HashMap();
+                    sub_map.set('drilldownCategories', name);
+                    var drilldownData = [];
+                    var firstLevelCount = 0;
+                    var cnt = pc_system_count_map.get(name) / pc_system_total * 100;
+                    drilldownData.push(round(cnt, 2));
+                    firstLevelCount = firstLevelCount + round(cnt, 2);
+                    sub_map.set('drilldownData', drilldownData);
+                    sub_map.set('y', round(firstLevelCount, 2));
+                    pc_system_map.set(name, sub_map);
+                });
+                pc_system_map.set('firstLevelSeriesName', "App");
+                creteSimplePieHighChart(pc_system_element,pc_system_map);
+            });
+
+            var pc_app_element=$('#pc_app');
+            var pc_app_count_map=new HashMap();
+            var pc_app_big=new HashMap();
+            var firstPCAppName=new Array();
+            var pc_app_total=0;
+            $.getJSON('get_pc_app',function (pcAppJSONObjects) {
+                $.each(pcAppJSONObjects,function (i,pcAppJSONObject) {
+                    pc_app_count_map.set(pcAppJSONObject.name,pcAppJSONObject.count);
+                    pc_app_total=pc_app_total+pcAppJSONObject.count;
+                    var array=pcAppJSONObject.name.slice(0,1);
+                    var array2=pcAppJSONObject.name.slice(1,20);
+                    var arr=[];
+                    if(pc_app_big.has(array)){
+                        pc_app_big.get(array).push(array2);
+                    }else{
+                        arr.push(array2);
+                        firstPCAppName.push(array);
+                        pc_app_big.set(array,arr);
+                    }
+                });
+                var pc_app_map=new HashMap();
+                $.each(firstPCAppName, function (i, name) {
+                    var sub_map = new HashMap();
+                    var drilldownCategories = pc_app_big.get(name);
+                    sub_map.set('drilldownCategories', drilldownCategories);
+                    var drilldownData = [];
+                    var firstLevelCount = 0;
+                    $.each(drilldownCategories, function (i, cate) {
+                        var cnt = pc_app_count_map.get(name+cate) / pc_app_total * 100;
+                        drilldownData.push(round(cnt, 2));
+                        firstLevelCount = firstLevelCount + round(cnt, 2);
+                    });
+                    sub_map.set('drilldownData', drilldownData);
+                    sub_map.set('y', round(firstLevelCount, 2));
+                    pc_app_map.set(name, sub_map);
+                });
+                pc_app_map.set('firstLevelSeriesName', "App");
+                pc_app_map.set('secondLevelSeriesName', "Versions");
+                createPieHighChart(pc_app_element, pc_app_map);
+            });
+        });
+    </script>
+
+</body>
+</html>

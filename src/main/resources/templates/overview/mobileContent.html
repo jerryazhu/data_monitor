@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+<div class="row">
+    <h2>移动端(android)</h2>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> 安卓系统分布
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="android_system"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> 安卓app版本分布
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="android_app"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+</div>
+<div class="row">
+    <h2>移动端(IOS)</h2>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> IOS系统分布
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="ios_system"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> IOS APP版本分布
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="ios_app"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+</div>
+
+    <script>
+        $(document).ready(function () {
+            var android_system_element=$('#android_system');
+            android_system_element.waypoint(function(direction) {
+                var android_system_count_map=new HashMap();
+                var android_system_big=new HashMap();
+                var firstAndroidSystemName=new Array();
+                var android_system_total=0;
+                $.getJSON('get_android_system',function (androidSystemJSONObjects) {
+                    $.each(androidSystemJSONObjects,function (i,androidSystemJSONObject) {
+                        android_system_count_map.set(androidSystemJSONObject.name,androidSystemJSONObject.count);
+                        android_system_total=android_system_total+androidSystemJSONObject.count;
+                        var array=androidSystemJSONObject.name.slice(0,1);
+                        var array2=androidSystemJSONObject.name.slice(1,20);
+
+                        var arr=[];
+                        if(android_system_big.has(array)){
+                            android_system_big.get(array).push(array2);
+                        }else{
+                            arr.push(array2);
+                            firstAndroidSystemName.push(array);
+                            android_system_big.set(array,arr);
+                        }
+                    });
+                    var android_system_map=new HashMap();
+
+                    $.each(firstAndroidSystemName, function (i, name) {
+                        var sub_map = new HashMap();
+                        var drilldownCategories = android_system_big.get(name);
+                        sub_map.set('drilldownCategories', drilldownCategories);
+                        var drilldownData = [];
+                        var firstLevelCount = 0;
+                        $.each(drilldownCategories, function (i, cate) {
+                            var cnt = android_system_count_map.get(name+cate) / android_system_total * 100;
+                            drilldownData.push(round(cnt, 2));
+                            firstLevelCount = firstLevelCount + round(cnt, 2);
+                        });
+                        sub_map.set('drilldownData', drilldownData);
+                        sub_map.set('y', round(firstLevelCount, 2));
+                        android_system_map.set(name, sub_map);
+                    });
+                    android_system_map.set('firstLevelSeriesName', "System");
+                    android_system_map.set('secondLevelSeriesName', "Versions");
+                    createPieHighChart(android_system_element, android_system_map);
+                });
+                this.destroy();
+            }, {
+                offset: 'bottom-in-view'
+            });
+
+            var android_app_element=$('#android_app');
+            var android_app_count_map=new HashMap();
+            var android_app_big=new HashMap();
+            var firstAndroidAppName=new Array();
+            var android_app_total=0;
+            $.getJSON('get_android_app',function (androidAppJSONObjects) {
+                $.each(androidAppJSONObjects,function (i,androidAppJSONObject) {
+                    android_app_count_map.set(androidAppJSONObject.name,androidAppJSONObject.count);
+                    android_app_total=android_app_total+androidAppJSONObject.count;
+                    var array=androidAppJSONObject.name.slice(0,1);
+                    var array2=androidAppJSONObject.name.slice(1,20);
+                    var arr=[];
+                    if(android_app_big.has(array)){
+                        android_app_big.get(array).push(array2);
+                    }else{
+                        arr.push(array2);
+                        firstAndroidAppName.push(array);
+                        android_app_big.set(array,arr);
+                    }
+                });
+                var android_app_map=new HashMap();
+                $.each(firstAndroidAppName, function (i, name) {
+                    var sub_map = new HashMap();
+                    var drilldownCategories = android_app_big.get(name);
+                    sub_map.set('drilldownCategories', drilldownCategories);
+                    var drilldownData = [];
+                    var firstLevelCount = 0;
+                    $.each(drilldownCategories, function (i, cate) {
+                        var cnt = android_app_count_map.get(name+cate) / android_app_total * 100;
+                        drilldownData.push(round(cnt, 2));
+                        firstLevelCount = firstLevelCount + round(cnt, 2);
+                    });
+                    sub_map.set('drilldownData', drilldownData);
+                    sub_map.set('y', round(firstLevelCount, 2));
+                    android_app_map.set(name, sub_map);
+                });
+                android_app_map.set('firstLevelSeriesName', "App");
+                android_app_map.set('secondLevelSeriesName', "Versions");
+                createPieHighChart(android_app_element, android_app_map);
+            });
+
+
+            var ios_system_element=$('#ios_system');
+            ios_system_element.waypoint(function(direction) {
+                var ios_system_count_map=new HashMap();
+                var ios_system_big=new HashMap();
+                var firstIosSystemName=new Array();
+                var ios_system_total=0;
+                $.getJSON('get_ios_system',function (iosSystemJSONObjects) {
+                    $.each(iosSystemJSONObjects,function (i,iosSystemJSONObject) {
+                        ios_system_count_map.set(iosSystemJSONObject.name,iosSystemJSONObject.count);
+                        ios_system_total=ios_system_total+iosSystemJSONObject.count;
+                        var wholeName=iosSystemJSONObject.name.split("::");
+                        var array=wholeName[0];
+                        var array2=wholeName[1];
+                        var arr=[];
+                        if(ios_system_big.has(array)){
+                            ios_system_big.get(array).push(array2);
+                        }else{
+                            arr.push(array2);
+                            firstIosSystemName.push(array);
+                            ios_system_big.set(array,arr);
+                        }
+                    });
+                    var ios_system_map=new HashMap();
+
+                    $.each(firstIosSystemName, function (i, name) {
+                        var sub_map = new HashMap();
+                        var drilldownCategories = ios_system_big.get(name);
+                        sub_map.set('drilldownCategories', drilldownCategories);
+                        var drilldownData = [];
+                        var firstLevelCount = 0;
+                        $.each(drilldownCategories, function (i, cate) {
+                            var cnt = ios_system_count_map.get(name+"::"+cate) / ios_system_total * 100;
+                            drilldownData.push(round(cnt, 2));
+                            firstLevelCount = firstLevelCount + round(cnt, 2);
+                        });
+                        sub_map.set('drilldownData', drilldownData);
+                        sub_map.set('y', round(firstLevelCount, 2));
+                        ios_system_map.set(name, sub_map);
+                    });
+                    ios_system_map.set('firstLevelSeriesName', "System");
+                    ios_system_map.set('secondLevelSeriesName', "Versions");
+                    createPieHighChart(ios_system_element, ios_system_map);
+                });
+                this.destroy();
+            }, {
+                offset: 'bottom-in-view'
+            });
+
+            var ios_app_element=$('#ios_app');
+            var ios_app_count_map=new HashMap();
+            var firstIosAppName=new Array();
+            var ios_app_total=0;
+            $.getJSON('get_ios_app',function (iosAppJSONObjects) {
+                $.each(iosAppJSONObjects,function (i,iosAppJSONObject) {
+                    ios_app_count_map.set(iosAppJSONObject.name,iosAppJSONObject.count);
+                    ios_app_total=ios_app_total+iosAppJSONObject.count;
+                    firstIosAppName.push(iosAppJSONObject.name);
+                });
+                var ios_app_map=new HashMap();
+
+                $.each(firstIosAppName, function (i, name) {
+                    var sub_map = new HashMap();
+                    sub_map.set('drilldownCategories', name);
+                    var drilldownData = [];
+                    var firstLevelCount = 0;
+                    var cnt = ios_app_count_map.get(name) / ios_app_total * 100;
+                    drilldownData.push(round(cnt, 2));
+                    firstLevelCount = firstLevelCount + round(cnt, 2);
+                    sub_map.set('drilldownData', drilldownData);
+                    sub_map.set('y', round(firstLevelCount, 2));
+                    ios_app_map.set(name, sub_map);
+                });
+                ios_app_map.set('firstLevelSeriesName', "App");
+                creteSimplePieHighChart(ios_app_element,ios_app_map);
+            });
+        });
+    </script>
+
+</body>
+</html>

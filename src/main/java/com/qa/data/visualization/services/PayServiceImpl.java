@@ -1,6 +1,7 @@
 package com.qa.data.visualization.services;
 
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -16,6 +17,7 @@ public class PayServiceImpl implements PayService {
 
     @Override
     @SuppressWarnings("unchecked")
+    @Cacheable(value = "pay_cache", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getDailyActivityMap() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         Query q = entityManager.createNativeQuery("select concat(year,'-',month,'-',day) as time,sum(tmoney) from (\n" +

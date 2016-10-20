@@ -5,6 +5,7 @@ import com.qa.data.visualization.repositories.*;
 import com.qa.data.visualization.services.*;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -88,6 +89,7 @@ public class IndexController {
 
     @RequestMapping("class_tools_daily_activity/{type}")
     @ResponseBody
+    @Cacheable(value = "class_tool_cache", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getClassToolDailyActivityByType(@PathVariable String type) {
         ArrayList<Object> list = new ArrayList<Object>();
         List<ClassToolsDailyActivity> classToolsDailyActivityList = classToolsDailyActivityService.getDailyActivitiesByType(type);
@@ -102,6 +104,7 @@ public class IndexController {
 
     @RequestMapping("class_mode_daily_activity/{mode}")
     @ResponseBody
+    @Cacheable(value = "class_mode_cache", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getClassModeDailyActivityByType(@PathVariable String mode) throws ParseException {
         ArrayList<Object> list = new ArrayList<Object>();
         Iterable<ClassModeDailyActivity> classModeDailyActivityList = classModeDailyActivityRepository.findAll();
@@ -140,6 +143,7 @@ public class IndexController {
 
     @RequestMapping("student_daily_activity/{type}")
     @ResponseBody
+    @Cacheable(value = "web_daily_activity_cache", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getStuWebDailyActivityByType(@PathVariable String type) throws ParseException {
         ArrayList<Object> list = new ArrayList<Object>();
         if (type.equals("Web")) {

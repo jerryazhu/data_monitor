@@ -4,6 +4,7 @@ import com.qa.data.visualization.entities.web.*;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.TableQuery;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -18,6 +19,7 @@ public class WebActionServiceImpl implements WebActionService {
 
     @Override
     @SuppressWarnings("unchecked")
+    @Cacheable(value = "web_hotspot_cache", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getHotSpot() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         javax.persistence.Query q = entityManager.createNativeQuery("select left(right(time,8),5) as min,count(*) as cnt,time  from ABC360_WEB_STUDENT_ACTION_LAST_TBL group by min ORDER BY time ASC");

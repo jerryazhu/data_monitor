@@ -13,3 +13,9 @@ curl http://localhost/student_daily_activity/Android
 curl http://localhost/student_daily_activity/Web
 curl http://localhost/student_daily_activity/iOS
 curl http://localhost/student_daily_activity/ClassPlat
+curl http://localhost/get_android_app
+curl http://localhost/get_ios_app
+curl http://localhost/get_android_system
+curl http://localhost/get_ios_system
+curl http://localhost/get_pc_app
+curl http://localhost/get_pc_system

@@ -1,5 +1,6 @@
 package com.qa.data.visualization.services;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -18,6 +19,7 @@ public class AndroidAppServiceImpl implements AndroidAppService{
 
     @Override
     @SuppressWarnings("unchecked")
+    @Cacheable(value = "android_app_version_cache", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getAndroidApp() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         Query q = entityManager.createNativeQuery("select app_version as name,count(app_version) as count from ( select * from ABC360_ANDROID_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*10*1000)) a inner JOIN\n" +

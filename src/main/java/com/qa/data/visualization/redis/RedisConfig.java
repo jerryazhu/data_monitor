@@ -42,7 +42,7 @@ public class RedisConfig extends CachingConfigurerSupport {
                 sb.append("-");
                 for (Object obj : params) {
                     sb.append(obj.toString());
-                    sb.append(":");
+                    sb.append("-");
                 }
                 return sb.toString();
             }

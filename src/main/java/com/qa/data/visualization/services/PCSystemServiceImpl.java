@@ -1,5 +1,6 @@
 package com.qa.data.visualization.services;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -18,6 +19,7 @@ public class PCSystemServiceImpl implements PCSystemService {
 
     @Override
     @SuppressWarnings("unchecked")
+    @Cacheable(value = "pc_os_version_cache", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getPCSystem() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         Query q = entityManager.createNativeQuery("select os as name,count(os) as count from (select * from ebk_pc_stu_client where os!='Unknow os' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*10)) a inner JOIN\n" +

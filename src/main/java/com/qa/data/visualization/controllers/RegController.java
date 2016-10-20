@@ -22,7 +22,7 @@ public class RegController {
     @Autowired
     private RegService regService;
 
-    @RequestMapping(value = "/get_reg_daily_activity", method = RequestMethod.POST)
+    @RequestMapping(value = "/get_reg_daily_activity", method = RequestMethod.GET)
     @ResponseBody
     public ArrayList findRegDailyActivity() throws ParseException {
         ArrayList<Object> list = new ArrayList<Object>();

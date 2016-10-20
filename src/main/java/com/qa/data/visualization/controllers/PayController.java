@@ -23,7 +23,7 @@ public class PayController {
     @Autowired
     private PayService payService;
 
-    @RequestMapping(value = "/get_pay_daily_activity", method = RequestMethod.POST)
+    @RequestMapping(value = "/get_pay_daily_activity", method = RequestMethod.GET)
     @ResponseBody
     public ArrayList findRegDailyActivity() throws ParseException {
         ArrayList<Object> list = new ArrayList<Object>();

@@ -1,71 +1,55 @@
 function createSimpleHighStock(element, url, seriesName, duration){
-    var token = $("meta[name='_csrf']").attr("content");
-    var header = $("meta[name='_csrf_header']").attr("content");
-    $.ajax({
-        type: "post",
-        url: url,
-        data: "",
-        datatype: "json",
-        beforeSend: function (request)
-        {
-            request.setRequestHeader(header, token);
-        },
-        success: function (returnData) {
-            var seriesOptions = [];
-            if(duration=="month"){
-                seriesOptions = [{
-                    name : seriesName,
-                    data : returnData,
-                    tooltip: {
-                        valueDecimals: 0
-                    },
-                    dataGrouping: {
-                        approximation: "sum",
-                        enabled: true,
-                        forced: true,
-                        units: [['month',[1]]]
-                    }
-                }];
-            }
-            else {
-                seriesOptions = [{
-                    name : seriesName,
-                    data : returnData,
-                    tooltip: {
-                        valueDecimals: 0
-                    }
-                }];
-            }
-            element.highcharts('StockChart', {
-                xAxis: {
-                    type: 'datetime',
-                    dateTimeLabelFormats: {
-                        second: '%Y-%m-%d<br/>%H:%M:%S',
-                        minute: '%Y-%m-%d<br/>%H:%M',
-                        hour: '%Y-%m-%d<br/>%H:%M',
-                        day: '%Y<br/>%m-%d',
-                        week: '%Y<br/>%m-%d',
-                        month: '%Y-%m',
-                        year: '%Y'
-                    }
+    $.getJSON(url, function (returnData) {
+        var seriesOptions = [];
+        if(duration=="month"){
+            seriesOptions = [{
+                name : seriesName,
+                data : returnData,
+                tooltip: {
+                    valueDecimals: 0
                 },
-                rangeSelector : {
-                    selected : 4
-                },
-
-                title : {
-                    text : ''
-                },
-                navigator: {
-                    enabled: false
-                },
-                series : seriesOptions
-            });
-
-        },
-        error: function (errorMsg) {
-            console.log(errorMsg);
+                dataGrouping: {
+                    approximation: "sum",
+                    enabled: true,
+                    forced: true,
+                    units: [['month',[1]]]
+                }
+            }];
         }
+        else {
+            seriesOptions = [{
+                name : seriesName,
+                data : returnData,
+                tooltip: {
+                    valueDecimals: 0
+                }
+            }];
+        }
+        element.highcharts('StockChart', {
+            xAxis: {
+                type: 'datetime',
+                dateTimeLabelFormats: {
+                    second: '%Y-%m-%d<br/>%H:%M:%S',
+                    minute: '%Y-%m-%d<br/>%H:%M',
+                    hour: '%Y-%m-%d<br/>%H:%M',
+                    day: '%Y<br/>%m-%d',
+                    week: '%Y<br/>%m-%d',
+                    month: '%Y-%m',
+                    year: '%Y'
+                }
+            },
+            rangeSelector : {
+                selected : 4
+            },
+
+            title : {
+                text : ''
+            },
+            navigator: {
+                enabled: false
+            },
+            series : seriesOptions
+        });
     });
 }
 

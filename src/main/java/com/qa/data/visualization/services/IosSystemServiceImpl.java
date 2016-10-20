@@ -1,5 +1,6 @@
 package com.qa.data.visualization.services;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -18,6 +19,7 @@ public class IosSystemServiceImpl implements IosSystemService {
 
     @Override
     @SuppressWarnings("unchecked")
+    @Cacheable(value = "ios_version_cache", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getIosSystem() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         Query q = entityManager.createNativeQuery("select os_version as name,count(os_version) as count from ( select * from ABC360_IOS_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())- 3600*24*10)) a inner JOIN\n" +

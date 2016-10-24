@@ -93,8 +93,8 @@ public class RegServiceImpl implements RegService {
                     "from ABC360_REG_CITY_RECORD_TBL rcr\n" +
                     "left join ebk_student_info si on rcr.sid=si.sid\n" +
                     "left join ebk_students s on si.sid=s.id\n" +
-                    "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('2016-10-1')\n" +
-                    "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('2016-10-23')\n" +
+                    "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('"+cutData[0]+"')\n" +
+                    "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('"+cutData[1]+"')\n" +
                     "and s.status=0\n" +
                     ")A\n" +
                     "group by city\n" +
@@ -109,8 +109,8 @@ public class RegServiceImpl implements RegService {
                             "from ABC360_REG_CITY_RECORD_TBL rcr\n" +
                             "left join ebk_student_info si on rcr.sid=si.sid\n" +
                             "left join ebk_students s on si.sid=s.id\n" +
-                            "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('2016-10-1')\n" +
-                            "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('2016-10-23')\n" +
+                            "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('"+cutData[0]+"')\n" +
+                            "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('"+cutData[1]+"')\n" +
                             "and s.status=0\n" +
                             "and rcr.city='" + aCityName + "'\n" +
                             ")A\n" +

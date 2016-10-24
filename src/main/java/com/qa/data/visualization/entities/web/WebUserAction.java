@@ -1,5 +1,7 @@
 package com.qa.data.visualization.entities.web;
 
+import com.web.spring.datatable.annotations.SqlIndex;
+
 import javax.persistence.*;
 
 @Entity
@@ -10,9 +12,11 @@ public class WebUserAction {
     private Long id;
 
     private String time;
+    @SqlIndex
     private String operatorid;
     private String operatorname;
     private String controller;
+    @SqlIndex
     private String method;
     private String notes;
 

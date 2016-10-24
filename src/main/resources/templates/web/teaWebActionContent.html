@@ -30,8 +30,8 @@
                             <th></th>
                             <th>operatorid</th>
                             <th>operatorname</th>
-                            <th>Controller</th>
-                            <th>Method</th>
+                            <th>controller</th>
+                            <th>method</th>
                             <th>notes</th>
                         </tr>
                         </tfoot>
@@ -74,6 +74,7 @@
 <script th:src="@{/js/datatables/jquery.dataTables.js}"></script>
 <script th:src="@{/js/datatables/dataTables.bootstrap.min.js}"></script>
 <script>
+    //<![CDATA[
     $(document).ready(function () {
 
         $('#teaWebActionGroupOrderBy').DataTable({
@@ -135,7 +136,10 @@
         $('#teaWebActionTable tfoot th').each(function () {
             var title = $(this).text();
             if (title != "") {
-                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+                $(this).html('<input id="'+title+'" type="text" placeholder="Search ' + title + '" />');
+            }
+            if(title=="operatorname" || title=="controller" || title=="notes"){
+                $('#'+title).hide();
             }
         });
 
@@ -143,6 +147,17 @@
         table.columns().every(function () {
             var that = this;
             $('input', this.footer()).on('keyup change', function () {
+                if(this.value != "" && (this.id == "operatorid" || this.id != "method")){
+                    $.each(["operatorname","controller","notes"], function(i, id){
+                        $('#'+id).show();
+                    });
+                }
+                if(this.value == "" && (this.id == "operatorid" || this.id == "method")){
+                    $.each(["operatorname","controller","notes"], function(i, id){
+                        $('#'+id).val("").hide();
+                        table.column(':contains('+id+')').search("");
+                    });
+                }
                 if (that.search() !== this.value) {
                     that.search(this.value).draw();
                 }
@@ -150,6 +165,7 @@
         });
 
     });
+    //]]>
 </script>
 </body>
 </html>

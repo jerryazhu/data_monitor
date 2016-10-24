@@ -6,10 +6,16 @@ import com.qa.data.visualization.entities.pc.PCTeaAPIAction;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 
-public interface PCActionService {
+import java.util.LinkedHashMap;
+
+public interface PCService {
     DataSet<PCStuAPIAction> findPCStuAPIActionsWithDatatablesCriterias(DatatablesCriterias criterias);
 
     DataSet<PCAPIStuActionGroupCount> findPCAPIStuActionGroupCount(DatatablesCriterias criterias);
 
     DataSet<PCTeaAPIAction> findPCTeaAPIActionsWithDatatablesCriterias(DatatablesCriterias criterias);
+
+    LinkedHashMap<String,String> getPCApp();
+
+    LinkedHashMap<String,String> getPCSystem();
 }

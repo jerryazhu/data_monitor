@@ -3,7 +3,6 @@ package com.qa.data.visualization.controllers;
 import com.qa.data.visualization.entities.*;
 import com.qa.data.visualization.repositories.*;
 import com.qa.data.visualization.services.*;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.awt.event.ItemEvent;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,19 +41,11 @@ public class IndexController {
     @Autowired
     private WebActionService lastWebStuActionService;
     @Autowired
-    private BrandService brandService;
+    private AndroidService androidService;
     @Autowired
-    private AndroidSystemService androidSystemService;
+    private IosService iosService;
     @Autowired
-    private AndroidAppService androidAppService;
-    @Autowired
-    private IosSystemService iosSystemService;
-    @Autowired
-    private IosAppService iosAppService;
-    @Autowired
-    private PCSystemService pcSystemService;
-    @Autowired
-    private PCAppService pcAppService;
+    private PCService pcService;
     @RequestMapping("/")
     String index(Model model) {
         long lastError = lastErrorRepository.count();
@@ -229,25 +219,11 @@ public class IndexController {
         }
         return list;
     }
-    @RequestMapping("get_brand")
-    @ResponseBody
-    public ArrayList getBrand(){
-        ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String, String> stuBrand= brandService.getBrand();
-        for(Map.Entry<String,String> entry :stuBrand.entrySet()){
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("name",entry.getKey());
-            map.put("count",Integer.parseInt(entry.getValue()));
-            list.add(map);
-        }
-        return list;
-    }
-
     @RequestMapping("get_android_system")
     @ResponseBody
     public ArrayList getAndroidSystem(){
         ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String,String> androidSystem=androidSystemService.getAndroidSystem();
+        LinkedHashMap<String,String> androidSystem=androidService.getAndroidSystem();
         for(Map.Entry<String,String> entry:androidSystem.entrySet()){
             HashMap<String,Object> map=new HashMap<>();
             map.put("name",entry.getKey().substring(0,1)+entry.getKey());
@@ -260,7 +236,7 @@ public class IndexController {
     @ResponseBody
     public ArrayList getAndroidApp(){
         ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String,String> androidApp=androidAppService.getAndroidApp();
+        LinkedHashMap<String,String> androidApp=androidService.getAndroidApp();
         for(Map.Entry<String,String> entry:androidApp.entrySet()){
             HashMap<String,Object> map=new HashMap<>();
             map.put("name",entry.getKey().substring(0,1)+entry.getKey());
@@ -273,7 +249,7 @@ public class IndexController {
     @ResponseBody
     public ArrayList getIosSystem(){
         ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String,String> iosSystem=iosSystemService.getIosSystem();
+        LinkedHashMap<String,String> iosSystem=iosService.getIosSystem();
         for(Map.Entry<String,String> entry:iosSystem.entrySet()){
             HashMap<String,Object> map=new HashMap<>();
             String[] bigSystemAll=entry.getKey().split(" ");
@@ -293,7 +269,7 @@ public class IndexController {
     @ResponseBody
     public ArrayList getIosApp(){
         ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String,String> iosApp=iosAppService.getIosApp();
+        LinkedHashMap<String,String> iosApp=iosService.getIosApp();
         for(Map.Entry<String,String> entry:iosApp.entrySet()){
             HashMap<String,Object> map=new HashMap<>();
             map.put("name",entry.getKey());
@@ -307,7 +283,7 @@ public class IndexController {
     @ResponseBody
     public ArrayList getPcSystem(){
         ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String,String> pcSystem=pcSystemService.getPCSystem();
+        LinkedHashMap<String,String> pcSystem= pcService.getPCSystem();
         for(Map.Entry<String,String> entry:pcSystem.entrySet()){
             HashMap<String,Object> map=new HashMap<>();
             String[] a=entry.getKey().split(" ");
@@ -326,7 +302,7 @@ public class IndexController {
     @ResponseBody
     public ArrayList getPcApp(){
         ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String,String> pcApp=pcAppService.getPCApp();
+        LinkedHashMap<String,String> pcApp= pcService.getPCApp();
         for(Map.Entry<String,String> entry:pcApp.entrySet()){
             HashMap<String,Object> map=new HashMap<>();
             map.put("name",entry.getKey().substring(0,1)+entry.getKey());

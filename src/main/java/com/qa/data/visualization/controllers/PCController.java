@@ -3,7 +3,7 @@ package com.qa.data.visualization.controllers;
 import com.qa.data.visualization.entities.pc.PCAPIStuActionGroupCount;
 import com.qa.data.visualization.entities.pc.PCStuAPIAction;
 import com.qa.data.visualization.entities.pc.PCTeaAPIAction;
-import com.qa.data.visualization.services.PCActionService;
+import com.qa.data.visualization.services.PCService;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;
@@ -19,13 +19,13 @@ import javax.servlet.http.HttpServletRequest;
 public class PCController {
 
     @Autowired
-    private PCActionService pcActionService;
+    private PCService pcService;
 
     @RequestMapping(value = "/get_pc_stu_api_action")
     @ResponseBody
     public DatatablesResponse<PCStuAPIAction> findPCStuAPIActionsWithDatatablesCriterias(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<PCStuAPIAction> actions = pcActionService.findPCStuAPIActionsWithDatatablesCriterias(criterias);
+        DataSet<PCStuAPIAction> actions = pcService.findPCStuAPIActionsWithDatatablesCriterias(criterias);
         return DatatablesResponse.build(actions, criterias);
     }
 
@@ -33,7 +33,7 @@ public class PCController {
     @ResponseBody
     public DatatablesResponse<PCAPIStuActionGroupCount> findPCAPIStuActionGroupCount(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<PCAPIStuActionGroupCount> actions = pcActionService.findPCAPIStuActionGroupCount(criterias);
+        DataSet<PCAPIStuActionGroupCount> actions = pcService.findPCAPIStuActionGroupCount(criterias);
         return DatatablesResponse.build(actions, criterias);
     }
 
@@ -41,7 +41,7 @@ public class PCController {
     @ResponseBody
     public DatatablesResponse<PCTeaAPIAction> findPCTeaAPIActionsWithDatatablesCriterias(HttpServletRequest request) {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<PCTeaAPIAction> actions = pcActionService.findPCTeaAPIActionsWithDatatablesCriterias(criterias);
+        DataSet<PCTeaAPIAction> actions = pcService.findPCTeaAPIActionsWithDatatablesCriterias(criterias);
         return DatatablesResponse.build(actions, criterias);
     }
 

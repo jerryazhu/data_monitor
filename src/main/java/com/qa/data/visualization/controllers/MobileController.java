@@ -69,8 +69,8 @@ public class MobileController {
     @RequestMapping(value = "/get_android_model_cnt")
     @ResponseBody
     public DatatablesResponse<AndroidModelCnt> getAndroidModelCnt(HttpServletRequest request){
-        String customSQL="select model as model,count(model) as count from ( select * from ABC360_ANDROID_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*10*1000)) a inner JOIN\n" +
-                "(select uid,max(time) as time from ABC360_ANDROID_APP_DEVICE_TBL where LENGTH(time)=13 and time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*10*1000) group by uid) b\n" +
+        String customSQL="select model as model,count(model) as count from ( select * from ABC360_ANDROID_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*30*1000)) a inner JOIN\n" +
+                "(select uid,max(time) as time from ABC360_ANDROID_APP_DEVICE_TBL where LENGTH(time)=13 and time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*30*1000) group by uid) b\n" +
                 "on a.time = b.time and a.uid = b.uid\n" +
                 "GROUP BY (model) order by count desc";
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);

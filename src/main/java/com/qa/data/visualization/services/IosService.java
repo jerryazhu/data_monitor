@@ -3,8 +3,9 @@ package com.qa.data.visualization.services;
 import java.util.LinkedHashMap;
 
 /**
- * Created by dykj on 2016/10/10.
+ * Created by dykj on 2016/10/24.
  */
-public interface IosSystemService {
+public interface IosService {
+    LinkedHashMap<String,String> getIosApp();
     LinkedHashMap<String,String> getIosSystem();
 }

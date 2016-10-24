@@ -26,7 +26,28 @@ function getLastDay(year, month) {
     var new_date = new Date(new_year, new_month, 1);
     return (new Date(new_date.getTime() - 1000 * 60 * 60 * 24)).getDate();
 }
-
+function get_type_by(selected) {
+    var type = "";
+    if(selected=="所有"){
+        type = "all";
+    }
+    else if(selected=="其它"){
+        type = "0";
+    }
+    else if(selected=="青少年"){
+        type = "1";
+    }
+    else if(selected=="商务"){
+        type = "2";
+    }
+    else if(selected=="应试"){
+        type = "3";
+    }
+    else{
+        type = "4";
+    }
+    return type;
+}
 function timeConverter(UNIX_timestamp) {
     var a = new Date(UNIX_timestamp * 1000);
     var year = a.getFullYear();

@@ -12,7 +12,7 @@ public class AndroidModel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @SqlIndex
-    @SqlCondition("LENGTH(time)=13 and time<UNIX_TIMESTAMP(now())*1000")
+    @SqlCondition("LENGTH(time)=13 and time<UNIX_TIMESTAMP(now())*1000 and time> (UNIX_TIMESTAMP(now())*1000 - 3600*24*30*1000)")
     private String time;
     @SqlIndex
     private String uid;

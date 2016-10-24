@@ -1,4 +1,136 @@
 Highcharts.setOptions({global: {useUTC: false}});
+function createSimpleColumnHighcharts(element,url,data,remark) {
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    $.ajax({
+        type: "get",
+        url:  encodeURI(url+data),
+        data: "",
+        datatype: "json",
+        beforeSend: function (request)
+        {
+            request.setRequestHeader(header, token);
+        },
+        success: function (returnData) {
+            $(element).highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: data
+                },
+                xAxis: {
+                    type: 'category'
+                },
+                yAxis: {},
+                legend: {
+                    enabled: false
+                },
+                plotOptions: {
+                    series: {
+                        borderWidth: 0,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.y:.0f}'
+                        }
+                    }
+                },
+
+                tooltip: {
+                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.0f}</b><br/>'
+                },
+
+                series: [{
+                    name: remark,
+                    colorByPoint: true,
+                    data: returnData
+                }]
+            });
+        },
+        error: function (errorMsg) {
+            console.log(errorMsg);
+        }
+    });
+}
+function createColumnHighcharts(element,url,data,type) {
+    $.ajax({
+        type: "get",
+        url: url+data,
+        data: "",
+        datatype: "json",
+        success: function (returnData) {
+            var JSONObject = returnData ;
+            $(element).highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: data.slice(0,23)+type
+                },
+                xAxis: {
+                    categories: JSONObject.cityNames
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: ''
+                    },
+                    stackLabels: {
+                        enabled: true,
+                        style: {
+                            fontWeight: 'bold',
+                            color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                        }
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        var total = 0;
+                        $.each(this.points, function (i, point) {
+                            total = total + point.y;
+                        });
+                        var s = '<strong>' + this.x + '总计 ' + total + '</strong>';
+
+                        var sortedPoints = this.points.sort(function (a, b) {
+                            return ((a.y < b.y) ? -1 : ((a.y > b.y) ? 1 : 0));
+                        });
+                        sortedPoints.reverse();
+                        $.each(sortedPoints, function (i, point) {
+                            if(point.y != 0 ){
+                                s += '<br/><span style="color:' + point.series.color + '"> ' + point.series.name + ' </span>: <b> ' + point.y + " (" + (point.y / total * 100).toFixed(0) + '%)';
+                            }
+                        });
+
+                        return s;
+                    },
+                    shared: true
+                },
+                series: [{
+                    name: '其它',
+                    data: JSONObject.type0
+                }, {
+                    name: '青少年',
+                    data: JSONObject.type1
+                }, {
+                    name: '商务',
+                    data: JSONObject.type2
+                }, {
+                    name: '应试',
+                    data: JSONObject.type3
+                }, {
+                    name: '综合',
+                    data: JSONObject.type4
+                }]
+
+            });
+        },
+        error: function (errorMsg) {
+            console.log(errorMsg);
+        }
+    });
+    
+}
 function creteSimplePieHighChart(element,map) {
     var colors;
     if(map.size > 5){

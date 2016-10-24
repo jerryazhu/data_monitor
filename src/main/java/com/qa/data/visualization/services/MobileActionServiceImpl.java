@@ -9,9 +9,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 @Service
 public class MobileActionServiceImpl implements MobileActionService {
@@ -41,6 +38,7 @@ public class MobileActionServiceImpl implements MobileActionService {
         TableQuery query = new TableQuery(entityManager, IOSAPIStuActionGroupCount.class, criterias);
         return query.getResultDataSet();
     }
+
     @Override
     public DataSet<AndroidModel> getAndroidModel(DatatablesCriterias criterias) {
         TableQuery query = new TableQuery(entityManager, AndroidModel.class, criterias);

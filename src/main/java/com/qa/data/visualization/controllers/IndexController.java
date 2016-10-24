@@ -46,6 +46,7 @@ public class IndexController {
     private IosService iosService;
     @Autowired
     private PCService pcService;
+
     @RequestMapping("/")
     String index(Model model) {
         long lastError = lastErrorRepository.count();
@@ -99,28 +100,28 @@ public class IndexController {
         ArrayList<Object> list = new ArrayList<Object>();
         Iterable<ClassModeDailyActivity> classModeDailyActivityList = classModeDailyActivityRepository.findAll();
         for (ClassModeDailyActivity da : classModeDailyActivityList) {
-            if(mode.equals("QQ")) {
+            if (mode.equals("QQ")) {
                 Object[] array = new Object[2];
                 DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
                 array[0] = dfm.parse(da.getTime()).getTime();
                 array[1] = da.getQQ();
                 list.add(array);
             }
-            if(mode.equals("Skype")) {
+            if (mode.equals("Skype")) {
                 Object[] array = new Object[2];
                 DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
                 array[0] = dfm.parse(da.getTime()).getTime();
                 array[1] = da.getSkype();
                 list.add(array);
             }
-            if(mode.equals("ClassPlat")) {
+            if (mode.equals("ClassPlat")) {
                 Object[] array = new Object[2];
                 DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
                 array[0] = dfm.parse(da.getTime()).getTime();
                 array[1] = da.getClassPlat();
                 list.add(array);
             }
-            if(mode.equals("Total")) {
+            if (mode.equals("Total")) {
                 Object[] array = new Object[2];
                 DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
                 array[0] = dfm.parse(da.getTime()).getTime();
@@ -189,6 +190,7 @@ public class IndexController {
         }
         return list;
     }
+
     @RequestMapping("get_student_browser")
     @ResponseBody
     public ArrayList getStuBrowser() {
@@ -219,61 +221,65 @@ public class IndexController {
         }
         return list;
     }
+
     @RequestMapping("get_android_system")
     @ResponseBody
-    public ArrayList getAndroidSystem(){
-        ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String,String> androidSystem=androidService.getAndroidSystem();
-        for(Map.Entry<String,String> entry:androidSystem.entrySet()){
-            HashMap<String,Object> map=new HashMap<>();
-            map.put("name",entry.getKey().substring(0,1)+entry.getKey());
-            map.put("count",Integer.parseInt(entry.getValue()));
+    public ArrayList getAndroidSystem() {
+        ArrayList<Object> list = new ArrayList<Object>();
+        LinkedHashMap<String, String> androidSystem = androidService.getAndroidSystem();
+        for (Map.Entry<String, String> entry : androidSystem.entrySet()) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("name", entry.getKey().substring(0, 1) + entry.getKey());
+            map.put("count", Integer.parseInt(entry.getValue()));
             list.add(map);
         }
         return list;
     }
+
     @RequestMapping("get_android_app")
     @ResponseBody
-    public ArrayList getAndroidApp(){
-        ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String,String> androidApp=androidService.getAndroidApp();
-        for(Map.Entry<String,String> entry:androidApp.entrySet()){
-            HashMap<String,Object> map=new HashMap<>();
-            map.put("name",entry.getKey().substring(0,1)+entry.getKey());
-            map.put("count",Integer.parseInt(entry.getValue()));
+    public ArrayList getAndroidApp() {
+        ArrayList<Object> list = new ArrayList<Object>();
+        LinkedHashMap<String, String> androidApp = androidService.getAndroidApp();
+        for (Map.Entry<String, String> entry : androidApp.entrySet()) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("name", entry.getKey().substring(0, 1) + entry.getKey());
+            map.put("count", Integer.parseInt(entry.getValue()));
             list.add(map);
         }
         return list;
     }
+
     @RequestMapping("get_ios_system")
     @ResponseBody
-    public ArrayList getIosSystem(){
-        ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String,String> iosSystem=iosService.getIosSystem();
-        for(Map.Entry<String,String> entry:iosSystem.entrySet()){
-            HashMap<String,Object> map=new HashMap<>();
-            String[] bigSystemAll=entry.getKey().split(" ");
-            String system=bigSystemAll[bigSystemAll.length-1];
-            String[] bigSystem=system.split("\\.");
-            if(bigSystemAll.length>2){
-                map.put("name",bigSystemAll[0]+" "+bigSystemAll[1]+" "+bigSystem[0]+"::"+entry.getKey());
-            }else{
-                map.put("name",bigSystemAll[0]+" "+bigSystem[0]+"::"+entry.getKey());
+    public ArrayList getIosSystem() {
+        ArrayList<Object> list = new ArrayList<Object>();
+        LinkedHashMap<String, String> iosSystem = iosService.getIosSystem();
+        for (Map.Entry<String, String> entry : iosSystem.entrySet()) {
+            HashMap<String, Object> map = new HashMap<>();
+            String[] bigSystemAll = entry.getKey().split(" ");
+            String system = bigSystemAll[bigSystemAll.length - 1];
+            String[] bigSystem = system.split("\\.");
+            if (bigSystemAll.length > 2) {
+                map.put("name", bigSystemAll[0] + " " + bigSystemAll[1] + " " + bigSystem[0] + "::" + entry.getKey());
+            } else {
+                map.put("name", bigSystemAll[0] + " " + bigSystem[0] + "::" + entry.getKey());
             }
-            map.put("count",Integer.parseInt(entry.getValue()));
+            map.put("count", Integer.parseInt(entry.getValue()));
             list.add(map);
         }
         return list;
     }
+
     @RequestMapping("get_ios_app")
     @ResponseBody
-    public ArrayList getIosApp(){
-        ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String,String> iosApp=iosService.getIosApp();
-        for(Map.Entry<String,String> entry:iosApp.entrySet()){
-            HashMap<String,Object> map=new HashMap<>();
-            map.put("name",entry.getKey());
-            map.put("count",Integer.parseInt(entry.getValue()));
+    public ArrayList getIosApp() {
+        ArrayList<Object> list = new ArrayList<Object>();
+        LinkedHashMap<String, String> iosApp = iosService.getIosApp();
+        for (Map.Entry<String, String> entry : iosApp.entrySet()) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("name", entry.getKey());
+            map.put("count", Integer.parseInt(entry.getValue()));
             list.add(map);
         }
         return list;
@@ -281,18 +287,18 @@ public class IndexController {
 
     @RequestMapping("get_pc_system")
     @ResponseBody
-    public ArrayList getPcSystem(){
-        ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String,String> pcSystem= pcService.getPCSystem();
-        for(Map.Entry<String,String> entry:pcSystem.entrySet()){
-            HashMap<String,Object> map=new HashMap<>();
-            String[] a=entry.getKey().split(" ");
-            String b=a[1];
-            for(int i=2;i<a.length;i++){
-                b=b+a[i];
+    public ArrayList getPcSystem() {
+        ArrayList<Object> list = new ArrayList<Object>();
+        LinkedHashMap<String, String> pcSystem = pcService.getPCSystem();
+        for (Map.Entry<String, String> entry : pcSystem.entrySet()) {
+            HashMap<String, Object> map = new HashMap<>();
+            String[] a = entry.getKey().split(" ");
+            String b = a[1];
+            for (int i = 2; i < a.length; i++) {
+                b = b + a[i];
             }
-            map.put("name",b);
-            map.put("count",Integer.parseInt(entry.getValue()));
+            map.put("name", b);
+            map.put("count", Integer.parseInt(entry.getValue()));
             list.add(map);
         }
         return list;
@@ -300,13 +306,13 @@ public class IndexController {
 
     @RequestMapping("get_pc_app")
     @ResponseBody
-    public ArrayList getPcApp(){
-        ArrayList<Object> list=new ArrayList<Object>();
-        LinkedHashMap<String,String> pcApp= pcService.getPCApp();
-        for(Map.Entry<String,String> entry:pcApp.entrySet()){
-            HashMap<String,Object> map=new HashMap<>();
-            map.put("name",entry.getKey().substring(0,1)+entry.getKey());
-            map.put("count",Integer.parseInt(entry.getValue()));
+    public ArrayList getPcApp() {
+        ArrayList<Object> list = new ArrayList<Object>();
+        LinkedHashMap<String, String> pcApp = pcService.getPCApp();
+        for (Map.Entry<String, String> entry : pcApp.entrySet()) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("name", entry.getKey().substring(0, 1) + entry.getKey());
+            map.put("count", Integer.parseInt(entry.getValue()));
             list.add(map);
         }
         return list;

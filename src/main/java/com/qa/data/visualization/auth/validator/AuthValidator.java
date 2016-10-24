@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component
@@ -23,7 +22,7 @@ public class AuthValidator implements Validator {
     public void validate(Object o, Errors errors) {
         User user = (User) o;
         Object value = errors.getFieldValue("username");
-        if (value == null ||!StringUtils.hasText(value.toString())) {
+        if (value == null || !StringUtils.hasText(value.toString())) {
             errors.rejectValue("username", "NotEmpty");
             return;
         }
@@ -37,7 +36,7 @@ public class AuthValidator implements Validator {
         }
 
         Object value2 = errors.getFieldValue("password");
-        if (value2 == null ||!StringUtils.hasText(value2.toString())) {
+        if (value2 == null || !StringUtils.hasText(value2.toString())) {
             errors.rejectValue("password", "NotEmpty");
             return;
         }

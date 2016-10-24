@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
@@ -18,17 +19,20 @@ import java.util.Arrays;
 public class LogAspect {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private ThreadLocal<Long> startTime = new ThreadLocal<>();
+
     public LogAspect() {
         logger.info("LogAspect");
     }
+
     @Pointcut("execution(* com.qa.data.visualization..*(..))")
-    public void webLog(){}
+    public void webLog() {
+    }
 
     @Before("webLog()")
     public void doBefore(JoinPoint joinPoint) throws Throwable {
         startTime.set(System.currentTimeMillis());
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if(attributes != null) {
+        if (attributes != null) {
             HttpServletRequest request = attributes.getRequest();
             logger.info("URL : " + request.getRequestURL().toString());
             logger.info("HTTP_METHOD : " + request.getMethod());
@@ -37,6 +41,7 @@ public class LogAspect {
             logger.info("ARGS : " + Arrays.toString(joinPoint.getArgs()));
         }
     }
+
     @AfterReturning(returning = "ret", pointcut = "webLog()")
     public void doAfterReturning(Object ret) throws Throwable {
         logger.info("RESPONSE : " + ret);

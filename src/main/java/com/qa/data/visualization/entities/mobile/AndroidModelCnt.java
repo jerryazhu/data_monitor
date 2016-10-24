@@ -1,11 +1,5 @@
 package com.qa.data.visualization.entities.mobile;
 
-import org.springframework.data.annotation.Id;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-
 /**
  * Created by dykj on 2016/10/12.
  */

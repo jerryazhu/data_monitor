@@ -15,7 +15,7 @@ public interface PCService {
 
     DataSet<PCTeaAPIAction> findPCTeaAPIActionsWithDatatablesCriterias(DatatablesCriterias criterias);
 
-    LinkedHashMap<String,String> getPCApp();
+    LinkedHashMap<String, String> getPCApp();
 
-    LinkedHashMap<String,String> getPCSystem();
+    LinkedHashMap<String, String> getPCSystem();
 }

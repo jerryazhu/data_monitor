@@ -8,6 +8,11 @@ public class ClassModeDailyActivity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Integer Skype;
+    private Integer QQ;
+    private Integer ClassPlat;
+    private Integer Total;
+    private String time;
 
     public Integer getSkype() {
         return Skype;
@@ -41,11 +46,6 @@ public class ClassModeDailyActivity {
         Total = total;
     }
 
-    private Integer Skype;
-    private Integer QQ;
-    private Integer ClassPlat;
-    private Integer Total;
-
     public String getTime() {
         return time;
     }
@@ -53,7 +53,5 @@ public class ClassModeDailyActivity {
     public void setTime(String time) {
         this.time = time;
     }
-
-    private String time;
 
 }

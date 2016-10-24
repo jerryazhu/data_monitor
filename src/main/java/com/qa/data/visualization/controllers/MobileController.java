@@ -1,7 +1,6 @@
 package com.qa.data.visualization.controllers;
 
 
-import com.qa.data.visualization.auth.entities.User;
 import com.qa.data.visualization.entities.mobile.*;
 import com.qa.data.visualization.services.MobileActionService;
 import com.web.spring.datatable.DataSet;
@@ -9,16 +8,13 @@ import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;
 import com.web.spring.datatable.TableQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
 
 @Controller
 @RequestMapping(value = "/mobile")
@@ -27,6 +23,7 @@ public class MobileController {
     private EntityManager entityManager;
     @Autowired
     private MobileActionService mobileActionService;
+
     @RequestMapping(value = "/get_android_stu_api_action")
     @ResponseBody
     public DatatablesResponse<AndroidStuAPIAction> findAndroidStuAPIForDataTables(HttpServletRequest request) {
@@ -66,16 +63,17 @@ public class MobileController {
         DataSet<AndroidModel> dataSet = mobileActionService.getAndroidModel(criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
+
     @RequestMapping(value = "/get_android_model_cnt")
     @ResponseBody
-    public DatatablesResponse<AndroidModelCnt> getAndroidModelCnt(HttpServletRequest request){
-        String customSQL="select model as model,count(model) as count from ( select * from ABC360_ANDROID_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*30*1000)) a inner JOIN\n" +
+    public DatatablesResponse<AndroidModelCnt> getAndroidModelCnt(HttpServletRequest request) {
+        String customSQL = "select model as model,count(model) as count from ( select * from ABC360_ANDROID_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*30*1000)) a inner JOIN\n" +
                 "(select uid,max(time) as time from ABC360_ANDROID_APP_DEVICE_TBL where LENGTH(time)=13 and time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*30*1000) group by uid) b\n" +
                 "on a.time = b.time and a.uid = b.uid\n" +
                 "GROUP BY (model) order by count desc";
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
         TableQuery query = new TableQuery(entityManager, AndroidModelCnt.class, criterias, customSQL);
-        DataSet<AndroidModelCnt> dataSet=query.getResultDataSet();
-        return DatatablesResponse.build(dataSet,criterias);
+        DataSet<AndroidModelCnt> dataSet = query.getResultDataSet();
+        return DatatablesResponse.build(dataSet, criterias);
     }
 }

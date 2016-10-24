@@ -13,7 +13,7 @@ import java.util.List;
  * Created by dykj on 2016/10/24.
  */
 @Service
-public class IosServiceImpl implements IosService{
+public class IosServiceImpl implements IosService {
     @PersistenceContext
     private EntityManager entityManager;
 

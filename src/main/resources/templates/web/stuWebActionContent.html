@@ -27,7 +27,7 @@
                         </thead>
                         <tfoot>
                         <tr>
-                            <th></th>
+                            <th>time</th>
                             <th>operatorid</th>
                             <th>operatorname</th>
                             <th>controller</th>
@@ -147,12 +147,12 @@
         table.columns().every(function () {
             var that = this;
             $('input', this.footer()).on('keyup change', function () {
-                if(this.value != "" && (this.id == "operatorid" || this.id == "method")){
+                if(this.value != "" && (this.id == "time" || this.id == "operatorid" || this.id == "method")){
                     $.each(["operatorname","controller","notes"], function(i, id){
                         $('#'+id).show();
                     });
                 }
-                if(this.value == "" && (this.id == "operatorid" || this.id == "method")){
+                if(this.value == "" && (this.id == "time" || this.id == "operatorid" || this.id == "method")){
                     $.each(["operatorname","controller","notes"], function(i, id){
                         $('#'+id).val("").hide();
                         table.column(':contains('+id+')').search("");

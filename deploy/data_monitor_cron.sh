@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 source /etc/profile
 curl http://localhost/reg/get_reg_daily_activity
+curl http://localhost/reg/get_reg_city/$(date '+%Y-%m')-1---$(date --date='yesterday' '+%Y-%m-%d')
+curl http://localhost/reg/get_experience_city/$(date '+%Y-%m')-1---$(date --date='yesterday' '+%Y-%m-%d')---all
 curl http://localhost/pay/get_pay_daily_activity
 curl http://localhost/get_web_hot_spot
 curl http://localhost/class_tools_daily_activity/2

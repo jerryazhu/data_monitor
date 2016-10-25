@@ -92,7 +92,7 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-context-support:4.3.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: redis.clients:jedis:2.8.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.4.2" level="project" />
-    <orderEntry type="library" name="Maven: com.github.lwfwind.web:spring-jquery-datatable:1.6" level="project" />
+    <orderEntry type="library" name="Maven: com.github.lwfwind.web:spring-jquery-datatable:1.7" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.16" level="project" />
     <orderEntry type="library" name="Maven: com.github.lwfwind.common:java-common-helper:1.0" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.5" level="project" />

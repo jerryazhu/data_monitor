@@ -11,6 +11,7 @@ public class WebStuAction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @SqlIndex
     private String time;
     @SqlIndex
     private String operatorid;

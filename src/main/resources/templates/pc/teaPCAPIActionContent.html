@@ -103,7 +103,7 @@
         table.columns().every(function () {
             var that = this;
             $('input', this.footer()).on('keyup change', function () {
-                if(this.value != "" && (this.id == "uid" || this.id != "api_name")){
+                if(this.value != "" && (this.id == "uid" || this.id == "api_name")){
                     $.each(["request_type","parameters","response_idx"], function(i, id){
                         $('#'+id).show();
                     });

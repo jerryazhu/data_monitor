@@ -16,6 +16,7 @@ public class PCStuAPIAction {
     @SqlIndex
     private String uid;
     private String client_ip;
+    @SqlIndex
     private String api_name;
     private String request_type;
     private String session_id;

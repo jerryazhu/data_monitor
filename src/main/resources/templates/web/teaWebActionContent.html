@@ -147,7 +147,7 @@
         table.columns().every(function () {
             var that = this;
             $('input', this.footer()).on('keyup change', function () {
-                if(this.value != "" && (this.id == "operatorid" || this.id != "method")){
+                if(this.value != "" && (this.id == "operatorid" || this.id == "method")){
                     $.each(["operatorname","controller","notes"], function(i, id){
                         $('#'+id).show();
                     });

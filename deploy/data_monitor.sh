@@ -50,7 +50,7 @@ do_git() {
 do_build() {
 	echo "do build start at $(date)" | tee -a $APP_BUILD_LOGFILE
 	cd $APP_SOURCE_ROOTDIR
-	./mvnw clean package -Dmaven.test.skip=true 2>&1 | tee -a $APP_BUILD_LOGFILE
+	./mvnw clean package -U -Dmaven.test.skip=true 2>&1 | tee -a $APP_BUILD_LOGFILE
 	echo "do build end at $(date)" | tee -a $APP_BUILD_LOGFILE
 }
 

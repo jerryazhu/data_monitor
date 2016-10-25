@@ -10,7 +10,7 @@ public class PCTeaAPIAction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    @SqlIndex
     private String time;
     @SqlIndex
     private String uid;

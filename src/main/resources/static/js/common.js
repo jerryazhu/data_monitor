@@ -48,7 +48,7 @@ function get_type_by(selected) {
     }
     return type;
 }
-function timeConverter(UNIX_timestamp) {
+function unixToDate(UNIX_timestamp) {
     var a = new Date(UNIX_timestamp * 1000);
     var year = a.getFullYear();
     var month = a.getMonth() + 1;
@@ -62,4 +62,9 @@ function timeConverter(UNIX_timestamp) {
     min = (min < 10 ? "0" : "") + min;
     sec = (sec < 10 ? "0" : "") + sec;
     return year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec;
+}
+
+function dateToUnix(dateString){
+    if(dateString.length == 0){return "";}
+    return Date.parse(dateString)/1000;
 }

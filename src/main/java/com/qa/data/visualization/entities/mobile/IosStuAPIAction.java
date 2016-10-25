@@ -10,7 +10,7 @@ public class IosStuAPIAction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    @SqlIndex
     private String time;
     @SqlIndex
     private String uid;

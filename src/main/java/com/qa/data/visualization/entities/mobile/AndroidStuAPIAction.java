@@ -10,7 +10,7 @@ public class AndroidStuAPIAction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    @SqlIndex
     private String time;
     @SqlIndex
     @Column(name = "uid")

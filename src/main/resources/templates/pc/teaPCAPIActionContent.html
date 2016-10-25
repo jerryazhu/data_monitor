@@ -27,7 +27,7 @@
                         </thead>
                         <tfoot>
                         <tr>
-                            <th></th>
+                            <th>time</th>
                             <th>uid</th>
                             <th>api_name</th>
                             <th>request_type</th>
@@ -78,7 +78,7 @@
                 {
                     "targets": 0,
                     "render": function ( data, type, row, meta ) {
-                        return timeConverter(parseInt(data));
+                        return unixToDate(parseInt(data));
                     }
                 }
             ],
@@ -103,12 +103,12 @@
         table.columns().every(function () {
             var that = this;
             $('input', this.footer()).on('keyup change', function () {
-                if(this.value != "" && (this.id == "uid" || this.id == "api_name")){
+                if(this.value != "" && (this.id == "time" || this.id == "uid" || this.id == "api_name")){
                     $.each(["request_type","parameters","response_idx"], function(i, id){
                         $('#'+id).show();
                     });
                 }
-                if(this.value == "" && (this.id == "uid" || this.id == "api_name")){
+                if(this.value == "" && (this.id == "time" || this.id == "uid" || this.id == "api_name")){
                     $.each(["request_type","parameters","response_idx"], function(i, id){
                         $('#'+id).val("").hide();
                         table.column(':contains('+id+')').search("");
@@ -116,7 +116,19 @@
 
                 }
                 if (that.search() !== this.value) {
-                    that.search(this.value).draw();
+                    if(this.id == "time"){
+                        if(this.value.indexOf("~") != -1){
+                            var arr = this.value.split("~");
+                            var converted = dateToUnix(arr[0])+"~"+dateToUnix(arr[1]);
+                            that.search(converted).draw();
+                        }
+                        else {
+                            that.search(dateToUnix(this.value)).draw();
+                        }
+                    }
+                    else {
+                        that.search(this.value).draw();
+                    }
                 }
             });
         });

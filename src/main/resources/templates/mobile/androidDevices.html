@@ -126,7 +126,7 @@
                     "targets": 0,
                     "render": function ( data, type, row, meta ) {
                         if(data.length==13){
-                            return timeConverter(parseInt(data) / 1000);
+                            return unixToDate(parseInt(data) / 1000);
                         }else{
                             return "未知时间";
                         }

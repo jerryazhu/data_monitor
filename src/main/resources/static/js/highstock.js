@@ -188,3 +188,146 @@ function createHighStock(element, url, map, duration) {
         });
     });
 }
+function createComplexHighStock(element,url1,url2,by,type){
+    var date = new Date();
+    var dateformatted_to;
+    var dateformatted_from;
+    if(date.getDate()==1){
+        dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-1";
+    }
+    else{
+        dateformatted_from = date.getFullYear() + "-" + (date.getMonth() + 1) + "-1";
+    }
+    if(date.getDate()==1){
+        dateformatted_to = date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(),date.getMonth());
+    }
+    else{
+        dateformatted_to = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1);
+    }
+    var time=dateformatted_from+"---"+dateformatted_to;
+    $.ajax({
+        type: "get",
+        url: url1+time,
+        data: "",
+        datatype: "json",
+        success: function (returnData) {
+            var seriesOptions = [],
+                tooltipOptions = "";
+            seriesCounter = 0;
+            names = [];
+            var JSONObject= returnData ;
+            JSONObject.forEach(function (element) {
+                names.push(element[0]);
+            });
+            /**
+             * Create the chart when all data is loaded
+             * @returns {undefined}
+             */
+            function createChart() {
+                element.highcharts('StockChart', {
+                    xAxis: {
+                        type: 'datetime',
+                        dateTimeLabelFormats: {
+                            second: '%Y-%m-%d<br/>%H:%M:%S',
+                            minute: '%Y-%m-%d<br/>%H:%M',
+                            hour: '%Y-%m-%d<br/>%H:%M',
+                            day: '%Y<br/>%m-%d',
+                            week: '%Y<br/>%m-%d',
+                            month: '%Y-%m',
+                            year: '%Y'
+                        }
+                    },
+                    rangeSelector: {
+                        selected: 4
+                    },
+
+                    navigator: {
+                        enabled: false
+                    },
+
+                    tooltip: tooltipOptions,
+
+                    series: seriesOptions
+                });
+            }
+            $.each(names, function (i, name) {
+                if(type=="all"){
+                    var condition=name;
+                }else{
+                    var condition = name+"---"+get_type_by(type);
+                }
+                $.getJSON(url2+condition,function (data) {
+                    if(by=="month"){
+                        seriesOptions[i] = {
+                            name: name,
+                            data: data,
+                            dataGrouping: {
+                                approximation: "sum",
+                                enabled: true,
+                                forced: true,
+                                units: [['month',[1]]]
+                            }
+                        };
+                        tooltipOptions={
+                            formatter: function() {
+                                var total = 0;
+                                $.each(this.points, function (i, point) {
+                                    total = total + point.y;
+                                });
+                                var s = '<strong>'+ Highcharts.dateFormat('%Y-%m', new Date(this.x)) + " " + total + '</strong>';
+
+                                var sortedPoints = this.points.sort(function(a, b){
+                                    return ((a.y < b.y) ? -1 : ((a.y > b.y) ? 1 : 0));
+                                });
+                                sortedPoints.reverse();
+                                $.each(sortedPoints , function(i, point) {
+                                    s += '<br/><span style="color:'+point.series.color+'"> '+point.series.name+' </span>: <b> '+point.y;
+                                });
+
+                                return s;
+                            },
+                            valueDecimals: 0
+                        };
+                    }
+                    else {
+                        seriesOptions[i] = {
+                            name: name,
+                            data: data
+                        };
+                        tooltipOptions={
+                            formatter: function() {
+                                var total = 0;
+                                $.each(this.points, function (i, point) {
+                                    total = total + point.y;
+                                });
+                                var s = '<strong>'+ Highcharts.dateFormat('%Y-%m-%d', new Date(this.x)) + " " + total + '</strong>';
+
+                                var sortedPoints = this.points.sort(function(a, b){
+                                    return ((a.y < b.y) ? -1 : ((a.y > b.y) ? 1 : 0));
+                                });
+                                sortedPoints.reverse();
+                                $.each(sortedPoints , function(i, point) {
+                                    s += '<br/><span style="color:'+point.series.color+'"> '+point.series.name+' </span>: <b> '+point.y;
+                                });
+
+                                return s;
+                            },
+                            valueDecimals: 0
+                        };
+                    }
+                    // As we're loading the data asynchronously, we don't know what order it will arrive. So
+                    // we keep a counter and create the chart when all the data is loaded.
+                    seriesCounter += 1;
+
+                    if (seriesCounter === names.length) {
+                        createChart();
+                    }
+                });
+            });
+
+        },
+        error: function (errorMsg) {
+            console.log(errorMsg);
+        }
+    });
+}

@@ -1,5 +1,6 @@
 package com.qa.data.visualization.controllers;
 
+import com.qa.data.visualization.aspect.LogAspect;
 import com.qa.data.visualization.services.RegService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import sun.awt.image.ImageWatched;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -57,6 +59,7 @@ public class RegController {
 
     @RequestMapping(value = "/get_experience_city/{data}")
     @ResponseBody
+    @SuppressWarnings("unchecked")
     public HashMap getExperienceCity(@PathVariable String data) throws Exception {
         ArrayList<Object> list = new ArrayList<Object>();
         ArrayList message = regService.getExperienceCity(data);
@@ -70,4 +73,31 @@ public class RegController {
         return cityMessage;
     }
 
+    @RequestMapping(value = "/get_reg_stock/{name}")
+    @ResponseBody
+    public ArrayList getRegStock(@PathVariable String name) throws Exception{
+        ArrayList<Object> list =new ArrayList<Object>();
+        LinkedHashMap<String,String> regStock=regService.getRegStock(name);
+        for(Map.Entry<String,String> entry:regStock.entrySet()){
+            Object[]array=new Object[2];
+            array[0]=Long.parseLong(entry.getKey());
+            array[1]=Long.parseLong(entry.getValue());
+            list.add(array);
+        }
+        return list;
+    }
+
+    @RequestMapping(value = "/get_trial_stock/{nameType}")
+    @ResponseBody
+    public ArrayList getTrialStock(@PathVariable String nameType) throws Exception{
+        ArrayList<Object> list=new ArrayList<Object>();
+        LinkedHashMap<String,String> trialStock=regService.getTrialStock(nameType);
+        for(Map.Entry<String,String> entry:trialStock.entrySet()){
+            Object[]array=new Object[2];
+            array[0]=Long.parseLong(entry.getKey());
+            array[1]=Long.parseLong(entry.getValue());
+            list.add(array);
+        }
+        return list;
+    }
 }

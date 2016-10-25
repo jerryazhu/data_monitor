@@ -26,10 +26,6 @@
 
 	<repositories>
 		<repository>
-			<id>oss-sonatype</id>
-			<url>https://oss.sonatype.org/service/local/</url>
-		</repository>
-		<repository>
 			<id>JBoss repository</id>
 			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>

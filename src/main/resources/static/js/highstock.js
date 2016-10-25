@@ -212,11 +212,10 @@ function createComplexHighStock(element,url1,url2,by,type){
         datatype: "json",
         success: function (returnData) {
             var seriesOptions = [],
-                tooltipOptions = "";
-            seriesCounter = 0;
-            names = [];
-            var JSONObject= returnData ;
-            JSONObject.forEach(function (element) {
+                tooltipOptions = [];
+            var seriesCounter = 0;
+            var names = [];
+            returnData.forEach(function (element) {
                 names.push(element[0]);
             });
             /**
@@ -251,10 +250,11 @@ function createComplexHighStock(element,url1,url2,by,type){
                 });
             }
             $.each(names, function (i, name) {
+                var condition = "";
                 if(type=="all"){
-                    var condition=name;
+                    condition=name;
                 }else{
-                    var condition = name+"---"+get_type_by(type);
+                    condition = name+"---"+get_type_by(type);
                 }
                 $.getJSON(url2+condition,function (data) {
                     if(by=="month"){

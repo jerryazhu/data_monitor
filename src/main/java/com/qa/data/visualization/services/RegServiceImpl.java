@@ -186,24 +186,24 @@ public class RegServiceImpl implements RegService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public LinkedHashMap<String,String> getRegStock(String cityName){
-        String citySql=null;
-        String groupBy=null;
-        if(cityName!=null){
-            citySql="where city='"+cityName+"'";
-            groupBy="year,month,day,city";
-        }else{
-            citySql="";
-            groupBy="year,month,day";
+    public LinkedHashMap<String, String> getRegStock(String cityName) {
+        String citySql = null;
+        String groupBy = null;
+        if (cityName != null) {
+            citySql = "where city='" + cityName + "'";
+            groupBy = "year,month,day,city";
+        } else {
+            citySql = "";
+            groupBy = "year,month,day";
         }
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         Query q = entityManager.createNativeQuery("select UNIX_TIMESTAMP(CONVERT_TZ(concat(year,'-',month,'-',day),'+00:00','SYSTEM'))*1000 as time,sum(cnt) as cnt " +
-                "from ABC360_REG_CITY_DAILY_TBL  "+citySql+"group by "+groupBy+"");
+                "from ABC360_REG_CITY_DAILY_TBL  " + citySql + "group by " + groupBy + "");
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
-            if(result[0]!=null){
-                String []resultTime=result[0].toString().split("\\.");
-                if(resultTime[0].compareTo("1325347200000")>0){
+            if (result[0] != null) {
+                String[] resultTime = result[0].toString().split("\\.");
+                if (resultTime[0].compareTo("1325347200000") > 0) {
                     map.put(resultTime[0], result[1].toString());
                 }
             }
@@ -213,14 +213,14 @@ public class RegServiceImpl implements RegService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public LinkedHashMap<String,String> getTrialStock(String nameType){
-        String []cutDate=nameType.split("---");
-        String type=cutDate[1];
-        String sqlType=null;
-        if(type.equals("all")){
-            sqlType="study_aim in(0,1,2,3,4)";
-        }else{
-            sqlType="study_aim="+type+"";
+    public LinkedHashMap<String, String> getTrialStock(String nameType) {
+        String[] cutDate = nameType.split("---");
+        String type = cutDate[1];
+        String sqlType = null;
+        if (type.equals("all")) {
+            sqlType = "study_aim in(0,1,2,3,4)";
+        } else {
+            sqlType = "study_aim=" + type + "";
         }
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         Query q = entityManager.createNativeQuery("select UNIX_TIMESTAMP(CONVERT_TZ(concat(year,'-',month,'-',day), '+00:00', 'SYSTEM'))*1000  as time,count(A.study_aim) as cnt from (\n" +
@@ -228,14 +228,14 @@ public class RegServiceImpl implements RegService {
                 "        from ABC360_REG_CITY_RECORD_TBL rcr\n" +
                 "        left join ebk_student_info si on rcr.sid = si.sid\n" +
                 "        left join ebk_students s on si.sid = s.id\n" +
-                "        where "+sqlType+" and rcr.city='"+cutDate[0]+"'\n" +
+                "        where " + sqlType + " and rcr.city='" + cutDate[0] + "'\n" +
                 "        and s.status = 0\n" +
                 "    ) A\n" +
                 "    group by year,month,day");
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
-            if(result[0]!=null){
-                String[]cutResult=result[0].toString().split("\\.");
+            if (result[0] != null) {
+                String[] cutResult = result[0].toString().split("\\.");
                 map.put(cutResult[0], result[1].toString());
             }
         }

@@ -228,9 +228,7 @@
             timeRange2=fromDate2.datepicker('getFormattedDate')+"---"+toDate2.datepicker('getFormattedDate')+"---"+typeNumber;
             createColumnHighcharts(experience_city_element,experience_city_url,timeRange2,type);
         });
-    });
-    function regStock(){
-        var reg_city_url="/reg/get_reg_city/";
+
         var reg_stock_element=$('#student_reg_region_stock');
         var reg_stock_url="/reg/get_reg_stock/";
         var reg_stock_duration = $('#reg_location').find("option:selected").val();
@@ -240,9 +238,8 @@
             var reg_stock_duration = $(this).find("option:selected").val();
             createComplexHighStock(reg_stock_element,reg_city_url,reg_stock_url,reg_stock_duration,reg_stock_type);
         });
-    };
-    function trialStock() {
-        var reg_city_url="/reg/get_reg_city/";
+
+
         var trial_stock_element=$('#student_trial_region_stock');
         var trial_stock_url="/reg/get_trial_stock/";
         var trial_stock_duration=$('#trial_time_select').find("option:selected").val();
@@ -256,9 +253,7 @@
             var trial_stock_duration=$('#trial_time_select').find("option:selected").val();
             createComplexHighStock(trial_stock_element,reg_city_url,trial_stock_url,trial_stock_duration,trial_stock_type);
         });
-    };
-    setTimeout(regStock,1000);
-    setTimeout(trialStock,6000);
+    });
 </script>
 </body>
 </html>

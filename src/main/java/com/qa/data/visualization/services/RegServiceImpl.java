@@ -186,6 +186,7 @@ public class RegServiceImpl implements RegService {
 
     @Override
     @SuppressWarnings("unchecked")
+    @Cacheable(value = "reg_city", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getRegStock(String cityName) {
         String citySql = null;
         String groupBy = null;
@@ -213,6 +214,7 @@ public class RegServiceImpl implements RegService {
 
     @Override
     @SuppressWarnings("unchecked")
+    @Cacheable(value = "trial_city", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getTrialStock(String nameType) {
         String[] cutDate = nameType.split("---");
         String type = cutDate[1];

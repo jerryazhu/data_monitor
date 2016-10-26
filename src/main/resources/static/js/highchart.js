@@ -1,14 +1,13 @@
 Highcharts.setOptions({global: {useUTC: false}});
-function createSimpleColumnHighcharts(element,url,data,remark) {
+function createSimpleColumnHighcharts(element, url, data, remark) {
     var token = $("meta[name='_csrf']").attr("content");
     var header = $("meta[name='_csrf_header']").attr("content");
     $.ajax({
         type: "get",
-        url:  encodeURI(url+data),
+        url: encodeURI(url + data),
         data: "",
         datatype: "json",
-        beforeSend: function (request)
-        {
+        beforeSend: function (request) {
             request.setRequestHeader(header, token);
         },
         success: function (returnData) {
@@ -53,20 +52,20 @@ function createSimpleColumnHighcharts(element,url,data,remark) {
         }
     });
 }
-function createColumnHighcharts(element,url,data,type) {
+function createColumnHighcharts(element, url, data, type) {
     $.ajax({
         type: "get",
-        url: url+data,
+        url: url + data,
         data: "",
         datatype: "json",
         success: function (returnData) {
-            var JSONObject = returnData ;
+            var JSONObject = returnData;
             $(element).highcharts({
                 chart: {
                     type: 'column'
                 },
                 title: {
-                    text: data.slice(0,23)+type
+                    text: data.slice(0, 23) + type
                 },
                 xAxis: {
                     categories: JSONObject.cityNames
@@ -97,7 +96,7 @@ function createColumnHighcharts(element,url,data,type) {
                         });
                         sortedPoints.reverse();
                         $.each(sortedPoints, function (i, point) {
-                            if(point.y != 0 ){
+                            if (point.y != 0) {
                                 s += '<br/><span style="color:' + point.series.color + '"> ' + point.series.name + ' </span>: <b> ' + point.y + " (" + (point.y / total * 100).toFixed(0) + '%)';
                             }
                         });
@@ -129,11 +128,11 @@ function createColumnHighcharts(element,url,data,type) {
             console.log(errorMsg);
         }
     });
-    
+
 }
-function creteSimplePieHighChart(element,map) {
+function creteSimplePieHighChart(element, map) {
     var colors;
-    if(map.size > 5){
+    if (map.size > 5) {
         colors = Highcharts.getOptions().colors.slice(0);
     }
     else {
@@ -144,7 +143,7 @@ function creteSimplePieHighChart(element,map) {
     var data = [];
     var index = 0;
     map.forEach(function (value, key) {
-        if (key != "firstLevelSeriesName" ) {
+        if (key != "firstLevelSeriesName") {
             categories.push(key);
             var subData = {
                 y: value.get("y"),
@@ -231,7 +230,7 @@ function creteSimplePieHighChart(element,map) {
 }
 function createPieHighChart(element, map) {
     var colors;
-    if(map.size > 5){
+    if (map.size > 5) {
         colors = Highcharts.getOptions().colors.slice(0);
     }
     else {

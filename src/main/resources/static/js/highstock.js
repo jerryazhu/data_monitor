@@ -1,10 +1,10 @@
-function createSimpleHighStock(element, url, seriesName, duration){
+function createSimpleHighStock(element, url, seriesName, duration) {
     $.getJSON(url, function (returnData) {
         var seriesOptions = [];
-        if(duration=="month"){
+        if (duration == "month") {
             seriesOptions = [{
-                name : seriesName,
-                data : returnData,
+                name: seriesName,
+                data: returnData,
                 tooltip: {
                     valueDecimals: 0
                 },
@@ -12,14 +12,14 @@ function createSimpleHighStock(element, url, seriesName, duration){
                     approximation: "sum",
                     enabled: true,
                     forced: true,
-                    units: [['month',[1]]]
+                    units: [['month', [1]]]
                 }
             }];
         }
         else {
             seriesOptions = [{
-                name : seriesName,
-                data : returnData,
+                name: seriesName,
+                data: returnData,
                 tooltip: {
                     valueDecimals: 0
                 }
@@ -38,17 +38,17 @@ function createSimpleHighStock(element, url, seriesName, duration){
                     year: '%Y'
                 }
             },
-            rangeSelector : {
-                selected : 4
+            rangeSelector: {
+                selected: 4
             },
 
-            title : {
-                text : ''
+            title: {
+                text: ''
             },
             navigator: {
                 enabled: false
             },
-            series : seriesOptions
+            series: seriesOptions
         });
     });
 }
@@ -188,26 +188,26 @@ function createHighStock(element, url, map, duration) {
         });
     });
 }
-function createComplexHighStock(element,url1,url2,by,type){
+function createComplexHighStock(element, url1, url2, by, type) {
     var date = new Date();
     var dateformatted_to;
     var dateformatted_from;
-    if(date.getDate()==1){
+    if (date.getDate() == 1) {
         dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-1";
     }
-    else{
+    else {
         dateformatted_from = date.getFullYear() + "-" + (date.getMonth() + 1) + "-1";
     }
-    if(date.getDate()==1){
-        dateformatted_to = date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(),date.getMonth());
+    if (date.getDate() == 1) {
+        dateformatted_to = date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth());
     }
-    else{
+    else {
         dateformatted_to = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1);
     }
-    var time=dateformatted_from+"---"+dateformatted_to;
+    var time = dateformatted_from + "---" + dateformatted_to;
     $.ajax({
         type: "get",
-        url: url1+time,
+        url: url1 + time,
         data: "",
         datatype: "json",
         success: function (returnData) {
@@ -249,15 +249,16 @@ function createComplexHighStock(element,url1,url2,by,type){
                     series: seriesOptions
                 });
             }
+
             $.each(names, function (i, name) {
                 var condition = "";
-                if(type=="all"){
-                    condition=name;
-                }else{
-                    condition = name+"---"+get_type_by(type);
+                if (type == "all") {
+                    condition = name;
+                } else {
+                    condition = name + "---" + get_type_by(type);
                 }
-                $.getJSON(url2+condition,function (data) {
-                    if(by=="month"){
+                $.getJSON(url2 + condition, function (data) {
+                    if (by == "month") {
                         seriesOptions[i] = {
                             name: name,
                             data: data,
@@ -265,23 +266,23 @@ function createComplexHighStock(element,url1,url2,by,type){
                                 approximation: "sum",
                                 enabled: true,
                                 forced: true,
-                                units: [['month',[1]]]
+                                units: [['month', [1]]]
                             }
                         };
-                        tooltipOptions={
-                            formatter: function() {
+                        tooltipOptions = {
+                            formatter: function () {
                                 var total = 0;
                                 $.each(this.points, function (i, point) {
                                     total = total + point.y;
                                 });
-                                var s = '<strong>'+ Highcharts.dateFormat('%Y-%m', new Date(this.x)) + " " + total + '</strong>';
+                                var s = '<strong>' + Highcharts.dateFormat('%Y-%m', new Date(this.x)) + " " + total + '</strong>';
 
-                                var sortedPoints = this.points.sort(function(a, b){
+                                var sortedPoints = this.points.sort(function (a, b) {
                                     return ((a.y < b.y) ? -1 : ((a.y > b.y) ? 1 : 0));
                                 });
                                 sortedPoints.reverse();
-                                $.each(sortedPoints , function(i, point) {
-                                    s += '<br/><span style="color:'+point.series.color+'"> '+point.series.name+' </span>: <b> '+point.y;
+                                $.each(sortedPoints, function (i, point) {
+                                    s += '<br/><span style="color:' + point.series.color + '"> ' + point.series.name + ' </span>: <b> ' + point.y;
                                 });
 
                                 return s;
@@ -294,20 +295,20 @@ function createComplexHighStock(element,url1,url2,by,type){
                             name: name,
                             data: data
                         };
-                        tooltipOptions={
-                            formatter: function() {
+                        tooltipOptions = {
+                            formatter: function () {
                                 var total = 0;
                                 $.each(this.points, function (i, point) {
                                     total = total + point.y;
                                 });
-                                var s = '<strong>'+ Highcharts.dateFormat('%Y-%m-%d', new Date(this.x)) + " " + total + '</strong>';
+                                var s = '<strong>' + Highcharts.dateFormat('%Y-%m-%d', new Date(this.x)) + " " + total + '</strong>';
 
-                                var sortedPoints = this.points.sort(function(a, b){
+                                var sortedPoints = this.points.sort(function (a, b) {
                                     return ((a.y < b.y) ? -1 : ((a.y > b.y) ? 1 : 0));
                                 });
                                 sortedPoints.reverse();
-                                $.each(sortedPoints , function(i, point) {
-                                    s += '<br/><span style="color:'+point.series.color+'"> '+point.series.name+' </span>: <b> '+point.y;
+                                $.each(sortedPoints, function (i, point) {
+                                    s += '<br/><span style="color:' + point.series.color + '"> ' + point.series.name + ' </span>: <b> ' + point.y;
                                 });
 
                                 return s;

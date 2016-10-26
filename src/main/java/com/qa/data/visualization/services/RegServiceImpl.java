@@ -33,6 +33,7 @@ public class RegServiceImpl implements RegService {
 
     @Override
     @SuppressWarnings("unchecked")
+    @Cacheable(value = "reg_city_only", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getRegCity(String time) {
         String[] cutTime = time.split("---");
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
@@ -148,30 +149,30 @@ public class RegServiceImpl implements RegService {
                 }
             }
         }
-
+        int zero = 0;
         if (number0.size() == 0) {
             for (int i = 0; i < 20; i++) {
-                number0.add("0");
+                number0.add(zero);
             }
         }
         if (number1.size() == 0) {
             for (int i = 0; i < 20; i++) {
-                number1.add("0");
+                number1.add(zero);
             }
         }
         if (number2.size() == 0) {
             for (int i = 0; i < 20; i++) {
-                number2.add("0");
+                number2.add(zero);
             }
         }
         if (number3.size() == 0) {
             for (int i = 0; i < 20; i++) {
-                number3.add("0");
+                number3.add(zero);
             }
         }
         if (number4.size() == 0) {
             for (int i = 0; i < 20; i++) {
-                number4.add("0");
+                number4.add(zero);
             }
         }
         ArrayList message = new ArrayList();

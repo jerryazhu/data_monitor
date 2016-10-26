@@ -59,7 +59,6 @@ public class RegController {
     @ResponseBody
     @SuppressWarnings("unchecked")
     public HashMap getExperienceCity(@PathVariable String data) throws Exception {
-        ArrayList<Object> list = new ArrayList<Object>();
         ArrayList message = regService.getExperienceCity(data);
         HashMap cityMessage = new HashMap();
         cityMessage.put("cityNames", message.get(0));

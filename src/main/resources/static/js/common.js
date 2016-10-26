@@ -1,6 +1,6 @@
 if (!Array.prototype.shuffle) {
-    Array.prototype.shuffle = function() {
-        for(var j, x, i = this.length; i; j = parseInt(Math.random() * i), x = this[--i], this[i] = this[j], this[j] = x);
+    Array.prototype.shuffle = function () {
+        for (var j, x, i = this.length; i; j = parseInt(Math.random() * i), x = this[--i], this[i] = this[j], this[j] = x);
         return this;
     };
 }
@@ -28,22 +28,22 @@ function getLastDay(year, month) {
 }
 function get_type_by(selected) {
     var type = "";
-    if(selected=="所有"){
+    if (selected == "所有") {
         type = "all";
     }
-    else if(selected=="其它"){
+    else if (selected == "其它") {
         type = "0";
     }
-    else if(selected=="青少年"){
+    else if (selected == "青少年") {
         type = "1";
     }
-    else if(selected=="商务"){
+    else if (selected == "商务") {
         type = "2";
     }
-    else if(selected=="应试"){
+    else if (selected == "应试") {
         type = "3";
     }
-    else{
+    else {
         type = "4";
     }
     return type;
@@ -64,7 +64,9 @@ function unixToDate(UNIX_timestamp) {
     return year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec;
 }
 
-function dateToUnix(dateString){
-    if(dateString.length == 0){return "";}
-    return Date.parse(dateString)/1000;
+function dateToUnix(dateString) {
+    if (dateString.length == 0) {
+        return "";
+    }
+    return Date.parse(dateString) / 1000;
 }

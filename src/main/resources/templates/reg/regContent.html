@@ -26,7 +26,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <div  style="float:right">
+            <div style="float:right">
                 <div class="input-group input-daterange">
                     <input id="from_date" type="text" class="form-control" value=""/>
                     <span class="input-group-addon">to</span>
@@ -81,7 +81,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div style="float: right">
-                <select id='reg_location' class="selectpicker" >
+                <select id='reg_location' class="selectpicker">
                     <option>month</option>
                     <option>day</option>
                 </select>
@@ -138,120 +138,122 @@
         var reg_his_url = "/reg/get_reg_daily_activity";
         var seriesName = "注册量";
         var reg_his_duration = $('#reg_total').find("option:selected").val();
-        createSimpleHighStock(reg_his_element, reg_his_url,seriesName, reg_his_duration);
-        $('#reg_total').on('change', function(){
+        createSimpleHighStock(reg_his_element, reg_his_url, seriesName, reg_his_duration);
+        $('#reg_total').on('change', function () {
             var reg_his_duration = $(this).find("option:selected").val();
-            createSimpleHighStock(reg_his_element, reg_his_url,seriesName, reg_his_duration);
+            createSimpleHighStock(reg_his_element, reg_his_url, seriesName, reg_his_duration);
         });
 
-        var reg_city_element=$('#student_reg_city_spread');
-        var reg_city_url="/reg/get_reg_city/";
-        var reg_city_remark="地区";
-        var fromDate=$('#from_date');
-        var toDate=$('#to_date');
+        var reg_city_element = $('#student_reg_city_spread');
+        var reg_city_url = "/reg/get_reg_city/";
+        var reg_city_remark = "地区";
+        var fromDate = $('#from_date');
+        var toDate = $('#to_date');
         fromDate.datepicker({
-            startDate:"-3y",
-            todayHighlight:true,
-            format:'yyyy-m-d',
-            antoclose:true
+            startDate: "-3y",
+            todayHighlight: true,
+            format: 'yyyy-m-d',
+            antoclose: true
         });
         toDate.datepicker({
-            startDate:"-3y",
-            todayHighlight:true,
-            format:'yyyy-m-d',
-            antoclose:true
+            startDate: "-3y",
+            todayHighlight: true,
+            format: 'yyyy-m-d',
+            antoclose: true
         });
-        var date=new Date();
+        var date = new Date();
         var dateFormatted_to;
         var dateFormatted_from;
-        if(date.getDate()==1){
-            dateFormatted_from=date.getFullYear()+"-"+date.getMonth()+"-1";
-        }else{
-            dateFormatted_from=date.getFullYear()+"-"+(date.getMonth()+1)+"-1";
+        if (date.getDate() == 1) {
+            dateFormatted_from = date.getFullYear() + "-" + date.getMonth() + "-1";
+        } else {
+            dateFormatted_from = date.getFullYear() + "-" + (date.getMonth() + 1) + "-1";
         }
-        if(date.getDate()==1){
-            dateFormatted_to=date.getFullYear()+"-"+date.getMonth()+"-"+getLastDay(date.getFullYear(),date.getMonth());
-        }else{
-            dateFormatted_to=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+(date.getDate()-1);
+        if (date.getDate() == 1) {
+            dateFormatted_to = date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth());
+        } else {
+            dateFormatted_to = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1);
         }
-        fromDate.datepicker("setDate",dateFormatted_from);
-        toDate.datepicker("setDate",dateFormatted_to);
-        var timeRange=fromDate.datepicker('getFormattedDate')+"---"+toDate.datepicker('getFormattedDate');
-        createSimpleColumnHighcharts(reg_city_element,reg_city_url,timeRange,reg_city_remark);
-        fromDate.on("changeDate", function() {
-            timeRange=fromDate.datepicker('getFormattedDate')+"---"+toDate.datepicker('getFormattedDate');
-            createSimpleColumnHighcharts(reg_city_element,reg_city_url,timeRange,reg_city_remark)
+        fromDate.datepicker("setDate", dateFormatted_from);
+        toDate.datepicker("setDate", dateFormatted_to);
+        var timeRange = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');
+        createSimpleColumnHighcharts(reg_city_element, reg_city_url, timeRange, reg_city_remark);
+        fromDate.on("changeDate", function () {
+            timeRange = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');
+            createSimpleColumnHighcharts(reg_city_element, reg_city_url, timeRange, reg_city_remark)
         });
-        toDate.on("changeDate", function() {
-            timeRange=fromDate.datepicker('getFormattedDate')+"---"+toDate.datepicker('getFormattedDate');
-            createSimpleColumnHighcharts(reg_city_element,reg_city_url,timeRange,reg_city_remark)
+        toDate.on("changeDate", function () {
+            timeRange = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');
+            createSimpleColumnHighcharts(reg_city_element, reg_city_url, timeRange, reg_city_remark)
         });
 
-        var experience_city_element=$('#trail_student_direction_spread');
-        var experience_city_url="/reg/get_experience_city/";
-        var fromDate2 =  $('#from_date2');
-        var toDate2 =  $('#to_date2');
-        var typeSelect =  $('#type_select');
+        var experience_city_element = $('#trail_student_direction_spread');
+        var experience_city_url = "/reg/get_experience_city/";
+        var fromDate2 = $('#from_date2');
+        var toDate2 = $('#to_date2');
+        var typeSelect = $('#type_select');
         fromDate2.datepicker({
             startDate: "-3y",
             todayHighlight: true,
-            format : 'yyyy-m-d',
+            format: 'yyyy-m-d',
             autoclose: true
         });
         toDate2.datepicker({
             startDate: "-3y",
             todayHighlight: true,
-            format : 'yyyy-m-d',
+            format: 'yyyy-m-d',
             autoclose: true
         });
-        fromDate2.datepicker('setDate',dateFormatted_from);
-        toDate2.datepicker('setDate',dateFormatted_to);
-        var type=typeSelect.find("option:selected").val();
+        fromDate2.datepicker('setDate', dateFormatted_from);
+        toDate2.datepicker('setDate', dateFormatted_to);
+        var type = typeSelect.find("option:selected").val();
         var typeNumber = get_type_by(type);
-        var timeRange2=fromDate2.datepicker('getFormattedDate')+"---"+toDate2.datepicker('getFormattedDate')+"---"+typeNumber;
-        createColumnHighcharts(experience_city_element,experience_city_url,timeRange2,type);
-        typeSelect.on('change', function(){
-            type=typeSelect.find("option:selected").val();
+        var timeRange2 = fromDate2.datepicker('getFormattedDate') + "---" + toDate2.datepicker('getFormattedDate') + "---" + typeNumber;
+        createColumnHighcharts(experience_city_element, experience_city_url, timeRange2, type);
+        typeSelect.on('change', function () {
+            type = typeSelect.find("option:selected").val();
             typeNumber = get_type_by(type);
-            timeRange2=fromDate2.datepicker('getFormattedDate')+"---"+toDate2.datepicker('getFormattedDate')+"---"+typeNumber;
-            createColumnHighcharts(experience_city_element,experience_city_url,timeRange2,type);
+            timeRange2 = fromDate2.datepicker('getFormattedDate') + "---" + toDate2.datepicker('getFormattedDate') + "---" + typeNumber;
+            createColumnHighcharts(experience_city_element, experience_city_url, timeRange2, type);
         });
-        fromDate2.on("changeDate", function() {
-            type=typeSelect.find("option:selected").val();
-           typeNumber = get_type_by(type);
-            timeRange2=fromDate2.datepicker('getFormattedDate')+"---"+toDate2.datepicker('getFormattedDate')+"---"+typeNumber;
-            createColumnHighcharts(experience_city_element,experience_city_url,timeRange2,type);
-        });
-        toDate2.on("changeDate", function() {
-            type=typeSelect.find("option:selected").val();
+        fromDate2.on("changeDate", function () {
+            type = typeSelect.find("option:selected").val();
             typeNumber = get_type_by(type);
-            timeRange2=fromDate2.datepicker('getFormattedDate')+"---"+toDate2.datepicker('getFormattedDate')+"---"+typeNumber;
-            createColumnHighcharts(experience_city_element,experience_city_url,timeRange2,type);
+            timeRange2 = fromDate2.datepicker('getFormattedDate') + "---" + toDate2.datepicker('getFormattedDate') + "---" + typeNumber;
+            createColumnHighcharts(experience_city_element, experience_city_url, timeRange2, type);
+        });
+        toDate2.on("changeDate", function () {
+            type = typeSelect.find("option:selected").val();
+            typeNumber = get_type_by(type);
+            timeRange2 = fromDate2.datepicker('getFormattedDate') + "---" + toDate2.datepicker('getFormattedDate') + "---" + typeNumber;
+            createColumnHighcharts(experience_city_element, experience_city_url, timeRange2, type);
         });
 
-        var reg_stock_element=$('#student_reg_region_stock');
-        var reg_stock_url="/reg/get_reg_stock/";
+        var reg_stock_element = $('#student_reg_region_stock');
+        var reg_stock_url = "/reg/get_reg_stock/";
         var reg_stock_duration = $('#reg_location').find("option:selected").val();
-        var reg_stock_type ="all";
-        createComplexHighStock(reg_stock_element, reg_city_url,reg_stock_url,reg_stock_duration,reg_stock_type);
-        $('#reg_location').on('change', function(){
+        var reg_stock_type = "all";
+        createComplexHighStock(reg_stock_element, reg_city_url, reg_stock_url, reg_stock_duration, reg_stock_type);
+        $('#reg_location').on('change', function () {
             var reg_stock_duration = $(this).find("option:selected").val();
-            createComplexHighStock(reg_stock_element,reg_city_url,reg_stock_url,reg_stock_duration,reg_stock_type);
+            createComplexHighStock(reg_stock_element, reg_city_url, reg_stock_url, reg_stock_duration, reg_stock_type);
         });
 
 
-        var trial_stock_element=$('#student_trial_region_stock');
-        var trial_stock_url="/reg/get_trial_stock/";
-        var trial_stock_duration=$('#trial_time_select').find("option:selected").val();
-        var trial_stock_type=$('#trial_type_select').find("option:selected").val();
-        createComplexHighStock(trial_stock_element,reg_city_url,trial_stock_url,trial_stock_duration,trial_stock_type);
-        $('#trial_type_select').on('change',function () {
-            var trial_stock_type=$('#trial_type_select').find("option:selected").val();
-            createComplexHighStock(trial_stock_element,reg_city_url,trial_stock_url,trial_stock_duration,trial_stock_type);
+        var trial_stock_element = $('#student_trial_region_stock');
+        var trial_stock_url = "/reg/get_trial_stock/";
+        var trial_stock_duration = $('#trial_time_select').find("option:selected").val();
+        var trial_stock_type = $('#trial_type_select').find("option:selected").val();
+        createComplexHighStock(trial_stock_element, reg_city_url, trial_stock_url, trial_stock_duration, trial_stock_type);
+        $('#trial_type_select').on('change', function () {
+            var trial_stock_type = $('#trial_type_select').find("option:selected").val();
+            var trial_stock_duration = $('#trial_time_select').find("option:selected").val();
+            createComplexHighStock(trial_stock_element, reg_city_url, trial_stock_url, trial_stock_duration, trial_stock_type);
         });
-        $('#trial_time_select').on('change',function () {
-            var trial_stock_duration=$('#trial_time_select').find("option:selected").val();
-            createComplexHighStock(trial_stock_element,reg_city_url,trial_stock_url,trial_stock_duration,trial_stock_type);
+        $('#trial_time_select').on('change', function () {
+            var trial_stock_duration = $('#trial_time_select').find("option:selected").val();
+            var trial_stock_type = $('#trial_type_select').find("option:selected").val();
+            createComplexHighStock(trial_stock_element, reg_city_url, trial_stock_url, trial_stock_duration, trial_stock_type);
         });
     });
 </script>

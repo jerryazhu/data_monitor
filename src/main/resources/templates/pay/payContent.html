@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
 </head>
 <body>
@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-lg-12">
         <div style="float: right">
-            <select id='pay_total' class="selectpicker" >
+            <select id='pay_total' class="selectpicker">
                 <option>month</option>
                 <option>day</option>
             </select>
@@ -23,7 +23,110 @@
             <!-- /.panel-body -->
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div style="float: right">
+                <select id='pay_type' class="selectpicker">
+                    <option>month</option>
+                    <option>day</option>
+                </select>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-map-marker fa-fw"></i> 付费金额各方向趋势
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div id="student_pay_type_stock" style="height:400px"></div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div style="float: right">
+                <select id='pay_type_time' class="selectpicker">
+                    <option>month</option>
+                    <option>day</option>
+                </select>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-map-marker fa-fw"></i> 各方向付费次数趋势
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div id="student_pay_type_time_stock" style="height:400px"></div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div style="float:right">
+                <select id='type_select' class="selectpicker">
+                    <option>所有</option>
+                    <option>青少年</option>
+                    <option>商务</option>
+                    <option>应试</option>
+                    <option>综合</option>
+                    <option>其它</option>
+                </select>
+            </div>
+            <div style="float:right">
+                <div class="input-group input-daterange">
+                    <input id="from_date" type="text" class="form-control" value=""/>
+                    <span class="input-group-addon">to</span>
+                    <input id="to_date" type="text" class="form-control" value=""/>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-map-marker fa-fw"></i> 付费地区分布
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div id="student_pay_city_spread" style="height:400px"></div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div style="float: right">
+                <select id='pay_location' class="selectpicker">
+                    <option>month</option>
+                    <option>day</option>
+                </select>
+                <select id='pay_type_select' class="selectpicker">
+                    <option>所有</option>
+                    <option>青少年</option>
+                    <option>商务</option>
+                    <option>应试</option>
+                    <option>综合</option>
+                    <option>其它</option>
+                </select>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-map-marker fa-fw"></i> 付费各地区趋势
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div id="student_pay_region_stock" style="height:400px"></div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+        </div>
+    </div>
 </div>
+
 
 <script>
     $(document).ready(function () {
@@ -32,12 +135,109 @@
         var pay_his_url = "/pay/get_pay_daily_activity";
         var seriesName = "付费";
         var pay_his_duration = $('#pay_total').find("option:selected").val();
-        createSimpleHighStock(pay_his_element, pay_his_url,seriesName, pay_his_duration);
-        $('#pay_total').on('change', function(){
-            var reg_his_duration = $(this).find("option:selected").val();
-            createSimpleHighStock(pay_his_element, pay_his_url,seriesName, pay_his_duration);
+        createSimpleHighStock(pay_his_element, pay_his_url, seriesName, pay_his_duration);
+        $('#pay_total').on('change', function () {
+            var pay_his_duration = $(this).find("option:selected").val();
+            createSimpleHighStock(pay_his_element, pay_his_url, seriesName, pay_his_duration);
         });
 
+        var pay_type_stock_element = $('#student_pay_type_stock');
+        var pay_type_stock_url = "/pay/get_pay_type_stock/";
+        var pay_type_stock_duration = $('#pay_type').find("option:selected").val();
+        var pay_type_stock_map = new HashMap();
+        pay_type_stock_map.set("其他", "0");
+        pay_type_stock_map.set("青少年", "1");
+        pay_type_stock_map.set("商务", "2");
+        pay_type_stock_map.set("应试", "3");
+        pay_type_stock_map.set("综合", "4");
+        createHighStock(pay_type_stock_element, pay_type_stock_url, pay_type_stock_map, pay_type_stock_duration);
+        $('#pay_type').on('change', function () {
+            var pay_type_stock_duration = $('#pay_type').find("option:selected").val();
+            createHighStock(pay_type_stock_element, pay_type_stock_url, pay_type_stock_map, pay_type_stock_duration);
+        });
+
+        var pay_type_time_stock_element = $('#student_pay_type_time_stock');
+        var pay_type_time_stock_url = "/pay/get_pay_type_time_stock/";
+        var pay_type_time_stock_duration = $('#pay_type_time').find("option:selected").val();
+        createHighStock(pay_type_time_stock_element, pay_type_time_stock_url, pay_type_stock_map, pay_type_time_stock_duration);
+        $('#pay_type_time').on("change", function () {
+            var pay_type_time_stock_duration = $('#pay_type_time').find("option:selected").val();
+            createHighStock(pay_type_time_stock_element, pay_type_time_stock_url, pay_type_stock_map, pay_type_time_stock_duration);
+        });
+
+        var pay_city_spread_element = $('#student_pay_city_spread');
+        var pay_city_spread_url = "/pay/get_pay_city_spread/";
+        var fromDate = $('#from_date');
+        var toDate = $('#to_date');
+        var typeSelect = $('#type_select');
+        fromDate.datepicker({
+            startDate: "-3y",
+            todayHighlight: true,
+            format: 'yyyy-m-d',
+            autoclose: true
+        });
+        toDate.datepicker({
+            startDate: "-3y",
+            todayHighlight: true,
+            format: 'yyyy-m-d',
+            autoclose: true
+        });
+        var date = new Date();
+        var dateformatted_to;
+        var dateformatted_from;
+        if (date.getDate() == 1) {
+            dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-1";
+        }
+        else {
+            dateformatted_from = date.getFullYear() + "-" + (date.getMonth() + 1) + "-1";
+        }
+        if (date.getDate() == 1) {
+            dateformatted_to = date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth());
+        }
+        else {
+            dateformatted_to = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1);
+        }
+        fromDate.datepicker('setDate', dateformatted_from);
+        toDate.datepicker('setDate', dateformatted_to);
+        var type = typeSelect.find("option:selected").val();
+        var typeNumber = get_type_by(type);
+        var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate') + "---" + typeNumber;
+        createColumnHighcharts(pay_city_spread_element, pay_city_spread_url, data, type);
+        typeSelect.on('change', function () {
+            var type = typeSelect.find("option:selected").val();
+            var typeNumber = get_type_by(type);
+            var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate') + "---" + typeNumber;
+            createColumnHighcharts(pay_city_spread_element, pay_city_spread_url, data, type);
+        });
+        fromDate.on("changeDate", function () {
+            var type = typeSelect.find("option:selected").val();
+            var typeNumber = get_type_by(type);
+            var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate') + "---" + typeNumber;
+            createColumnHighcharts(pay_city_spread_element, pay_city_spread_url, data, type);
+        });
+        toDate.on("changeDate", function () {
+            var type = typeSelect.find("option:selected").val();
+            var typeNumber = get_type_by(type);
+            var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate') + "---" + typeNumber;
+            createColumnHighcharts(pay_city_spread_element, pay_city_spread_url, data, type);
+        });
+
+        var pay_region_stock_element = $('#student_pay_region_stock');
+        var pay_region_stock_url = "/pay/get_pay_region_stock/";
+        var pay_city_url = "/pay/get_pay_city/"
+        var pay_region_stock_duration = $('#pay_location').find("option:selected").val();
+        var pay_region_stock_type = $('#pay_type_select').find("option:selected").val();
+        createComplexHighStock(pay_region_stock_element, pay_city_url, pay_region_stock_url, pay_region_stock_duration, pay_region_stock_type);
+        $('#pay_type_select').on('change', function () {
+            var pay_region_stock_type = $('#pay_type_select').find("option:selected").val();
+            var pay_region_stock_duration = $('#pay_location').find("option:selected").val();
+            createComplexHighStock(pay_region_stock_element, pay_city_url, pay_region_stock_url, pay_region_stock_duration, pay_region_stock_type);
+        });
+        $('#pay_location').on('change', function () {
+            var pay_region_stock_duration = $('#pay_location').find("option:selected").val();
+            var pay_region_stock_type = $('#pay_type_select').find("option:selected").val();
+            createComplexHighStock(pay_region_stock_element, pay_city_url, pay_region_stock_url, pay_region_stock_duration, pay_region_stock_type);
+        });
     });
 </script>
 </body>

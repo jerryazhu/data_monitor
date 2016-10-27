@@ -1,4 +1,4 @@
-package com.qa;
+package com.qa.data.visualization;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

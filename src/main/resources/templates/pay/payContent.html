@@ -68,6 +68,27 @@
     <div class="row">
         <div class="col-lg-12">
             <div style="float:right">
+                <div class="input-group input-daterange">
+                    <input id="from_date_all" type="text" class="form-control" value=""/>
+                    <span class="input-group-addon">to</span>
+                    <input id="to_date_all" type="text" class="form-control" value=""/>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-map-marker fa-fw"></i> 付费学生总分布
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div id="student_pay_city_all_spread" style="height:400px"></div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div style="float:right">
                 <select id='type_select' class="selectpicker">
                     <option>所有</option>
                     <option>青少年</option>
@@ -165,6 +186,52 @@
             createHighStock(pay_type_time_stock_element, pay_type_time_stock_url, pay_type_stock_map, pay_type_time_stock_duration);
         });
 
+        var pay_city_all_element=$('#student_pay_city_all_spread');
+        var pay_city_all_url="/pay/get_pay_city/";
+        var fromDateAll=$('#from_date_all');
+        var toDateAll=$('#to_date_all');
+        var pay_city_all_remark="地区";
+        fromDateAll.datepicker({
+            startDate: "-3y",
+            todayHighlight: true,
+            format: 'yyyy-m-d',
+            autoclose: true
+        });
+        toDateAll.datepicker({
+            startDate: "-3y",
+            todayHighlight: true,
+            format: 'yyyy-m-d',
+            autoclose: true
+        });
+        var date = new Date();
+        var dateformatted_to_all;
+        var dateformatted_from_all;
+        if (date.getDate() == 1) {
+            dateformatted_from_all = date.getFullYear() + "-" + date.getMonth() + "-1";
+        }
+        else {
+            dateformatted_from_all = date.getFullYear() + "-" + (date.getMonth() + 1) + "-1";
+        }
+        if (date.getDate() == 1) {
+            dateformatted_to_all = date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth());
+        }
+        else {
+            dateformatted_to_all = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1);
+        }
+        fromDateAll.datepicker('setDate', dateformatted_from_all);
+        toDateAll.datepicker('setDate', dateformatted_to_all);
+        var dataAll=fromDateAll.datepicker('getFormattedDate')+"---"+toDateAll.datepicker('getFormattedDate');
+        createSimpleColumnHighcharts(pay_city_all_element, pay_city_all_url, dataAll, pay_city_all_remark);
+        fromDateAll.on("changeDate", function (){
+            var dataAll=fromDateAll.datepicker('getFormattedDate')+"---"+toDateAll.datepicker('getFormattedDate');
+            createSimpleColumnHighcharts(pay_city_all_element, pay_city_all_url, dataAll, pay_city_all_remark);
+        });
+        toDateAll.on("changeDate", function (){
+            var dataAll=fromDateAll.datepicker('getFormattedDate')+"---"+toDateAll.datepicker('getFormattedDate');
+            createSimpleColumnHighcharts(pay_city_all_element, pay_city_all_url, dataAll, pay_city_all_remark);
+        });
+
+
         var pay_city_spread_element = $('#student_pay_city_spread');
         var pay_city_spread_url = "/pay/get_pay_city_spread/";
         var fromDate = $('#from_date');
@@ -182,7 +249,7 @@
             format: 'yyyy-m-d',
             autoclose: true
         });
-        var date = new Date();
+//        var date = new Date();
         var dateformatted_to;
         var dateformatted_from;
         if (date.getDate() == 1) {

@@ -39,7 +39,7 @@ public class AndroidServiceImpl implements AndroidService {
     public LinkedHashMap<String, String> getAndroidSystem() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         Query q = entityManager.createNativeQuery("select os_version as name,count(os_version) as count from ( select * from ABC360_ANDROID_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*30*1000)) a inner JOIN\n" +
-                "(select uid,max(time) as time from ABC360_ANDROID_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*30*1000) group by uid) b\n" +
+                "(select uid,max(time) as time from ABC360_ANDROID_APP_DEVICE_TBL where time > (UNIX_TIMESTAMP(now())*1000 - 3600*24*30*1000) group by uid,model) b\n" +
                 "on a.time = b.time and a.uid = b.uid \n" +
                 "GROUP BY (os_version)");
         List<Object[]> list = q.getResultList();

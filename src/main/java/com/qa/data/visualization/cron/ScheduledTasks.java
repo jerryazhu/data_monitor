@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class ScheduledTasks {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Scheduled(cron="1 8 * * * *")
+    @Scheduled(cron="1 1 8 * * *")
     public void cacheDataToRedis() throws Exception{
         logger.info("cacheDataToRedis start");
         WebClient client = new WebClient(BrowserVersion.FIREFOX_45);

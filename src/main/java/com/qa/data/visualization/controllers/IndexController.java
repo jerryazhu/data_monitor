@@ -46,6 +46,8 @@ public class IndexController {
     private IosService iosService;
     @Autowired
     private PCService pcService;
+    @Autowired
+    private StudentActivityAllRepository studentActivityAllRepository;
 
     @RequestMapping("/")
     String index(Model model) {
@@ -173,6 +175,22 @@ public class IndexController {
                 array[1] = da.getCount();
                 list.add(array);
             }
+        }
+        return list;
+    }
+
+    @RequestMapping("student_daily_activity_all")
+    @ResponseBody
+    public ArrayList getStudentDailyActivityAll() throws ParseException {
+        ArrayList<Object> list=new ArrayList<Object>();
+        Iterable<StudentActivityAll> studentActivityAll=studentActivityAllRepository.findAll();
+        for(StudentActivityAll saa: studentActivityAll){
+            Object[] array = new Object[2];
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = simpleDateFormat.parse(saa.getDay());
+            array[0]=date.getTime();
+            array[1]=saa.getCount();
+            list.add(array);
         }
         return list;
     }

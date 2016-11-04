@@ -85,7 +85,25 @@
                 </div>
             </div>
         </div>
+        <div class="col-lg-6">
+            <div style="float: right">
+                <select id='student_activity_all' class="selectpicker">
+                    <option>day</option>
+                    <option>week</option>
+                    <option>month</option>
+                </select>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-line-chart fa-fw"></i> 学生总日活量
+                </div>
+                <div class="panel-body">
+                    <div id="student_daily_activity_chart_all"></div>
+                </div>
+            </div>
+        </div>
     </div>
+
     <div class="row">
         <div class="col-lg-6">
             <div style="float: right">
@@ -177,6 +195,16 @@
             $('#student_activity').on('change', function () {
                 var student_duration = $(this).find("option:selected").val();
                 createHighStock(student_element, student_url, student_map, student_duration);
+            });
+
+            var student_activity_all_element=$('#student_daily_activity_chart_all');
+            var student_activity_all_url="student_daily_activity_all";
+            var seriesName = "活跃量";
+            var student_activity_all_duration = $('#student_activity_all').find("option:selected").val();
+            createSimpleHighStock(student_activity_all_element, student_activity_all_url, seriesName, student_activity_all_duration);
+            $('#student_activity_all').on('change', function () {
+                var student_activity_all_duration = $(this).find("option:selected").val();
+                createSimpleHighStock(student_activity_all_element, student_activity_all_url, seriesName, student_activity_all_duration);
             });
 
         });

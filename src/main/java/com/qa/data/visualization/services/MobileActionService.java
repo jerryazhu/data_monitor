@@ -14,4 +14,6 @@ public interface MobileActionService {
     DataSet<IOSAPIStuActionGroupCount> findIOSAPIStuActionGroupCount(DatatablesCriterias criterias);
 
     DataSet<AndroidModel> getAndroidModel(DatatablesCriterias criterias);
+
+    DataSet<AndroidModelCnt> getAndroidModelCnt(DatatablesCriterias criterias);
 }

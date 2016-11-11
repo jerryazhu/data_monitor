@@ -305,6 +305,38 @@ function createComplexHighStock(element, url1, url2, by, type) {
                             valueDecimals: 0
                         };
                     }
+                    else if (by == "week") {
+                        seriesOptions[i] = {
+                            name: name,
+                            data: data,
+                            dataGrouping: {
+                                approximation: "sum",
+                                enabled: true,
+                                forced: true,
+                                units: [['week', [1]]]
+                            }
+                        };
+                        tooltipOptions = {
+                            formatter: function () {
+                                var total = 0;
+                                $.each(this.points, function (i, point) {
+                                    total = total + point.y;
+                                });
+                                var s = '<strong>' + Highcharts.dateFormat('%Y-%m-%d', new Date(this.x)) + '</strong>';
+
+                                var sortedPoints = this.points.sort(function (a, b) {
+                                    return ((a.y < b.y) ? -1 : ((a.y > b.y) ? 1 : 0));
+                                });
+                                sortedPoints.reverse();
+                                $.each(sortedPoints, function (i, point) {
+                                    s += '<br/><span style="color:' + point.series.color + '"> ' + point.series.name + ' </span>: <b> ' + point.y + "(" + Math.floor(point.y / total * 100) + "%)" + " avg:" + Math.floor(point.y / 7);
+                                });
+
+                                return s;
+                            },
+                            valueDecimals: 0
+                        };
+                    }
                     else {
                         seriesOptions[i] = {
                             name: name,

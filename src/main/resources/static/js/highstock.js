@@ -16,6 +16,21 @@ function createSimpleHighStock(element, url, seriesName, duration) {
                 }
             }];
         }
+        else if (duration == "week") {
+            seriesOptions = [{
+                name: seriesName,
+                data: returnData,
+                tooltip: {
+                    valueDecimals: 0
+                },
+                dataGrouping: {
+                    approximation: "sum",
+                    enabled: true,
+                    forced: true,
+                    units: [['week', [1]]]
+                }
+            }];
+        }
         else {
             seriesOptions = [{
                 name: seriesName,

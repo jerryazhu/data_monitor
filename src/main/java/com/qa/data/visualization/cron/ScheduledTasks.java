@@ -2,7 +2,6 @@ package com.qa.data.visualization.cron;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.ProxyConfig;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.slf4j.Logger;
@@ -14,8 +13,8 @@ import org.springframework.stereotype.Component;
 public class ScheduledTasks {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Scheduled(cron="1 1 8 * * *")
-    public void cacheDataToRedis() throws Exception{
+    @Scheduled(cron = "1 1 8 * * *")
+    public void cacheDataToRedis() throws Exception {
         logger.info("cacheDataToRedis start");
         WebClient client = new WebClient(BrowserVersion.FIREFOX_45);
         client.getOptions().setJavaScriptEnabled(true);

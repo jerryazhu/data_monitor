@@ -6,6 +6,7 @@ import com.qa.data.visualization.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,6 +60,10 @@ public class IndexController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName();
         model.addAttribute("username", name);
+        Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
+        for (GrantedAuthority grantedAuthority : authorities) {
+            model.addAttribute(grantedAuthority.getAuthority(), true);
+        }
         return "index";
     }
 
@@ -182,14 +187,14 @@ public class IndexController {
     @RequestMapping("student_daily_activity_all")
     @ResponseBody
     public ArrayList getStudentDailyActivityAll() throws ParseException {
-        ArrayList<Object> list=new ArrayList<Object>();
-        Iterable<StudentActivityAll> studentActivityAll=studentActivityAllRepository.findAll();
-        for(StudentActivityAll saa: studentActivityAll){
+        ArrayList<Object> list = new ArrayList<Object>();
+        Iterable<StudentActivityAll> studentActivityAll = studentActivityAllRepository.findAll();
+        for (StudentActivityAll saa : studentActivityAll) {
             Object[] array = new Object[2];
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date date = simpleDateFormat.parse(saa.getDay());
-            array[0]=date.getTime();
-            array[1]=saa.getCount();
+            array[0] = date.getTime();
+            array[1] = saa.getCount();
             list.add(array);
         }
         return list;

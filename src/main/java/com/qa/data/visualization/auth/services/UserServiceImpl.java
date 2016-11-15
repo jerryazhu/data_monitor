@@ -1,5 +1,6 @@
 package com.qa.data.visualization.auth.services;
 
+import com.qa.data.visualization.auth.entities.Role;
 import com.qa.data.visualization.auth.entities.User;
 import com.qa.data.visualization.auth.repositories.RoleRepository;
 import com.qa.data.visualization.auth.repositories.UserRepository;
@@ -21,7 +22,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void save(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setRoles(new HashSet<>(roleRepository.findAll()));
+        user.setRoles(new HashSet<Role>() {{
+            add(roleRepository.findByName("ROLE_USER"));
+        }});
         userRepository.save(user);
     }
 

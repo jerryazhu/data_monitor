@@ -6,7 +6,7 @@ import javax.persistence.*;
  * Created by dykj on 2016/11/4.
  */
 @Entity
-@Table(name="ABC360_STUDENT_DAILY_ACTIVITY_TBL")
+@Table(name = "ABC360_STUDENT_DAILY_ACTIVITY_TBL")
 public class StudentActivityAll {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

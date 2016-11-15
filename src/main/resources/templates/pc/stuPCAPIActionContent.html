@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link th:href="@{/css/datatables/jquery.dataTables.css}" rel="stylesheet"/>
     <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome/font-awesome.min.css}" rel="stylesheet"/>
 </head>
 <body>
 
@@ -23,6 +25,7 @@
                             <th>request_type</th>
                             <th>parameters</th>
                             <th>response_idx</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tfoot>
@@ -33,6 +36,7 @@
                             <th>request_type</th>
                             <th>parameters</th>
                             <th>response_idx</th>
+                            <th></th>
                         </tr>
                         </tfoot>
                     </table>
@@ -73,6 +77,13 @@
 <script th:src="@{/js/datatables/jquery.dataTables.js}"></script>
 <script th:src="@{/js/datatables/dataTables.bootstrap.min.js}"></script>
 <script>
+    function format(d) {
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding_left:50px;">'+
+                '<tr>'+
+                '<td>Full Parameters : '+d.parameters+'</td>'+
+                '</tr>'+
+                '</table>';
+    }
     //<![CDATA[
     $(document).ready(function () {
 
@@ -116,19 +127,45 @@
                 "infoEmpty": "No records available",
                 "infoFiltered": "(filtered from _MAX_ total records)"
             },
+            "rowCallback":function (row,data) {
+                if($.inArray(data.DT_RowId,selected)!==-1){
+                    $(row).addClass('selected');
+                }
+            },
             columns: [
                 {"data": "time"},
                 {"data": "uid"},
                 {"data": "api_name"},
                 {"data": "request_type"},
                 {"data": "parameters"},
-                {"data": "response_idx"}
+                {"data": "response_idx"},
+                {
+                    "orderable": false,
+                    "data": null,
+                    "defaultContent": ''
+                }
             ],
             columnDefs: [
                 {
                     "targets": 0,
                     "render": function ( data, type, row, meta ) {
                         return unixToDate(parseInt(data));
+                    }
+                }, {
+                    "targets": [4],
+                    "data": "parameters",
+                    "render": function (data, type, full) {
+                        var subdata = data;
+                        if (data.length > 10) {
+                            subdata = data.substr(0, 10) + "...";
+                        }
+                        return subdata;
+                    }
+                },{
+                    "targets":[6],
+                    "data":null,
+                    "render":function (data,type,full) {
+                        return "<i class='fa fa-angle-down fa-2x' aria-hidden='true'></i>";
                     }
                 }
             ],
@@ -137,7 +174,28 @@
                 type: 'GET'
             }
         });
-
+        var selected=[];
+        $('#stuPCApiActionTable tbody').on( 'click', 'tr', function () {
+            var id=this.id;
+            var tr = $(this).closest('tr');
+            var row = table.row( tr );
+            var idx = $.inArray( id, selected );
+            if ( row.child.isShown() ) {
+                row.child.hide();
+                tr.find("i").attr("class","fa fa-angle-down fa-2x");
+                selected.splice(idx, 1 );
+                // Remove from the 'open' array
+            }
+            else {
+                row.child( format( row.data() ) ).show();
+                tr.find("i").attr("class","fa fa-angle-up fa-2x");
+                if ( idx === -1 ) {
+                    selected.push( id );
+                }
+                // Add to the 'open' array
+            }
+            $(this).toggleClass('selected');
+        } );
         // Setup - add a text input to each footer cell
         $('#stuPCApiActionTable tfoot th').each(function () {
             var title = $(this).text();
@@ -148,7 +206,6 @@
                 $('#'+title).hide();
             }
         });
-
         // Apply the search
         table.columns().every(function () {
             var that = this;

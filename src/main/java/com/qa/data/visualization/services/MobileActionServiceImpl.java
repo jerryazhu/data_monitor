@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class MobileActionServiceImpl implements MobileActionService {
@@ -25,6 +28,28 @@ public class MobileActionServiceImpl implements MobileActionService {
     public DataSet<IosStuAPIAction> findIosStuAPIActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
         TableQuery query = new TableQuery(entityManager, IosStuAPIAction.class, criterias);
         return query.getResultDataSet();
+    }
+
+    @Override
+    public HashMap<String,String> getAndroidResponse(String data){
+        HashMap<String,String> map=new HashMap<String,String>();
+        Query q=entityManager.createNativeQuery("select idx,response from ABC360_APP_API_ANDROID_RESPONCE_TBL where idx='"+data+"'");
+        List <Object[]>list=q.getResultList();
+        for(Object[] result :list){
+            map.put(result[0].toString(), result[1].toString());
+        }
+        return map;
+    }
+
+    @Override
+    public HashMap<String, String> getIosResponse(String data) {
+        HashMap<String, String> map = new HashMap<String, String>();
+        Query q = entityManager.createNativeQuery("select idx,response from ABC360_APP_API_IOS_RESPONCE_TBL where idx='"+data+"'");
+        List<Object[]> list = q.getResultList();
+        for (Object[] result : list) {
+            map.put(result[0].toString(), result[1].toString());
+        }
+        return map;
     }
 
     @Override

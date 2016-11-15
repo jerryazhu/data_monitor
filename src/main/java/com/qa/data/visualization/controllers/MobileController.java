@@ -8,12 +8,14 @@ import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping(value = "/mobile")
@@ -45,6 +47,20 @@ public class MobileController {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
         DataSet<AndroidAPIStuActionGroupCount> actions = mobileActionService.findAndroidAPIStuActionGroupCount(criterias);
         return DatatablesResponse.build(actions, criterias);
+    }
+
+    @RequestMapping(value = "/get_android_response/{data}")
+    @ResponseBody
+    public String getAndroidResponse(@PathVariable String data){
+        HashMap<String,String> androidResponse=mobileActionService.getAndroidResponse(data);
+        return androidResponse.get(data);
+    }
+
+    @RequestMapping(value = "/get_ios_response/{data}")
+    @ResponseBody
+    public String getIosResponse(@PathVariable String data){
+        HashMap<String, String> iosResponse = mobileActionService.getIosResponse(data);
+        return iosResponse.get(data);
     }
 
     @RequestMapping(value = "/get_ios_api_stu_action_group")

@@ -79,4 +79,11 @@ public class MobileActionServiceImpl implements MobileActionService {
         TableQuery query = new TableQuery(entityManager, AndroidModelCnt.class, criterias, customSQL);
         return query.getResultDataSet();
     }
+
+    @Override
+    public DataSet<AndroidCrash> getAndroidCrash(DatatablesCriterias criterias){
+        TableQuery query=new TableQuery(entityManager,AndroidCrash.class,criterias);
+        return query.getResultDataSet();
+    }
+
 }

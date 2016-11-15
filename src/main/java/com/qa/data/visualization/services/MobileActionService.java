@@ -22,4 +22,6 @@ public interface MobileActionService {
     DataSet<AndroidModel> getAndroidModel(DatatablesCriterias criterias);
 
     DataSet<AndroidModelCnt> getAndroidModelCnt(DatatablesCriterias criterias);
+
+    DataSet<AndroidCrash> getAndroidCrash(DatatablesCriterias criterias);
 }

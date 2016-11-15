@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link th:href="@{/css/datatables/jquery.dataTables.css}" rel="stylesheet"/>
     <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome/font-awesome.min.css}" rel="stylesheet"/>
 </head>
 <body>
 
@@ -23,6 +25,7 @@
                             <th>request_type</th>
                             <th>parameters</th>
                             <th>response_idx</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tfoot>
@@ -33,6 +36,7 @@
                             <th>request_type</th>
                             <th>parameters</th>
                             <th>response_idx</th>
+                            <th></th>
                         </tr>
                         </tfoot>
                     </table>
@@ -74,6 +78,14 @@
 <script th:src="@{/js/datatables/dataTables.bootstrap.min.js}"></script>
 <script>
     //<![CDATA[
+    function format(d,res) {
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding_left:50px;">'+
+                '<tr>'+
+                '<td> Full Parameters : '+d.parameters+'<br/>' +
+                ' Full Response : '+res+'</td>'+
+                '</tr>'+
+                '</table>';
+    }
     $(document).ready(function () {
 
         $('#iosPCApiActionGroupOrderBy').DataTable({
@@ -109,6 +121,7 @@
             paging: true,
             processing: true,
             serverSide: true,
+            filter: true,
             language: {
                 "lengthMenu": "Display _MENU_ records per page",
                 "zeroRecords": "Nothing found - sorry",
@@ -116,19 +129,45 @@
                 "infoEmpty": "No records available",
                 "infoFiltered": "(filtered from _MAX_ total records)"
             },
+            "rowCallback":function (row,data) {
+                if($.inArray(data.DT_RowId,selected)!==-1){
+                    $(row).addClass('selected');
+                }
+            },
             columns: [
                 {"data": "time"},
                 {"data": "uid"},
                 {"data": "api_name"},
                 {"data": "request_type"},
                 {"data": "parameters"},
-                {"data": "response_idx"}
+                {"data": "response_idx"},
+                {
+                    "orderable": false,
+                    "data": null,
+                    "defaultContent": ''
+                }
             ],
             columnDefs: [
                 {
                     "targets": 0,
-                    "render": function ( data, type, row, meta ) {
+                    "render": function (data, type, row, meta) {
                         return unixToDate(parseInt(data));
+                    }
+                }, {
+                    "targets": [4],
+                    "data": "parameters",
+                    "render": function (data, type, full) {
+                        var subdata = data;
+                        if (data.length > 10) {
+                            subdata = data.substr(0, 10) + "...";
+                        }
+                        return subdata;
+                    }
+                },{
+                    "targets":[6],
+                    "data":null,
+                    "render":function (data,type,full) {
+                        return "<i class='fa fa-angle-down fa-2x' aria-hidden='true'></i>";
                     }
                 }
             ],
@@ -137,38 +176,74 @@
                 type: 'GET'
             }
         });
-
+        var selected=[];
+        $('#iosPCApiActionTable tbody').on( 'click', 'tr', function () {
+            var res;
+            var rIdx;
+            var id=this.id;
+            var tr = $(this).closest('tr');
+            var row = table.row( tr );
+            var idx = $.inArray( id, selected );
+            if ( row.child.isShown() ) {
+                row.child.hide();
+                tr.find("i").attr("class","fa fa-angle-down fa-2x");
+                selected.splice(idx, 1 );
+                // Remove from the 'open' array
+            }
+            else {
+                rIdx=tr.find("i").parent().prev().text();
+                $.ajax({
+                    url: '/mobile/get_ios_response/'+rIdx+'',
+                    type:'GET',
+                    data:'',
+                    success:function (data) {
+                        res=data;
+                        row.child( format( row.data(),res) ).show();
+                    },
+                    error:function () {
+                        res='获取超时，请重试';
+                        row.child( format( row.data(),res) ).show();
+                    }
+                });
+                row.child( format( row.data(),res ) ).show();
+                tr.find("i").attr("class","fa fa-angle-up fa-2x");
+                if ( idx === -1 ) {
+                    selected.push( id );
+                }
+                // Add to the 'open' array
+            }
+            $(this).toggleClass('selected');
+        } );
         // Setup - add a text input to each footer cell
-        $('#iosPCApiActionTable tfoot th').each(function () {
+        $('#iosPCApiActionTable').find('tfoot th').each(function () {
             var title = $(this).text();
             if (title != "") {
-                $(this).html('<input id="'+title+'" type="text" placeholder="Search ' + title + '" />');
+                $(this).html('<input id="' + title + '" type="text" placeholder="Search ' + title + '" />');
             }
-            if(title=="request_type" || title=="parameters" || title=="response_idx"){
-                $('#'+title).hide();
+            if (title == "request_type" || title == "parameters" || title == "response_idx") {
+                $('#' + title).hide();
             }
         });
-
         // Apply the search
         table.columns().every(function () {
             var that = this;
             $('input', this.footer()).on('keyup change', function () {
-                if(this.value != "" && (this.id == "time" || this.id == "uid" || this.id == "api_name")){
-                    $.each(["request_type","parameters","response_idx"], function(i, id){
-                        $('#'+id).show();
+                if (this.value != "" && (this.id == "time" || this.id == "uid" || this.id == "api_name")) {
+                    $.each(["request_type", "parameters", "response_idx"], function (i, id) {
+                        $('#' + id).show();
                     });
                 }
-                if(this.value == "" && (this.id == "time" || this.id == "uid" || this.id == "api_name")){
-                    $.each(["request_type","parameters","response_idx"], function(i, id){
-                        $('#'+id).val("").hide();
-                        table.column(':contains('+id+')').search("");
+                if ((this.id == "time" || this.id == "uid" || this.id == "api_name")) {
+                    $.each(["request_type", "parameters", "response_idx"], function (i, id) {
+                        $('#' + id).val("").hide();
+                        table.column(':contains(' + id + ')').search("");
                     });
                 }
                 if (that.search() !== this.value) {
-                    if(this.id == "time"){
-                        if(this.value.indexOf("~") != -1){
+                    if (this.id == "time") {
+                        if (this.value.indexOf("~") != -1) {
                             var arr = this.value.split("~");
-                            var converted = dateToUnix(arr[0])+"~"+dateToUnix(arr[1]);
+                            var converted = dateToUnix(arr[0]) + "~" + dateToUnix(arr[1]);
                             that.search(converted).draw();
                         }
                         else {
@@ -181,7 +256,6 @@
                 }
             });
         });
-
     });
     //]]>
 </script>

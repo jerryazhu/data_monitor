@@ -1,9 +1,9 @@
 package com.qa.data.visualization.controllers;
 
-import com.qa.data.visualization.entities.pc.PCAPIStuActionGroupCount;
-import com.qa.data.visualization.entities.pc.PCStuAPIAction;
-import com.qa.data.visualization.entities.pc.PCTeaAPIAction;
-import com.qa.data.visualization.services.PCService;
+import com.qa.data.visualization.entities.jishu.pc.PCAPIStuActionGroupCount;
+import com.qa.data.visualization.entities.jishu.pc.PCStuAPIAction;
+import com.qa.data.visualization.entities.jishu.pc.PCTeaAPIAction;
+import com.qa.data.visualization.services.jishu.PCService;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;

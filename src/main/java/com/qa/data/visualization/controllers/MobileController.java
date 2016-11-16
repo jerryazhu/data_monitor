@@ -1,8 +1,8 @@
 package com.qa.data.visualization.controllers;
 
 
-import com.qa.data.visualization.entities.mobile.*;
-import com.qa.data.visualization.services.MobileActionService;
+import com.qa.data.visualization.entities.jishu.mobile.*;
+import com.qa.data.visualization.services.jishu.MobileActionService;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;
@@ -20,7 +20,7 @@ import java.util.HashMap;
 @Controller
 @RequestMapping(value = "/mobile")
 public class MobileController {
-    @PersistenceContext
+    @PersistenceContext(unitName = "primaryPersistenceUnit")
     private EntityManager entityManager;
     @Autowired
     private MobileActionService mobileActionService;

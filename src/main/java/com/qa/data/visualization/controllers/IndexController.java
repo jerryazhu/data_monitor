@@ -1,8 +1,8 @@
 package com.qa.data.visualization.controllers;
 
-import com.qa.data.visualization.entities.*;
-import com.qa.data.visualization.repositories.*;
-import com.qa.data.visualization.services.*;
+import com.qa.data.visualization.entities.jishu.*;
+import com.qa.data.visualization.repositories.jishu.*;
+import com.qa.data.visualization.services.jishu.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;

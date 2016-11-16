@@ -1,7 +1,7 @@
 package com.qa.data.visualization.controllers;
 
-import com.qa.data.visualization.entities.web.*;
-import com.qa.data.visualization.services.WebActionService;
+import com.qa.data.visualization.entities.jishu.web.*;
+import com.qa.data.visualization.services.jishu.WebActionService;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;

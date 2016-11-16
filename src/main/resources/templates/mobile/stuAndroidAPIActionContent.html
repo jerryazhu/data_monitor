@@ -218,7 +218,7 @@
         $('#androidPCApiActionTable tfoot th').each(function () {
             var title = $(this).text();
             if (title != "") {
-                $(this).html('<input id="'+title+'" type="text" placeholder="Search ' + title + '" />');
+                $(this).html('<input id="'+title+'" type="text" style="width:120px;" placeholder="Search ' + title + '" />');
             }
             if(title=="request_type" || title=="parameters" || title=="response_idx"){
                 $('#'+title).hide();

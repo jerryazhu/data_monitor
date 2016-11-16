@@ -113,6 +113,10 @@
                         return unixToDate(parseInt(data));
                     }
                 },{
+                    "targets": 6,
+                    "visible": false,
+                    "searchable": false
+                },{
                     "targets": 10,
                     "data": null,
                     "render": function (data, type, full) {
@@ -150,7 +154,7 @@
         $('#androidCrashTable').find('tfoot th').each(function () {
             var title = $(this).text();
             if (title != "") {
-                $(this).html('<input id="' + title + '" type="text" placeholder="Search ' + title + '" />');
+                $(this).html('<input id="' + title + '" type="text" style="width:120px;" placeholder="Search ' + title + '" />');
             }
             if (title == "unique_identifier" || title == "model" || title == "os_version" || title =="network_type" || title =="app_channel" ||title =="md5") {
                 $('#' + title).hide();

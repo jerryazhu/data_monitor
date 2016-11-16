@@ -81,7 +81,7 @@
     function format(d,res) {
         return '<table cellpadding="5" cellspacing="0" border="0" style="padding_left:50px;">'+
                 '<tr>'+
-                '<td> Full Parameters : '+d.parameters+'<br/>' +
+                '<td> Full Parameters : '+d.parameters.toString().replace(/\n/g,'<br/>')+'<br/>   <br/>' +
                 ' Full Response : '+res+'</td>'+
                 '</tr>'+
                 '</table>';
@@ -155,7 +155,7 @@
                     }
                 }, {
                     "targets": [4],
-                    "data": "parameters",
+                    "data": 'parameters',
                     "render": function (data, type, full) {
                         var subdata = data;
                         if (data.length > 10) {
@@ -167,7 +167,7 @@
                     "targets":[6],
                     "data":null,
                     "render":function (data,type,full) {
-                        return "<i class='fa fa-angle-down fa-2x' aria-hidden='true'></i>";
+                        return '<i class="fa fa-angle-down fa-2x" aria-hidden="true"></i>';
                     }
                 }
             ],
@@ -197,7 +197,7 @@
                     type:'GET',
                     data:'',
                     success:function (data) {
-                        res=data;
+                        res=data.replace(/\n/g,'<br/>');
                         row.child( format( row.data(),res) ).show();
                     },
                     error:function () {

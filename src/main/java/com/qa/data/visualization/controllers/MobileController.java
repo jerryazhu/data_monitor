@@ -86,4 +86,12 @@ public class MobileController {
         DataSet<AndroidModelCnt> dataSet = mobileActionService.getAndroidModelCnt(criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
+
+    @RequestMapping(value = "/get_android_crash")
+    @ResponseBody
+    public DatatablesResponse<AndroidCrash> getAndroidCrash(HttpServletRequest request){
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<AndroidCrash> dataSet=mobileActionService.getAndroidCrash(criterias);
+        return DatatablesResponse.build(dataSet,criterias);
+    }
 }

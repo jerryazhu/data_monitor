@@ -28,6 +28,7 @@
                             <th>app_version</th>
                             <th>app_channel</th>
                             <th>md5</th>
+                            <th>stack</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -43,6 +44,7 @@
                             <th>app_version</th>
                             <th>app_channel</th>
                             <th>md5</th>
+                            <th>stack</th>
                             <th></th>
                         </tr>
                         </tfoot>
@@ -61,8 +63,8 @@
     function format(d) {
         return '<table cellpadding="5" cellspacing="0" border="0" style="padding_left:50px;">'+
                 '<tr>'+
-                '<td><i class="fa fa-align-justify" aria-hidden="true"></i>      Full Stack : <br/>'+d.stack.toString().replace(/\n/g,'<br/>')+'<br/> <br/>' +
-                '<i class="fa fa-align-justify" aria-hidden="true"></i>      Full Logs : <br/>'+d.logs.toString().replace(/\n/g,'<br/>')+'</td>'+
+                '<td><i class="fa fa-align-justify" aria-hidden="true"></i>      Full Stack : <br/>'+d.stack.replace(/\n/g,'<br/>')+'<br/> <br/>' +
+                '<i class="fa fa-align-justify" aria-hidden="true"></i>      Full Logs : <br/>'+d.logs.replace(/\n/g,'<br/>')+'</td>'+
                 '</tr>'+
                 '</table>';
     }
@@ -71,11 +73,11 @@
             destroy: true,
             lengthMenu: [10, 25, 50, 100],
             order: [[0, "desc"]],
-            dom: 'lrtip',
             autoWidth: true,
             paging: true,
             processing: true,
             serverSide: true,
+            searching:true,
             filter: true,
             language: {
                 "lengthMenu": "Display _MENU_ records per page",
@@ -100,6 +102,7 @@
                 {"data": "app_version"},
                 {"data": "app_channel"},
                 {"data": "md5"},
+                {"data": "stack"},
                 {
                     "orderable": false,
                     "data": null,
@@ -113,11 +116,19 @@
                         return unixToDate(parseInt(data));
                     }
                 },{
+                    "targets":3,
+                    "visible":false,
+                    "searchable":false
+                },{
                     "targets": 6,
                     "visible": false,
                     "searchable": false
                 },{
                     "targets": 10,
+                    "visible": false,
+                    "searchable": true
+                },{
+                    "targets": 11,
                     "data": null,
                     "render": function (data, type, full) {
                         return '<i class="fa fa-angle-down fa-2x" aria-hidden="true"></i>';

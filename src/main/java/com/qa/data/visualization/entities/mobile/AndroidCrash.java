@@ -1,5 +1,7 @@
 package com.qa.data.visualization.entities.mobile;
 
+import com.web.spring.datatable.annotations.SqlIndexOperator;
+
 import javax.persistence.*;
 
 /**
@@ -21,6 +23,7 @@ public class AndroidCrash {
     private String app_version;
     private String app_channel;
     private String md5;
+    @SqlIndexOperator("like")
     private String stack;
     private String logs;
 

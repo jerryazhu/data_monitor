@@ -80,8 +80,8 @@
     function format(d,res) {
         return '<table cellpadding="5" cellspacing="0" border="0" style="padding_left:50px;">'+
                 '<tr>'+
-                '<td> <i class="fa fa-align-justify" aria-hidden="true"></i>      Full Parameters : <br/>'+d.parameters.toString().replace(/\n/g,"<br/>")+'<br/>  <br/>' +
-                ' <i class="fa fa-align-justify" aria-hidden="true"></i>      Full Response : <br/>'+res.toString().replace(/\n/g,"<br/>")+'</td>'+
+                '<td> <i class="fa fa-align-justify" aria-hidden="true"></i>      Full Parameters : <br/>'+d.parameters.replace(/\n/g,"<br/>")+'<br/>  <br/>' +
+                ' <i class="fa fa-align-justify" aria-hidden="true"></i>      Full Response : <br/>'+res+'</td>'+
                 '</tr>'+
                 '</table>';
     }

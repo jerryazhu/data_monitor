@@ -22,7 +22,7 @@
                 <a href="" aria-expanded="false"><i class="fa fa-dashboard fa-fw"></i> 青少</a>
                 <ul aria-expanded="false" class="nav nav-second-level">
                     <li>
-                        <a href="#" name="web---costClass"><i class="fa fa-table fa-fw"></i>学生耗课量</a>
+                        <a href="#" name="qingshao---costClass"><i class="fa fa-table fa-fw"></i>学生耗课量</a>
                     </li>
                 </ul>
             </li>
@@ -100,7 +100,9 @@
                 $(this).on("click", function () {
                     $("#content").empty();
                     var templateName = $(this).attr("name");
-                    $("#content").load("/overview/" + templateName);
+                    if(templateName){
+                        $("#content").load("/overview/" + templateName);
+                    }
                 });
             });
 
@@ -109,7 +111,9 @@
                 $(this).on("click", function () {
                     $("#content").empty();
                     var templateName = $(this).attr("name");
-                    $("#content").load("/table/" + templateName);
+                    if(templateName) {
+                        $("#content").load("/table/" + templateName);
+                    }
                 });
             });
         });

@@ -1,0 +1,9 @@
+.option-text {
+    padding: 0 12px;
+    color: #999;
+    cursor: pointer;
+    position: relative;
+}
+.option-text.active {
+    color: #43a8eb !important;
+}

@@ -3,6 +3,7 @@
 <head>
     <link th:href="@{/css/qingshao.css}" rel="stylesheet"/>
     <link th:href="@{/css/datepicker/bootstrap-datetimepicker.css}" rel="stylesheet"/>
+    <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
 </head>
 <body>
 
@@ -40,23 +41,17 @@
         <p class="text-right control-label"><strong>学生：</strong></p>
     </div>
     <div class="col-lg-10">
-        <div class="col-lg-1">
-            <span class="option-text">不限</span>
-        </div>
-        <label class="col-lg-1 text-right">
-            <span class="text-center">Id/Mobile</span>
-        </label>
-        <label class="col-lg-2">
-            <input class="form-control" type="text" id="student-id-mobile"/>
-        </label>
+        <span class="col-lg-1 option-text active">不限</span>
+        <span class="col-lg-1 option-text text-center">Id/Mobile</span>
+        <input class="col-lg-5 form-control" type="text" id="student-id-mobile" />
     </div>
 </div>
 <div class="row">
     <div class="col-lg-2">
         <p class="text-right control-label"><strong>套餐：</strong></p>
     </div>
-    <div class="col-lg-10">
-        <span class="option-text">不限</span>
+    <div class="col-lg-10" id="comboCountry">
+        <span class="option-text active">不限</span>
         <span class="option-text">欧美</span>
         <span class="option-text">菲律宾</span>
     </div>
@@ -65,8 +60,8 @@
     <div class="col-lg-2">
         <p class="text-right control-label"><strong>学员套餐：</strong></p>
     </div>
-    <div class="col-lg-10" id="taocan">
-        <span class="option-text">不限</span>
+    <div class="col-lg-10" id="combo">
+        <span class="option-text active">不限</span>
         <span class="option-text">五天/周 一节/天</span>
         <span class="option-text">五天/周 二节/天</span>
         <span class="option-text">三天/周 一节/天</span>
@@ -78,16 +73,10 @@
     <div class="col-lg-2">
         <p class="text-right control-label"><strong class="height">绑定课：</strong></p>
     </div>
-    <div class="col-lg-10 btn-group" data-toggle="buttons">
-        <label class=" col-lg-1 btn btn-default btn-sm active">
-            <input type="radio" name="options"/>全部
-        </label>
-        <label class="col-lg-1 btn btn-default btn-sm">
-            <input type="radio" name="options"/>绑定
-        </label>
-        <label class="col-lg-1 btn btn-default btn-sm">
-            <input type="radio" name="options"/>未绑定
-        </label>
+    <div class="col-lg-10" id="binding">
+        <span class="option-text active">不限</span>
+        <span class="option-text">绑定</span>
+        <span class="option-text">不绑定</span>
     </div>
 </div>
 <div class="row">
@@ -95,15 +84,19 @@
         <p class="text-right control-label"><strong class="height-title">老师：</strong></p>
     </div>
     <div class="col-lg-10">
-        <label class=" col-lg-1 btn btn-default btn-sm active">
-            <span class=" col-lg-12">全部</span>
-        </label>
-        <label class="col-lg-1 text-right">
-            <span class="text-center height-title">Id/Mobile</span>
-        </label>
-        <label class="col-lg-2">
-            <input class="form-control height" type="text" id="teacher-id-mobile"/>
-        </label>
+        <span class="col-lg-1 option-text active">不限</span>
+        <span class="col-lg-1 option-text text-center">Id/Name</span>
+        <input class="col-lg-5 form-control" type="text" id="teacher-id-name"/>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2">
+        <p class="text-right control-label"><strong class="height">老师Status：</strong></p>
+    </div>
+    <div class="col-lg-10" id="teacherStatus">
+        <span class="option-text active">不限</span>
+        <span class="option-text">试用</span>
+        <span class="option-text">活跃</span>
     </div>
 </div>
 <div class="row">
@@ -111,59 +104,88 @@
         <p class="text-right control-label"><strong class="height-title">教师组别：</strong></p>
     </div>
     <div class="col-lg-10">
-        <label class=" col-lg-1 btn btn-default btn-sm active">
-            <span class="col-lg-12">全部</span>
-        </label>
-        <label class="col-lg-1 text-right">
-            <span class="text-center height-title">组别</span>
-        </label>
-        <label class="col-lg-2">
-            <select class=" form-control height" id="group">
-                <option>---------</option>
-            </select>
-        </label>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-2">
-        <p class="text-right control-label"><strong class="height">老师Status：</strong></p>
-    </div>
-    <div class="col-lg-10 btn-group" data-toggle="buttons">
-        <label class=" col-lg-1 btn btn-default btn-sm active">
-            <input type="radio" name="options"/>全部
-        </label>
-        <label class="col-lg-1 btn btn-default btn-sm">
-            <input type="radio" name="options"/>试用
-        </label>
-        <label class="col-lg-1 btn btn-default btn-sm">
-            <input type="radio" name="options"/>活跃
-        </label>
+        <span class="col-lg-1 option-text active">不限</span>
+        <span class="col-lg-1 option-text text-center">Id/Mobile</span>
+        <select class="col-lg-5 form-control" id="group">
+            <option>--------</option>
+        </select>
     </div>
 </div>
 <div class="row">
     <div class="col-lg-2">
         <p class="text-right control-label"><strong class="height">老师属性：</strong></p>
     </div>
-    <div class="col-lg-10 btn-group" data-toggle="buttons">
-        <label class=" col-lg-1 btn btn-default btn-sm active">
-            <input type="radio" name="options"/>全部
-        </label>
-        <label class="col-lg-1 btn btn-default btn-sm">
-            <input type="radio" name="options"/>欧美
-        </label>
-        <label class="col-lg-1 btn btn-default btn-sm">
-            <input type="radio" name="options"/>菲律宾
-        </label>
+    <div class="col-lg-10" id="teacherType">
+        <span class="option-text active">不限</span>
+        <span class="option-text">欧美</span>
+        <span class="option-text">菲律宾</span>
     </div>
+</div>
+<div class="row">
+    <div class="col-lg-1"></div>
+    <div class="col-lg-10">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                青少学生耗课情况
+            </div>
+            <div class="panel-body">
+            <div class="dataTable_wrapper">
+            <table class="table table-striped table-bordered table-hover" id="youngCostClass">
+                <thead>
+                <tr>
+                    <th>time</th>
+                    <th>uid</th>
+                    <th>mobile</th>
+                    <th>unique_identifier</th>
+                    <th>model</th>
+                    <th>os_version</th>
+                    <th>network_type</th>
+                    <th>app_version</th>
+                    <th>app_channel</th>
+                    <th>md5</th>
+                    <th>stack</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th>time</th>
+                    <th>uid</th>
+                    <th>mobile</th>
+                    <th>unique_identifier</th>
+                    <th>model</th>
+                    <th>os_version</th>
+                    <th>network_type</th>
+                    <th>app_version</th>
+                    <th>app_channel</th>
+                    <th>md5</th>
+                    <th>stack</th>
+                </tr>
+                </tfoot>
+            </table>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-1"></div>
 </div>
 
 </body>
 <script th:src="@{/js/datepicker/moment.min.js}"></script>
 <script th:src="@{/js/datepicker/bootstrap-datetimepicker.min.js}"></script>
+<script th:src="@{/js/datatables/jquery.dataTables.js}"></script>
+<script th:src="@{/js/datatables/dataTables.bootstrap.min.js}"></script>
 <script>
     $(document).ready(function () {
         var beginTime = $('#begin-time');
         var toTime = $('#to-time');
+        var comboCountry=$('#comboCountry');
+        var combo=$('#combo');
+        var binding=$('#binding');
+        var teacherStatus=$('#teacherStatus');
+        var teacherType=$('#teacherType');
+        var teacherGroup = document.getElementById("group");
+        var studentInput=$('#student-id-mobile');
+        var teacherInput=$('#teacher-id-name');
         beginTime.datetimepicker();
         toTime.datetimepicker({
             useCurrent: false
@@ -174,8 +196,7 @@
         toTime.on("dp.change", function (e) {
             toTime.data("DateTimePicker").maxDate(e.date);
         });
-
-        $("#taocan > span").each(function (index) {
+        comboCountry.find("> span").each(function (index) {
             $(this).unbind('click');
             $(this).on("click", function () {
                 $(this).addClass("active");
@@ -183,7 +204,126 @@
                 $(this).prevAll().removeClass("active");
             });
         });
+        binding.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+            });
+        });
+        teacherStatus.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+            });
+        });
+        teacherType.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+            });
+        });
+        combo.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+            });
+        });
+        beginTime.on("change" ,function () {
+            getData();
+        });
+        toTime.on("change" ,function () {
+            getData();
+        });
+        studentInput.on("change",function () {
+            getData();
+        });
+        comboCountry.on("change",function () {
+            getData();
+        });
+        combo.on("change",function () {
+            getData();
+        });
+        binding.on("change",function () {
+            getData();
+        });
+        teacherInput.on("change",function () {
+            getData();
+        });
+        teacherStatus.on("change",function () {
+            getData();
+        });
+        teacherGroup.on("change",function () {
+            getData();
+        });
+        teacherType.on("change",function () {
+            getData();
+        });
+        getData();
 
+        $.ajax({
+            url: '/class/get_teacher_group',
+            type:'GET',
+            data:'',
+            success:function (data) {
+                $.each(data,function (n,value){
+                    var objOption = new Option(value);
+                    teacherGroup.add(objOption);
+                });
+            },
+            error:function () {
+            }
+        });
+        var table=$('#youngCostClass').DataTable({
+            destroy: true,
+            lengthMenu: [10, 25, 50, 100],
+            order: [[0, "desc"]],
+            autoWidth: true,
+            paging: true,
+            processing: true,
+            serverSide: true,
+            searching:false,
+            filter: true,
+            language: {
+                "lengthMenu": "Display _MENU_ records per page",
+                "zeroRecords": "Nothing found - sorry",
+                "info": "Showing page _PAGE_ of _PAGES_",
+                "infoEmpty": "No records available",
+                "infoFiltered": "(filtered from _MAX_ total records)"
+            }
+        });
     });
+    function getData() {
+        var bTime=$('#begin-time').val();
+        if(bTime==""){
+            bTime="all";
+        }
+        var tTime=$('#to-time').val();
+        if(tTime==""){
+            tTime="all";
+        }
+        var studentMessage=$('#student-id-mobile').val();
+        if(studentMessage==""){
+            studentMessage="all";
+        }
+        var teacherMessage=$('#teacher-id-name').val();
+        if(teacherMessage==""){
+            teacherMessage="all";
+        }
+        var comboCountry=$('#comboCountry').find('span[class="option-text active"]').text();
+        var binding = $('#binding').find('span[class="option-text active"]').text();
+        var teacherStatus=$('#teacherStatus').find('span[class="option-text active"]').text();
+        var teacherType=$('#teacherType').find('span[class="option-text active"]').text();
+        var combo=$('#combo').find('span[class="option-text active"]').text();
+        var group = $('#group').find("option:selected").val();
+        alert(bTime+tTime+studentMessage+teacherMessage+comboCountry+binding+teacherStatus+teacherType+combo+group);
+    }
 </script>
 </html>

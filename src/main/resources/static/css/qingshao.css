@@ -7,3 +7,6 @@
 .option-text.active {
     color: #43a8eb !important;
 }
+.form-control {
+    width: 20%;
+}

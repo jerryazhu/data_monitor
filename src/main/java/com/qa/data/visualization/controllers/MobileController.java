@@ -51,14 +51,14 @@ public class MobileController {
 
     @RequestMapping(value = "/get_android_response/{data}")
     @ResponseBody
-    public String getAndroidResponse(@PathVariable String data){
-        HashMap<String,String> androidResponse=mobileActionService.getAndroidResponse(data);
+    public String getAndroidResponse(@PathVariable String data) {
+        HashMap<String, String> androidResponse = mobileActionService.getAndroidResponse(data);
         return androidResponse.get(data);
     }
 
     @RequestMapping(value = "/get_ios_response/{data}")
     @ResponseBody
-    public String getIosResponse(@PathVariable String data){
+    public String getIosResponse(@PathVariable String data) {
         HashMap<String, String> iosResponse = mobileActionService.getIosResponse(data);
         return iosResponse.get(data);
     }
@@ -89,9 +89,9 @@ public class MobileController {
 
     @RequestMapping(value = "/get_android_crash")
     @ResponseBody
-    public DatatablesResponse<AndroidCrash> getAndroidCrash(HttpServletRequest request){
-        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
-        DataSet<AndroidCrash> dataSet=mobileActionService.getAndroidCrash(criterias);
-        return DatatablesResponse.build(dataSet,criterias);
+    public DatatablesResponse<AndroidCrash> getAndroidCrash(HttpServletRequest request) {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<AndroidCrash> dataSet = mobileActionService.getAndroidCrash(criterias);
+        return DatatablesResponse.build(dataSet, criterias);
     }
 }

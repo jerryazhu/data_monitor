@@ -20,14 +20,17 @@ import java.util.Map;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        entityManagerFactoryRef="entityManagerFactoryPrimary",
-        transactionManagerRef="transactionManagerPrimary",
-        basePackages= { "com.qa.data.visualization.repositories.jishu","com.qa.data.visualization.auth.repositories"}) //设置Repository所在位置
+        entityManagerFactoryRef = "entityManagerFactoryPrimary",
+        transactionManagerRef = "transactionManagerPrimary",
+        basePackages = {"com.qa.data.visualization.repositories.jishu", "com.qa.data.visualization.auth.repositories"})
+//设置Repository所在位置
 public class PrimaryConfig {
 
     @Autowired
     @Qualifier("primaryDataSource")
     private DataSource primaryDataSource;
+    @Autowired
+    private JpaProperties jpaProperties;
 
     @Primary
     @Bean(name = "entityManagerPrimary")
@@ -41,13 +44,10 @@ public class PrimaryConfig {
         return builder
                 .dataSource(primaryDataSource)
                 .properties(getVendorProperties(primaryDataSource))
-                .packages("com.qa.data.visualization.auth.entities","com.qa.data.visualization.entities.jishu") //设置实体类所在位置
+                .packages("com.qa.data.visualization.auth.entities", "com.qa.data.visualization.entities.jishu") //设置实体类所在位置
                 .persistenceUnit("primaryPersistenceUnit")
                 .build();
     }
-
-    @Autowired
-    private JpaProperties jpaProperties;
 
     private Map<String, String> getVendorProperties(DataSource dataSource) {
         return jpaProperties.getHibernateProperties(dataSource);

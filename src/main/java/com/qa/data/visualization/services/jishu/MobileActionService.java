@@ -11,9 +11,9 @@ public interface MobileActionService {
 
     DataSet<IosStuAPIAction> findIosStuAPIActionsWithDatatablesCriterias(DatatablesCriterias criterias);
 
-    HashMap<String,String> getAndroidResponse(String data);
+    HashMap<String, String> getAndroidResponse(String data);
 
-    HashMap<String,String> getIosResponse(String data);
+    HashMap<String, String> getIosResponse(String data);
 
     DataSet<AndroidAPIStuActionGroupCount> findAndroidAPIStuActionGroupCount(DatatablesCriterias criterias);
 

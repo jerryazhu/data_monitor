@@ -31,11 +31,11 @@ public class MobileActionServiceImpl implements MobileActionService {
     }
 
     @Override
-    public HashMap<String,String> getAndroidResponse(String data){
-        HashMap<String,String> map=new HashMap<String,String>();
-        Query q=entityManager.createNativeQuery("select idx,response from ABC360_APP_API_ANDROID_RESPONCE_TBL where idx='"+data+"'");
-        List <Object[]>list=q.getResultList();
-        for(Object[] result :list){
+    public HashMap<String, String> getAndroidResponse(String data) {
+        HashMap<String, String> map = new HashMap<String, String>();
+        Query q = entityManager.createNativeQuery("select idx,response from ABC360_APP_API_ANDROID_RESPONCE_TBL where idx='" + data + "'");
+        List<Object[]> list = q.getResultList();
+        for (Object[] result : list) {
             map.put(result[0].toString(), result[1].toString());
         }
         return map;
@@ -44,7 +44,7 @@ public class MobileActionServiceImpl implements MobileActionService {
     @Override
     public HashMap<String, String> getIosResponse(String data) {
         HashMap<String, String> map = new HashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select idx,response from ABC360_APP_API_IOS_RESPONCE_TBL where idx='"+data+"'");
+        Query q = entityManager.createNativeQuery("select idx,response from ABC360_APP_API_IOS_RESPONCE_TBL where idx='" + data + "'");
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             map.put(result[0].toString(), result[1].toString());
@@ -81,8 +81,8 @@ public class MobileActionServiceImpl implements MobileActionService {
     }
 
     @Override
-    public DataSet<AndroidCrash> getAndroidCrash(DatatablesCriterias criterias){
-        TableQuery query=new TableQuery(entityManager,AndroidCrash.class,criterias);
+    public DataSet<AndroidCrash> getAndroidCrash(DatatablesCriterias criterias) {
+        TableQuery query = new TableQuery(entityManager, AndroidCrash.class, criterias);
         return query.getResultDataSet();
     }
 

@@ -1,7 +1,6 @@
 package com.qa.data.visualization.services.jishu;
 
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 

@@ -19,14 +19,17 @@ import java.util.Map;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        entityManagerFactoryRef="entityManagerFactorySecondary",
-        transactionManagerRef="transactionManagerSecondary",
-        basePackages= { "com.qa.data.visualization.repositories.qingshao","com.qa.data.visualization.repositories.chengren" }) //设置Repository所在位置
+        entityManagerFactoryRef = "entityManagerFactorySecondary",
+        transactionManagerRef = "transactionManagerSecondary",
+        basePackages = {"com.qa.data.visualization.repositories.qingshao", "com.qa.data.visualization.repositories.chengren"})
+//设置Repository所在位置
 public class SecondaryConfig {
 
     @Autowired
     @Qualifier("secondaryDataSource")
     private DataSource secondaryDataSource;
+    @Autowired
+    private JpaProperties jpaProperties;
 
     @Bean(name = "entityManagerSecondary")
     public EntityManager entityManager(EntityManagerFactoryBuilder builder) {
@@ -34,17 +37,14 @@ public class SecondaryConfig {
     }
 
     @Bean(name = "entityManagerFactorySecondary")
-    public LocalContainerEntityManagerFactoryBean entityManagerFactorySecondary (EntityManagerFactoryBuilder builder) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactorySecondary(EntityManagerFactoryBuilder builder) {
         return builder
                 .dataSource(secondaryDataSource)
                 .properties(getVendorProperties(secondaryDataSource))
-                .packages("com.qa.data.visualization.entities.qingshao","com.qa.data.visualization.entities.chengren") //设置实体类所在位置
+                .packages("com.qa.data.visualization.entities.qingshao", "com.qa.data.visualization.entities.chengren") //设置实体类所在位置
                 .persistenceUnit("secondaryPersistenceUnit")
                 .build();
     }
-
-    @Autowired
-    private JpaProperties jpaProperties;
 
     private Map<String, String> getVendorProperties(DataSource dataSource) {
         return jpaProperties.getHibernateProperties(dataSource);

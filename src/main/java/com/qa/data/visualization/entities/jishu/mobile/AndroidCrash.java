@@ -8,7 +8,7 @@ import javax.persistence.*;
  * Created by dykj on 2016/11/15.
  */
 @Entity
-@Table(name="ABC360_ANDROID_APP_CRASH_TBL")
+@Table(name = "ABC360_ANDROID_APP_CRASH_TBL")
 public class AndroidCrash {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -122,8 +122,6 @@ public class AndroidCrash {
     public void setLogs(String logs) {
         this.logs = logs;
     }
-
-
 
 
 }

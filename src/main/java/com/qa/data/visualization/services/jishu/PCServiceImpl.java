@@ -43,8 +43,8 @@ public class PCServiceImpl implements PCService {
     @Cacheable(value = "pc_app_version_cache", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getPCApp() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select version as name,count(version) as count from (select * from ebk_pc_stu_client where version !='UnKnow version' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*30)) a inner JOIN\n" +
-                "(select sid,max(login_time) as Login_time from ebk_pc_stu_client where version !='UnKnow version' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*30) group by sid) b\n" +
+        Query q = entityManager.createNativeQuery("select version as name,count(version) as count from (select * from ebk_pc_stu_client where version !='UnKnow version' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*1)) a inner JOIN\n" +
+                "(select sid,max(login_time) as Login_time from ebk_pc_stu_client where version !='UnKnow version' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*1) group by sid) b\n" +
                 "on a.login_time = b.login_time and a.sid = b.sid \n" +
                 "GROUP BY (version)");
         List<Object[]> list = q.getResultList();
@@ -59,8 +59,8 @@ public class PCServiceImpl implements PCService {
     @Cacheable(value = "pc_os_version_cache", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getPCSystem() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select os as name,count(os) as count from (select * from ebk_pc_stu_client where os!='Unknow os' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*30)) a inner JOIN\n" +
-                "(select sid,max(login_time) as Login_time from ebk_pc_stu_client where os!='Unknow os' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*30) group by sid) b\n" +
+        Query q = entityManager.createNativeQuery("select os as name,count(os) as count from (select * from ebk_pc_stu_client where os!='Unknow os' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*1)) a inner JOIN\n" +
+                "(select sid,max(login_time) as Login_time from ebk_pc_stu_client where os!='Unknow os' and login_time > (UNIX_TIMESTAMP(now())- 3600*24*1) group by sid) b\n" +
                 "on a.login_time = b.login_time and a.sid = b.sid \n" +
                 "GROUP BY (os)");
         List<Object[]> list = q.getResultList();

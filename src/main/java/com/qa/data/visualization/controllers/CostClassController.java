@@ -1,7 +1,11 @@
 package com.qa.data.visualization.controllers;
 
 import com.qa.data.visualization.entities.qingshao.AutoComplete;
+import com.qa.data.visualization.entities.qingshao.CostClass;
 import com.qa.data.visualization.services.qingshao.ClassService;
+import com.web.spring.datatable.DataSet;
+import com.web.spring.datatable.DatatablesCriterias;
+import com.web.spring.datatable.DatatablesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -20,32 +25,35 @@ import java.util.*;
 public class CostClassController {
     @Autowired
     private ClassService classService;
-
     @RequestMapping(value = "/student_auto_complete")
     @ResponseBody
-    public List<AutoComplete> autocomplete(@RequestParam(value = "query", required = true) String query, HttpServletRequest request) {
+    public List<AutoComplete> autocompleteStudent(@RequestParam(value = "query", required = true) String query, HttpServletRequest request) {
         return classService.getStudentAutoComplete(query);
     }
 
+    @RequestMapping(value = "/teacher_auto_complete")
+    @ResponseBody
+    public List<AutoComplete> autocompleteTeacher(@RequestParam(value = "query", required = true) String query, HttpServletRequest request) {
+        return classService.getTeacherAutoComplete(query);
+    }
     @RequestMapping("/get_teacher_group")
     @ResponseBody
     public ArrayList getTeacherGroup() {
         ArrayList list = classService.getTeacherGroup();
         return list;
     }
-
-    @RequestMapping("/get_teacher_message/{data}")
+    @RequestMapping("/get_cost_class/{data}")
     @ResponseBody
-    public ArrayList getTeacherMessage(@PathVariable String data) {
-        ArrayList<Object> list = new ArrayList<Object>();
-        LinkedHashMap<String, String> teacherMessage = classService.getTeacherMessage(data);
-        for (Map.Entry<String, String> entry : teacherMessage.entrySet()) {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("id", entry.getKey());
-            map.put("data", entry.getValue());
-            list.add(map);
-        }
-        return list;
+    public DatatablesResponse<CostClass> getCostClass(@PathVariable String data, HttpServletRequest request) throws ParseException {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<CostClass> dataSet = classService.getCostClass(data,criterias);
+        return DatatablesResponse.build(dataSet, criterias);
     }
+    @RequestMapping("/get_cost_class_cnt")
+    @ResponseBody
+    public Long getCostClassCnt(){
+        return classService.getCostClassCnt();
+    }
+
 
 }

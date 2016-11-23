@@ -122,7 +122,7 @@
     <div class="col-lg-10">
         <div class="panel panel-default">
             <div style="float: right">
-            <span class="cnt"><i class="fa fa-align-right" aria-hidden="true"></i>Total:
+            <span class="cnt">Total:
                 <span class="cntNumber" id="costClassCnt">
                 </span>
             </span>
@@ -350,8 +350,7 @@
         });
         $('#youngCostClass').on( 'init.dt', function () {
                     getCnt();
-                } )
-                .dataTable();
+                }).dataTable();
     }
     function getCnt() {
         $.ajax({

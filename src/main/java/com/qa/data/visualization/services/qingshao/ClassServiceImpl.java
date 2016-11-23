@@ -29,7 +29,7 @@ import java.util.List;
  */
 @Service
 public class ClassServiceImpl implements ClassService {
-    public static Long costClassCnt;
+    private Long costClassCnt;
     @PersistenceContext(unitName = "secondaryPersistenceUnit")
     private EntityManager entityManager;
     @Autowired
@@ -100,115 +100,92 @@ public class ClassServiceImpl implements ClassService {
         Date date=dateFormat .parse(today);
         long todayUnix=date.getTime();
         long yesterdayUnix=todayUnix/1000-86400;
+        String sql="select ecr.begin_time as begin_time,ecr.tid as tid,ecr.tname as tname,ecr.sid as sid,ecr.sname as sname  \n" +
+                "from ebk_class_records ecr\n" +
+                "LEFT JOIN ebk_students es on ecr.sid = es.id\n" +
+                "LEFT JOIN ebk_student_info esi on ecr.sid = esi.sid\n" +
+                "LEFT JOIN ebk_teachers et on ecr.tid = et.id\n" +
+                "LEFT JOIN ebk_teacher_group etg on et.workgroup = etg.id\n" +
+                "where \n" +
+                "ecr.status=3\n" +
+                "and esi.study_aim=1 and ecr.free_try=0" ;
         String []cutData=data.split("\\+");
         String bTime=cutData[0];
         String tTime=cutData[1];
-        String timeSql;
         String studentMessage=cutData[2];
-        String studentMessageSql;
         String comboCountry=cutData[3];
         String combo=cutData[4];
-        String comboSql = null;
         String binding=cutData[5];
-        String bindingSql = null;
         String teacherMessage=cutData[6];
-        String teacherMessageSql;
         String teacherStatus=cutData[7];
-        String teacherStatusSql=null;
         String group=cutData[8];
-        String groupSql;
         String teacherType=cutData[9];
-        String teacherTypeSql=null;
         if(bTime.equals("all")||tTime.equals("all")){
-            timeSql="begin_time>"+yesterdayUnix;
+            sql=sql+"\n"+"and ecr.begin_time>"+yesterdayUnix;
         }else{
-            timeSql="begin_time between "+bTime+" and "+tTime;
+            sql=sql+"\n"+"and ecr.begin_time between "+bTime+" and "+tTime;
         }
-        if(studentMessage.equals("all")){
-            studentMessageSql="id != ''";
-        }else{
+        if(!studentMessage.equals("all")){
             String[]student=studentMessage.split("   ");
-            studentMessageSql="id = "+student[0];
+            sql=sql+"\n"+"and es.id= "+student[0];
         }
-        System.out.println("取值为"+comboCountry+combo);
         if(comboCountry.equals("不限")){
             switch (combo){
-                case "不限":comboSql="((lsns_per_day!=0 and days_per_week!=0) or (lsns_per_day_eu!=0 and days_per_week_eu!=0) or free_course!=0)";break;
-                case "51":comboSql="((lsns_per_day=1 and days_per_week=5) or (lsns_per_day_eu=1 and days_per_week_eu=5))";break;
-                case "52":comboSql="((lsns_per_day=2 and days_per_week=5) or (lsns_per_day_eu=2 and days_per_week_eu=5))";break;
-                case "31":comboSql="((lsns_per_day=1 and days_per_week=3) or (lsns_per_day_eu=1 and days_per_week_eu=3))";break;
-                case "32":comboSql="((lsns_per_day=2 and days_per_week=3) or (lsns_per_day_eu=2 and days_per_week_eu=3))";break;
-                case "00":comboSql="(free_course!=0)";break;
+                case "不限":break;
+                case "51":sql=sql+"\n"+"and ((es.lsns_per_day=1 and es.days_per_week=5) or (es.lsns_per_day_eu=1 and es.days_per_week_eu=5))";break;
+                case "52":sql=sql+"\n"+"and ((es.lsns_per_day=2 and es.days_per_week=5) or (es.lsns_per_day_eu=2 and es.days_per_week_eu=5))";break;
+                case "31":sql=sql+"\n"+"and ((es.lsns_per_day=1 and es.days_per_week=3) or (es.lsns_per_day_eu=1 and es.days_per_week_eu=3))";break;
+                case "32":sql=sql+"\n"+"and ((es.lsns_per_day=2 and es.days_per_week=3) or (es.lsns_per_day_eu=2 and es.days_per_week_eu=3))";break;
+                case "00":sql=sql+"\n"+"and ((es.lsns_per_day=0 and es.days_per_week=0 and es.lsns_per_day_eu=0 and es.days_per_week_eu=0 and es.acoin!=0)";break;
             }
         }else{
             if(comboCountry.equals("菲律宾")){
                 switch (combo){
-                    case "不限":comboSql="((lsns_per_day!=0 and days_per_week!=0) or free_course!=0)";break;
-                    case "51":comboSql="(lsns_per_day=1 and days_per_week=5)";break;
-                    case "52":comboSql="(lsns_per_day=2 and days_per_week=5)";break;
-                    case "31":comboSql="(lsns_per_day=1 and days_per_week=3)";break;
-                    case "32":comboSql="(lsns_per_day=2 and days_per_week=3)";break;
-                    case "00":comboSql="(free_course>free_course_2)";break;
+                    case "不限":sql=sql+"\n"+"and es.lsns_per_day!=0 and es.days.per_week!=0";break;
+                    case "51":sql=sql+"\n"+"and (es.lsns_per_day=1 and es.days_per_week=5)";break;
+                    case "52":sql=sql+"\n"+"and (es.lsns_per_day=2 and es.days_per_week=5)";break;
                 }
             }else{
                 switch (combo){
-                    case "不限":comboSql="((lsns_per_day_eu!=0 and days_per_week_eu!=0) or free_course!=0)";break;
-                    case "51":comboSql="(lsns_per_day_eu=1 and days_per_week_eu=5)";break;
-                    case "52":comboSql="(lsns_per_day_eu=2 and days_per_week_eu=5)";break;
-                    case "31":comboSql="(lsns_per_day_eu=1 and days_per_week_eu=3)";break;
-                    case "32":comboSql="(lsns_per_day_eu=2 and days_per_week_eu=3)";break;
-                    case "00":comboSql="(free_course_2!=0)";break;
+                    case "不限":sql=sql+"\n"+"and es.lsns_per_day_eu!=0 and es.lsns_per_day_eu!=0";break;
+                    case "51":sql=sql+"\n"+"and (es.lsns_per_day_eu=1 and es.days_per_week_eu=5)";break;
+                    case "52":sql=sql+"\n"+"and (es.lsns_per_day_eu=2 and es.days_per_week_eu=5)";break;
+                    case "31":sql=sql+"\n"+"and (es.lsns_per_day_eu=1 and es.days_per_week_eu=3)";break;
+                    case "32":sql=sql+"\n"+"and (es.lsns_per_day_eu=2 and es.days_per_week_eu=3)";break;
                 }
             }
         }
-        if(binding.equals("不限")){
-            bindingSql="is_bind!=0";
-        }
-        else{
+        if(!binding.equals("不限")){
             switch (binding){
-                case "绑定":bindingSql="is_bind=1";
-                case "不绑定":bindingSql="is_bind=-1";
+                case "绑定":sql=sql+"\n"+"and sec.is_bind=1";
+                case "不绑定":sql=sql+"\n"+"and src.is_bind=-1";
             }
         }
-        if(teacherMessage.equals("all")){
-            teacherMessageSql="id!=''";
-        }else{
+        if(!teacherMessage.equals("all")){
             String []teacher=teacherMessage.split("   ");
-            teacherMessageSql="id="+teacher[0];
+            sql=sql+"\n"+"and et.id="+teacher[0];
         }
-        if(group.equals("Group")){
-            groupSql="title!=''";
-        }else{
-            groupSql="title='"+group+"'";
+        if(!group.equals("Group")){
+            sql=sql+"\n"+"and etg.title='"+group+"'";
         }
         if(teacherStatus.equals("不限")){
-            teacherStatusSql="(status=3 or status=4)";
+            sql=sql+"\n"+"and (et.status=3 or et.status=4)";
         }else{
             switch (teacherStatus){
-                case "试用":teacherStatusSql="status=3";break;
-                case "活跃":teacherStatusSql="status=4";break;
+                case "试用":sql=sql+"\n"+"and et.status=3";break;
+                case "活跃":sql=sql+"\n"+"and et.status=4";break;
             }
         }
-        if(teacherType.equals("不限")){
-            teacherTypeSql="catalog!=0";
-        }else{
+        if(!teacherType.equals("不限")){
             switch (teacherType){
-                case "菲律宾":teacherTypeSql="catalog=1";break;
-                case "欧美":teacherTypeSql="catalog=2";break;
+                case "菲律宾":sql=sql+"\n"+"and et.catalog=1";break;
+                case "欧美":sql=sql+"\n"+"and et.catalog=2";break;
             }
         }
-        String sql="select begin_time,tid,tname,sid,sname from ebk_class_records where "+timeSql+" and status=3 \n" +
-                "and sid in(select id from ebk_students where "+studentMessageSql+"\n" +
-                "and id in(select sid from ebk_student_info where study_aim=1) \n"+
-                "and "+comboSql+")\n" +
-                "and "+bindingSql+"\n" +
-                "and tid in (select id from ebk_teachers where "+teacherMessageSql+"\n" +
-                "and "+teacherStatusSql+" and "+teacherTypeSql+"\n" +
-                "and workgroup in (select id from ebk_teacher_group where "+groupSql+"))";
-        System.out.println(sql);
         TableQuery query = new TableQuery(entityManager, CostClass.class, criterias, sql);
+        DataSet<CostClass> result=query.getResultDataSet();
         costClassCnt=query.getTotalCount();
-        return query.getResultDataSet();
+        return result;
     }
 
     @Override

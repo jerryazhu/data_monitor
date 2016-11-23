@@ -1,7 +1,11 @@
 package com.qa.data.visualization.services.qingshao;
 
 import com.qa.data.visualization.entities.qingshao.AutoComplete;
+import com.qa.data.visualization.entities.qingshao.CostClass;
+import com.web.spring.datatable.DataSet;
+import com.web.spring.datatable.DatatablesCriterias;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,5 +20,7 @@ public interface ClassService {
 
     ArrayList getTeacherGroup();
 
-    LinkedHashMap<String, String> getTeacherMessage(String data);
+    DataSet<CostClass> getCostClass(String data,DatatablesCriterias criterias) throws ParseException;
+
+    Long getCostClassCnt();
 }

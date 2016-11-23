@@ -3,10 +3,40 @@
     color: #999;
     cursor: pointer;
     position: relative;
+    height:30px;
+    line-height:30px;
+    overflow:hidden;
 }
 .option-text.active {
     color: #43a8eb !important;
 }
-.form-control {
-    width: 20%;
+.cnt{
+    font-family : 微软雅黑,宋体;
+    font-size : 30px;
+    font-weight: bold
 }
+.cntNumber{
+    font-family : 微软雅黑,宋体;
+    font-size : 30px;
+    font-weight: bold;
+    color : #3399FF;
+}
+.form-control {
+    width: 15%;
+    height: 30px;
+    line-height:30px;
+    overflow:hidden;
+    position: relative;
+    display:inline
+}
+.height{
+    height: 30px;
+    line-height:30px;
+    overflow:hidden;
+}
+.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
+.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+.autocomplete-selected { background: #F0F0F0; }
+.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
+.autocomplete-group { padding: 2px 5px; }
+.autocomplete-group strong { display: block; border-bottom: 1px solid #000; }

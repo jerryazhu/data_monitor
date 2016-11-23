@@ -12,12 +12,11 @@
 }
 .cnt{
     font-family : 微软雅黑,宋体;
-    font-size : 30px;
-    font-weight: bold
+    font-size: 16px;
 }
 .cntNumber{
     font-family : 微软雅黑,宋体;
-    font-size : 30px;
+    font-size : 25px;
     font-weight: bold;
     color : #3399FF;
 }

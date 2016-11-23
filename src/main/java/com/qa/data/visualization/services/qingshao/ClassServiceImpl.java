@@ -126,8 +126,7 @@ public class ClassServiceImpl implements ClassService {
             sql=sql+"\n"+"and ecr.begin_time between "+bTime+" and "+tTime;
         }
         if(!studentMessage.equals("all")){
-            String[]student=studentMessage.split("   ");
-            sql=sql+"\n"+"and es.id= "+student[0];
+            sql=sql+"\n"+"and es.id= "+studentMessage;
         }
         if(comboCountry.equals("不限")){
             switch (combo){
@@ -136,18 +135,18 @@ public class ClassServiceImpl implements ClassService {
                 case "52":sql=sql+"\n"+"and ((es.lsns_per_day=2 and es.days_per_week=5) or (es.lsns_per_day_eu=2 and es.days_per_week_eu=5))";break;
                 case "31":sql=sql+"\n"+"and ((es.lsns_per_day=1 and es.days_per_week=3) or (es.lsns_per_day_eu=1 and es.days_per_week_eu=3))";break;
                 case "32":sql=sql+"\n"+"and ((es.lsns_per_day=2 and es.days_per_week=3) or (es.lsns_per_day_eu=2 and es.days_per_week_eu=3))";break;
-                case "00":sql=sql+"\n"+"and ((es.lsns_per_day=0 and es.days_per_week=0 and es.lsns_per_day_eu=0 and es.days_per_week_eu=0 and es.acoin!=0)";break;
+                case "00":sql=sql+"\n"+"and (es.lsns_per_day=0 and es.days_per_week=0 and es.lsns_per_day_eu=0 and es.days_per_week_eu=0 and es.acoin!=0)";break;
             }
         }else{
             if(comboCountry.equals("菲律宾")){
                 switch (combo){
-                    case "不限":sql=sql+"\n"+"and es.lsns_per_day!=0 and es.days.per_week!=0";break;
+                    case "不限":sql=sql+"\n"+"and es.lsns_per_day!=0 and es.days_per_week!=0";break;
                     case "51":sql=sql+"\n"+"and (es.lsns_per_day=1 and es.days_per_week=5)";break;
                     case "52":sql=sql+"\n"+"and (es.lsns_per_day=2 and es.days_per_week=5)";break;
                 }
             }else{
                 switch (combo){
-                    case "不限":sql=sql+"\n"+"and es.lsns_per_day_eu!=0 and es.lsns_per_day_eu!=0";break;
+                    case "不限":sql=sql+"\n"+"and es.lsns_per_day_eu!=0 and es.days_per_week_eu!=0";break;
                     case "51":sql=sql+"\n"+"and (es.lsns_per_day_eu=1 and es.days_per_week_eu=5)";break;
                     case "52":sql=sql+"\n"+"and (es.lsns_per_day_eu=2 and es.days_per_week_eu=5)";break;
                     case "31":sql=sql+"\n"+"and (es.lsns_per_day_eu=1 and es.days_per_week_eu=3)";break;
@@ -157,13 +156,12 @@ public class ClassServiceImpl implements ClassService {
         }
         if(!binding.equals("不限")){
             switch (binding){
-                case "绑定":sql=sql+"\n"+"and sec.is_bind=1";
-                case "不绑定":sql=sql+"\n"+"and src.is_bind=-1";
+                case "绑定":sql=sql+"\n"+"and ecr.is_bind=1";break;
+                case "不绑定":sql=sql+"\n"+"and ecr.is_bind=-1";break;
             }
         }
         if(!teacherMessage.equals("all")){
-            String []teacher=teacherMessage.split("   ");
-            sql=sql+"\n"+"and et.id="+teacher[0];
+            sql=sql+"\n"+"and et.id="+teacherMessage;
         }
         if(!group.equals("Group")){
             sql=sql+"\n"+"and etg.title='"+group+"'";

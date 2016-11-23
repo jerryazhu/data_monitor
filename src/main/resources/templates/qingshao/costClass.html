@@ -285,8 +285,14 @@
                 if (!currentValue) {
                     return suggestion.value + "&nbsp;&nbsp;&nbsp;"+suggestion.data;
                 }
-
-                return suggestion.value + "&nbsp;&nbsp;&nbsp;"+suggestion.data;
+                var pattern = '(' + currentValue.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&") + ')';
+                return suggestion.value
+                                .replace(new RegExp(pattern, 'gi'), '<strong>$1<\/strong>')
+                                .replace(/&/g, '&amp;')
+                                .replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;')
+                                .replace(/"/g, '&quot;')
+                                .replace(/&lt;(\/?strong)&gt;/g, '<$1>') + "&nbsp;&nbsp;&nbsp;"+suggestion.data;
             },
             onSelect: function (suggestion) {
                 $('#student-id-mobile').val(suggestion.value + "   "+suggestion.data);
@@ -308,7 +314,14 @@
                 if (!currentValue) {
                     return suggestion.value + "&nbsp;&nbsp;&nbsp;"+suggestion.data;
                 }
-                return suggestion.value + "&nbsp;&nbsp;&nbsp;"+suggestion.data;
+                var pattern = '(' + currentValue.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&") + ')';
+                return suggestion.value
+                                .replace(new RegExp(pattern, 'gi'), '<strong>$1<\/strong>')
+                                .replace(/&/g, '&amp;')
+                                .replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;')
+                                .replace(/"/g, '&quot;')
+                                .replace(/&lt;(\/?strong)&gt;/g, '<$1>') + "&nbsp;&nbsp;&nbsp;"+suggestion.data;
             },
             onSelect: function (suggestion) {
                 $('#teacher-id-email').val(suggestion.value + "   "+suggestion.data);

@@ -15,7 +15,7 @@
             <div class="form-group">
                 <label class="sr-only" for="begin-time">BeginTime</label>
                 <div class='input-group date' id='begin-time'>
-                    <input class="form-control" type="text"/>
+                    <input class="form-control" type="text" id="bTimeInput"/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -26,7 +26,7 @@
             <div class="form-group">
                 <label class="sr-only" for="to-time">ToTime</label>
                 <div class='input-group date' id='to-time'>
-                    <input class="form-control" type="text"/>
+                    <input class="form-control" type="text" id="tTimeInput"/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -49,9 +49,9 @@
         <p class="text-right control-label"><strong class="height">套餐：</strong></p>
     </div>
     <div class="col-lg-10 height" id="comboCountry">
-        <span class="option-text active">不限</span>
-        <span class="option-text">欧美</span>
-        <span class="option-text">菲律宾</span>
+        <span class="option-text active" id="allCountry">不限</span>
+        <span class="option-text" id="eu">欧美</span>
+        <span class="option-text" id="ph">菲律宾</span>
     </div>
 </div>
 <div class="row">
@@ -59,12 +59,12 @@
         <p class="text-right control-label"><strong class="height">学员套餐：</strong></p>
     </div>
     <div class="col-lg-10 height" id="combo">
-        <span class="option-text active">不限</span>
-        <span class="option-text">五天/周 一节/天</span>
-        <span class="option-text">五天/周 二节/天</span>
-        <span class="option-text">三天/周 一节/天</span>
-        <span class="option-text">三天/周 二节/天</span>
-        <span class="option-text">自由课</span>
+        <span class="option-text active" id="allCombo">不限</span>
+        <span class="option-text" id="51combo">五天/周 一节/天</span>
+        <span class="option-text" id="52combo">五天/周 二节/天</span>
+        <span class="option-text" id="31combo">三天/周 一节/天</span>
+        <span class="option-text" id="32combo">三天/周 二节/天</span>
+        <span class="option-text" id="00combo">自由课</span>
     </div>
 </div>
 <div class="row">
@@ -166,8 +166,14 @@
         var teacherGroup = document.getElementById("group");
         var studentInput=$('#student-id-mobile');
         var teacherInput=$('#teacher-id-email');
+        var date = new Date();
+        var yDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1)+" 00:00";
+        var tDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate())+" "+date.getHours()+":"+date.getMinutes();;
+        $('#bTimeInput').val(yDay);
+        $('#tTimeInput').val(tDay);
         beginTime.datetimepicker({
-            format: 'YYYY-MM-DD HH:mm'
+            format: 'YYYY-MM-DD HH:mm',
+            useCurrent: false
         });
         toTime.datetimepicker({
             format: 'YYYY-MM-DD HH:mm',
@@ -209,6 +215,7 @@
                 $(this).addClass("active");
                 $(this).nextAll().removeClass("active");
                 $(this).prevAll().removeClass("active");
+                showCombo(this);
                 createTable();
             });
         });
@@ -245,6 +252,7 @@
                 $(this).addClass("active");
                 $(this).nextAll().removeClass("active");
                 $(this).prevAll().removeClass("active");
+                showCountry(this);
                 createTable();
             });
         });
@@ -310,6 +318,45 @@
 
         });
     });
+    function showCombo(e) {
+        var country=$('#comboCountry').find('span[class="option-text active"]').text();
+        if(country=='菲律宾'){
+            $('#31combo').hide();
+            $('#32combo').hide();
+            $('#00combo').hide();
+            var combo=$('#combo').find('span[class="option-text active"]').text();
+            if(combo=='三天/周 一节/天' || combo=='三天/周 二节/天'){
+                $('#combo').find("span").attr("class","option-text");
+                $('#allCombo').attr("class", "option-text active");
+            }
+        }else{
+            if(country=='欧美'){
+                $('#31combo').show();
+                $('#32combo').show();
+                $('#00combo').hide();
+            }else{
+                $('#31combo').show();
+                $('#32combo').show();
+                $('#00combo').show();
+            }
+        }
+    }
+    function showCountry(){
+        var combo=$('#combo').find('span[class="option-text active"]').text();
+        if(combo=='自由课'){
+            $('#eu').hide();
+            $('#ph').hide();
+        }else {
+            if (combo == '三天/周 一节/天' || combo == '三天/周 二节/天') {
+                $('#eu').show();
+                $('#ph').hide();
+            }
+            else {
+                $('#eu').show();
+                $('#ph').show();
+            }
+        }
+    }
     function createTable() {
         var table=$('#youngCostClass').DataTable({
             destroy: true,
@@ -322,7 +369,7 @@
             searching:false,
             filter: true,
             language: {
-                "lengthMenu": "Display _MENU_ records per page",
+                "lengthMenu": " _MENU_ ",
                 "zeroRecords": "Nothing found - sorry",
                 "info": "Showing page _PAGE_ of _PAGES_",
                 "infoEmpty": "No records available",
@@ -379,10 +426,16 @@
         var studentMessage=$('#student-id-mobile').val();
         if(studentMessage==""||studentMessage=="Id/Mobile"){
             studentMessage="all";
+        }else{
+            var student=studentMessage.split("   ");
+            studentMessage=student[0];
         }
         var teacherMessage=$('#teacher-id-email').val();
         if(teacherMessage==""||teacherMessage=="id/Email"){
             teacherMessage="all";
+        }else{
+            var teacher=teacherMessage.split("   ");
+            teacherMessage=teacher[0];
         }
         var comboCountry=$('#comboCountry').find('span[class="option-text active"]').text();
         var binding = $('#binding').find('span[class="option-text active"]').text();

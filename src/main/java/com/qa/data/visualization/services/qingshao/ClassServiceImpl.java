@@ -30,6 +30,7 @@ import java.util.List;
 @Service
 public class ClassServiceImpl implements ClassService {
     private Long costClassCnt;
+    private String wholeSql;
     @PersistenceContext(unitName = "secondaryPersistenceUnit")
     private EntityManager entityManager;
     @Autowired
@@ -183,6 +184,7 @@ public class ClassServiceImpl implements ClassService {
         TableQuery query = new TableQuery(entityManager, CostClass.class, criterias, sql);
         DataSet<CostClass> result=query.getResultDataSet();
         costClassCnt=query.getTotalCount();
+        wholeSql=sql;
         return result;
     }
 
@@ -190,5 +192,11 @@ public class ClassServiceImpl implements ClassService {
     @SuppressWarnings("unchecked")
     public Long getCostClassCnt(){
         return costClassCnt;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public String getWholeSql(){
+        return wholeSql;
     }
 }

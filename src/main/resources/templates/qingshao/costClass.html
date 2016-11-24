@@ -118,6 +118,13 @@
     </div>
 </div>
 <div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-10">
+        <div class="col-lg-3 pull-right"><button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#sql">SQL查看</button></div>
+        <div id="sql" class="collapse pull-center"></div>
+    </div>
+</div>
+<div class="row">
     <div class="col-lg-1"></div>
     <div class="col-lg-10">
         <div class="panel panel-default">
@@ -198,6 +205,7 @@
             var bTime=$('#begin-time').find("> input").val();
             var tTime=$('#to-time').find("> input").val();
             if(bTime!='' && tTime!='' && tTime>bTime){
+                $('#costClassCnt').html('<span  class="cntNumber">  </span>');
                 createTable();
             }
         });
@@ -206,6 +214,7 @@
             var bTime=$('#begin-time').find("> input").val();
             var tTime=$('#to-time').find("> input").val();
             if(bTime!='' && tTime!=''&& tTime>bTime){
+                $('#costClassCnt').html('<span  class="cntNumber">  </span>');
                 createTable();
             }
         });
@@ -216,6 +225,7 @@
                 $(this).nextAll().removeClass("active");
                 $(this).prevAll().removeClass("active");
                 showCombo(this);
+                $('#costClassCnt').html('<span  class="cntNumber">  </span>');
                 createTable();
             });
         });
@@ -225,6 +235,7 @@
                 $(this).addClass("active");
                 $(this).nextAll().removeClass("active");
                 $(this).prevAll().removeClass("active");
+                $('#costClassCnt').html('<span  class="cntNumber">  </span>');
                 createTable();
             });
         });
@@ -234,6 +245,7 @@
                 $(this).addClass("active");
                 $(this).nextAll().removeClass("active");
                 $(this).prevAll().removeClass("active");
+                $('#costClassCnt').html('<span  class="cntNumber">  </span>');
                 createTable();
             });
         });
@@ -243,6 +255,7 @@
                 $(this).addClass("active");
                 $(this).nextAll().removeClass("active");
                 $(this).prevAll().removeClass("active");
+                $('#costClassCnt').html('<span  class="cntNumber">  </span>');
                 createTable();
             });
         });
@@ -253,22 +266,27 @@
                 $(this).nextAll().removeClass("active");
                 $(this).prevAll().removeClass("active");
                 showCountry(this);
+                $('#costClassCnt').html('<span  class="cntNumber">  </span>');
                 createTable();
             });
         });
         $('#studentAll').click(function () {
             studentInput.val("");
+            $('#costClassCnt').html('<span  class="cntNumber">  </span>');
             createTable();
         });
         $('#teacherAll').click(function () {
             teacherInput.val("");
+            $('#costClassCnt').html('<span  class="cntNumber">  </span>');
             createTable();
         });
         $('#teacherGroupAll').click(function () {
             $('#group').val("Group");
+            $('#costClassCnt').html('<span  class="cntNumber">  </span>');
             createTable();
         });
         $('#group').on("change",function () {
+            $('#costClassCnt').html('<span  class="cntNumber">  </span>');
             createTable();
         });
         studentInput.autocomplete({
@@ -296,6 +314,7 @@
             },
             onSelect: function (suggestion) {
                 $('#student-id-mobile').val(suggestion.value + "   "+suggestion.data);
+                $('#costClassCnt').html('<span  class="cntNumber">  </span>');
                 createTable();
                 console.log('You selected: ' + suggestion.value + "&nbsp;&nbsp;&nbsp;"+suggestion.data);
             }
@@ -325,6 +344,7 @@
             },
             onSelect: function (suggestion) {
                 $('#teacher-id-email').val(suggestion.value + "   "+suggestion.data);
+                $('#costClassCnt').html('<span  class="cntNumber">  </span>');
                 createTable();
                 console.log('You selected: ' + suggestion.value +"&nbsp;&nbsp;&nbsp;"+suggestion.data);
             }
@@ -410,6 +430,7 @@
         });
         $('#youngCostClass').on( 'init.dt', function () {
                     getCnt();
+                    getSql();
                 }).dataTable();
     }
     function getCnt() {
@@ -419,6 +440,18 @@
             data:'',
             success:function (data) {
                 $('#costClassCnt').html('<span  class="cntNumber">'+data+'</span>');
+            },
+            error:function () {
+            }
+        });
+    }
+    function getSql() {
+        $.ajax({
+            url: '/class/get_whole_sql',
+            type:'GET',
+            data:'',
+            success:function (data) {
+                $('#sql').html('<span >'+data.replace(/\n/g,'<br/>')+'</span>');
             },
             error:function () {
             }

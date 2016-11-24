@@ -23,4 +23,6 @@ public interface ClassService {
     DataSet<CostClass> getCostClass(String data,DatatablesCriterias criterias) throws ParseException;
 
     Long getCostClassCnt();
+
+    String getWholeSql();
 }

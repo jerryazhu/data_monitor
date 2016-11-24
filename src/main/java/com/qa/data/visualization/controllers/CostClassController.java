@@ -55,5 +55,10 @@ public class CostClassController {
         return classService.getCostClassCnt();
     }
 
+    @RequestMapping("/get_whole_sql")
+    @ResponseBody
+    public String getWholeSql(){
+        return classService.getWholeSql();
+    }
 
 }

@@ -2,6 +2,8 @@ package com.qa.data.visualization.controllers;
 
 import com.qa.data.visualization.entities.qingshao.AutoComplete;
 import com.qa.data.visualization.entities.qingshao.CostClass;
+import com.qa.data.visualization.entities.qingshao.CostSaClass;
+import com.qa.data.visualization.entities.qingshao.newStudent;
 import com.qa.data.visualization.services.qingshao.ClassService;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
@@ -39,8 +41,12 @@ public class CostClassController {
     @RequestMapping("/get_teacher_group")
     @ResponseBody
     public ArrayList getTeacherGroup() {
-        ArrayList list = classService.getTeacherGroup();
-        return list;
+        return classService.getTeacherGroup();
+    }
+    @RequestMapping("/get_sa_teacher_group")
+    @ResponseBody
+    public ArrayList getSaTeacherGroup(){
+        return classService.getSaTeacherGroup();
     }
     @RequestMapping("/get_cost_class/{data}")
     @ResponseBody
@@ -49,16 +55,60 @@ public class CostClassController {
         DataSet<CostClass> dataSet = classService.getCostClass(data,criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
+    @RequestMapping("/get_cost_sa_class/{data}")
+    @ResponseBody
+    public DatatablesResponse<CostSaClass> getCostSaClass(@PathVariable String data, HttpServletRequest request) throws ParseException {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<CostSaClass> dataSet = classService.getCostSaClass(data,criterias);
+        return DatatablesResponse.build(dataSet, criterias);
+    }
+    @RequestMapping("/get_new_student/{data}")
+    @ResponseBody
+    public DatatablesResponse<newStudent> getNewStudent(@PathVariable String data, HttpServletRequest request) throws ParseException {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<newStudent> dataSet = classService.getNewStudent(data,criterias);
+        return DatatablesResponse.build(dataSet, criterias);
+    }
     @RequestMapping("/get_cost_class_cnt")
     @ResponseBody
     public Long getCostClassCnt(){
         return classService.getCostClassCnt();
     }
 
+    @RequestMapping("/get_cost_sa_class_cnt")
+    @ResponseBody
+    public Long getCostSaClassCnt(){
+        return classService.getCostSaClassCnt();
+    }
+
+    @RequestMapping("/get_new_student_cnt")
+    @ResponseBody
+    public Long getNewStudentCnt(){
+        return classService.getNewStudentCnt();
+    }
+
     @RequestMapping("/get_whole_sql")
     @ResponseBody
     public String getWholeSql(){
         return classService.getWholeSql();
+    }
+
+    @RequestMapping("/get_whole_sa_sql")
+    @ResponseBody
+    public String getWholeSaSql(){
+        return classService.getWholeSaSql();
+    }
+
+    @RequestMapping("/get_new_student_sql")
+    @ResponseBody
+    public String getNewStudentSql(){
+        return classService.getNewStudentSql();
+    }
+
+    @RequestMapping("/get_new_student_pay_cnt")
+    @ResponseBody
+    public String getNewStudentPayCnt(){
+        return classService.getNewStudentPayCnt();
     }
 
 }

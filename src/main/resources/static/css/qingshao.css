@@ -3,8 +3,8 @@
     color: #999;
     cursor: pointer;
     position: relative;
-    height:30px;
-    line-height:30px;
+    height:35px;
+    line-height:35px;
     overflow:hidden;
 }
 .option-text.active {
@@ -19,6 +19,7 @@
     font-size : 25px;
     font-weight: bold;
     color : #3399FF;
+    margin-right:10px;
 }
 .form-control {
     width: 15%;
@@ -29,8 +30,8 @@
     display:inline
 }
 .height{
-    height: 30px;
-    line-height:30px;
+    height: 35px;
+    line-height:35px;
     overflow:hidden;
 }
 .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }

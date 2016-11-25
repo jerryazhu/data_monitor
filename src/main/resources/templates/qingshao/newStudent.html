@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/css/qingshao.css}" rel="stylesheet"/>
+    <link th:href="@{/css/datepicker/bootstrap-datetimepicker.css}" rel="stylesheet"/>
+    <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="row">
+    <div class="col-lg-2">
+        <p class="text-right control-label"><strong class="height"> 时间：</strong></p>
+    </div>
+    <div class="col-lg-10">
+        <div class='col-md-3'>
+            <div class="form-group">
+                <label class="sr-only" for="begin-time">BeginTime</label>
+                <div class='input-group date' id='begin-time'>
+                    <input class="form-control" type="text" id="bTimeInput"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class='col-md-3'>
+            <div class="form-group">
+                <label class="sr-only" for="to-time">ToTime</label>
+                <div class='input-group date' id='to-time'>
+                    <input class="form-control" type="text" id="tTimeInput"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2 height">
+        <p class="text-right control-label"><strong class="height">注册方式：</strong></p>
+    </div>
+    <div class="col-lg-10 height" id="regWay">
+        <span class="option-text active" id="allCountry">不限</span>
+        <span class="option-text">市场新分学员</span>
+        <span class="option-text">转介绍</span>
+    </div>
+</div>
+<div class="row" id="changePlace">
+</div>
+<div class="row">
+    <div class="col-lg-2 height">
+        <p class="text-right control-label"><strong class="height">展示内容：</strong></p>
+    </div>
+    <div class="col-lg-10 height" id="tableShow">
+        <span class="option-text active">注册量</span>
+        <span class="option-text">预约量</span>
+        <span class="option-text">完成测评课数量</span>
+        <span class="option-text">销售量及购买人数</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-10">
+        <div class="col-lg-3 pull-right"><button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#sql">SQL查看</button></div>
+        <div id="sql" class="collapse pull-center"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-1"></div>
+    <div class="col-lg-10">
+        <div class="panel panel-default">
+            <div style="float: right">
+            <span class="cnt">Total:
+                <span class="cntNumber" id="costClassCnt">
+                </span>
+            </span>
+             <span class="cnt" id="payCntTotal">Pay_Total:
+                 <span class="cntNumber" id="payCnt">
+                 </span>
+             </span>
+            </div>
+            <div class="panel-body">
+                <div class="dataTable_wrapper">
+                    <table class="table table-striped table-bordered table-hover" id="newStudent">
+                        <thead>
+                        <tr>
+                            <th>create_time</th>
+                            <th>sid</th>
+                            <th>sname</th>
+                            <th>status</th>
+                            <th>cc</th>
+                            <th id="cnt">cnt</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-1"></div>
+</div>
+
+</body>
+<script th:src="@{/js/datepicker/moment.min.js}"></script>
+<script th:src="@{/js/datepicker/bootstrap-datetimepicker.min.js}"></script>
+<script th:src="@{/js/datatables/jquery.dataTables.js}"></script>
+<script th:src="@{/js/datatables/dataTables.bootstrap.min.js}"></script>
+<script th:src="@{/js/jquery-autocomplete/jquery.autocomplete.min.js}"></script>
+<script>
+    // <![CDATA[
+    $(document).ready(function () {
+        var beginTime = $('#begin-time');
+        var toTime = $('#to-time');
+        var regWay=$('#regWay');
+        var tableShow=$('#tableShow');
+        var date = new Date();
+        var yDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1)+" 00:00";
+        var tDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate())+" "+date.getHours()+":"+date.getMinutes();;
+        $('#bTimeInput').val(yDay);
+        $('#tTimeInput').val(tDay);
+        beginTime.datetimepicker({
+            format: 'YYYY-MM-DD HH:mm',
+            useCurrent: false
+        });
+        toTime.datetimepicker({
+            format: 'YYYY-MM-DD HH:mm',
+            useCurrent: false
+        });
+        recoverCnt();
+        createTable();
+        beginTime.on("dp.change", function (e) {
+            toTime.data("DateTimePicker").minDate(e.date);
+            var bTime=$('#begin-time').find("> input").val();
+            var tTime=$('#to-time').find("> input").val();
+            if(bTime!='' && tTime!='' && tTime>bTime){
+                recoverCnt();
+                createTable();
+            }
+        });
+        toTime.on("dp.change", function (e) {
+            toTime.data("DateTimePicker").maxDate(e.date);
+            var bTime=$('#begin-time').find("> input").val();
+            var tTime=$('#to-time').find("> input").val();
+            if(bTime!='' && tTime!=''&& tTime>bTime){
+                recoverCnt();
+                createTable();
+            }
+        });
+
+        regWay.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+                changeShow();
+                recoverCnt();
+                createTable();
+            });
+        });
+        tableShow.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+                recoverCnt();
+                createTable();
+            });
+        });
+    });
+    function changeShow() {
+        var regWay=$('#regWay').find('span[class="option-text active"]').text();
+        if(regWay=='不限'){
+            $('#changePlace').html(
+                    '<div></div>'
+            );
+        }else{
+            if(regWay=='市场新分学员'){
+                $('#changePlace').html(
+                        '<div class="col-lg-2 height"> <p class="text-right control-label"><strong class="height">学员注册级别：</strong></p> </div>'+
+                        '<div class="col-lg-10 height" id="regRank">'+
+                        '<span class="option-text active" id="allRegRank">不限</span>'+
+                        '<span class="option-text" id="SRank">S</span>'+
+                        '<span class="option-text" id="ARank">A</span>'+
+                        '<span class="option-text" id="BRank">B</span>'+
+                        '<span class="option-text" id="CRank">C</span>'+
+                        '</div>');
+
+            }else{
+                $('#changePlace').html(
+                        '<div class="col-lg-2 height"> <p class="text-right control-label"><strong class="height">介绍方式：</strong></p> </div>'+
+                        '<div class="col-lg-10 height" id="sendWay">'+
+                        '<span class="option-text active" id="allSendWay">不限</span>'+
+                        '<span class="option-text" id="1way">正常转介绍</span>'+
+                        '<span class="option-text" id="2way">渠道代理</span>'+
+                        '</div>'
+                );
+            }
+            var regRank=$('#regRank');
+            var sendWay=$('#sendWay');
+            regRank.find("> span").each(function (index) {
+                $(this).unbind('click');
+                $(this).on("click", function () {
+                    $(this).addClass("active");
+                    $(this).nextAll().removeClass("active");
+                    $(this).prevAll().removeClass("active");
+                    recoverCnt();
+                    createTable();
+                });
+            });
+            sendWay.find("> span").each(function (index) {
+                $(this).unbind('click');
+                $(this).on("click", function () {
+                    $(this).addClass("active");
+                    $(this).nextAll().removeClass("active");
+                    $(this).prevAll().removeClass("active");
+                    recoverCnt();
+                    createTable();
+                });
+            });
+        }
+    }
+    function recoverCnt() {
+        $('#costClassCnt').html('<span  class="cntNumber">  </span>');
+        $('#payCntTotal').hide();
+        $('#payCnt').html('<span  class="cntNumber">  </span>');
+
+    }
+    function createTable() {
+        var table=$('#newStudent').DataTable({
+            destroy: true,
+            lengthMenu: [10, 25, 50, 100],
+            order: [[0, "desc"]],
+            autoWidth: true,
+            paging: true,
+            processing: true,
+            serverSide: true,
+            searching:false,
+            filter: true,
+            language: {
+                "lengthMenu": " _MENU_ ",
+                "zeroRecords": "Nothing found - sorry",
+                "info": "Showing page _PAGE_ of _PAGES_",
+                "infoEmpty": "No records available",
+                "infoFiltered": "(filtered from _MAX_ total records)"
+            },
+            columns: [
+                {"data": "create_time"},
+                {"data": "sid"},
+                {"data": "sname"},
+                {"data": "status"},
+                {"data": "cc"},
+                {"data": "cnt"}
+            ],
+            columnDefs:[
+                {
+                    "targets": 0,
+                    "render": function (data, type, row, meta) {
+                        return unixToDate(parseInt(data));
+                    }
+                },{
+                    "targets":3,
+                    "render": function (data, type, row, meta) {
+                        switch (data){
+                            case '-1':return '未激活';break;
+                            case '0':return '体验中';break;
+                            case '1':return '上课中';break;
+                            case '2':return '休课中';break;
+                            case '3':return '停课中';break;
+                            case '4':return '已退款';break;
+                            case '5':return '已申请退款';break;
+                            case '6':return '退款业务已处理';break;
+                            case '7':return '冻结中';break;
+                            case '8':return '已清零';break;
+                            case '9':return '常规假期中';break;
+                            case '10':return '扣币假期中';break;
+                        }
+                    }
+                },{
+                    "targets":5,
+                    "name":'cnt',
+                    "visible": false
+                }
+            ],
+            ajax: {
+                url: '/class/get_new_student/'+getData(),
+                type: 'GET'
+            }
+        });
+        $('#newStudent').on( 'init.dt', function () {
+            getCnt();
+            getSql();
+        }).dataTable();
+        var tableShow=$('#tableShow').find('span[class="option-text active"]').text();
+        var column = table.column('cnt:name');
+        if(tableShow=='销售量及购买人数'){
+            column.visible(true);
+        }
+    }
+    function getCnt() {
+        $.ajax({
+            url: '/class/get_new_student_cnt',
+            type:'GET',
+            data:'',
+            success:function (data) {
+                $('#costClassCnt').html('<span  class="cntNumber">'+data+'</span>');
+                var tableShow=$('#tableShow').find('span[class="option-text active"]').text();
+                if(tableShow=='销售量及购买人数'){
+                    $('#payCntTotal').show();
+                    getPayCnt();
+                }else{
+                    $('#payCntTotal').hide();
+                }
+            },
+            error:function () {
+            }
+        });
+    }
+    function getPayCnt() {
+        $.ajax({
+            url: '/class/get_new_student_pay_cnt',
+            type:'GET',
+            data:'',
+            success:function (data) {
+                $('#payCnt').html('<span  class="cntNumber">'+data+'</span>');
+            },
+            error:function () {
+            }
+        });
+    }
+    function getSql() {
+        $.ajax({
+            url: '/class/get_new_student_sql',
+            type:'GET',
+            data:'',
+            success:function (data) {
+                $('#sql').html('<span >'+data.replace(/\n/g,'<br/>')+'</span>');
+            },
+            error:function () {
+            }
+        });
+    }
+    function getData() {
+        var bTime=$('#begin-time').find("> input").val();
+        var tTime=$('#to-time').find("> input").val();
+        if(bTime==''||tTime==''){
+            bTime="all";
+            tTime="all";
+        }else{
+            if(tTime>bTime){
+                bTime=dateToUnix(bTime);
+                tTime=dateToUnix(tTime);
+            }
+        }
+        var regWay=$('#regWay').find('span[class="option-text active"]').text();
+        var changeData;
+        if(regWay=='不限'){
+            changeData='不限';
+        }else{
+            if(regWay=='市场新分学员'){
+                changeData=$('#regRank').find('span[class="option-text active"]').text();
+            }else{
+                changeData=$('#sendWay').find('span[class="option-text active"]').text();
+            }
+        }
+        var tableShow=$('#tableShow').find('span[class="option-text active"]').text();
+        //alert(bTime+"+"+tTime+"+"+studentMessage+"+"+comboCountry+"+"+combo+"+"+binding+"+"+teacherMessage+"+"+teacherStatus+"+"+group+"+"+teacherType);
+        return bTime+"+"+tTime+"+"+regWay+"+"+changeData+"+"+tableShow;
+    }
+    // ]]>
+</script>
+</html>

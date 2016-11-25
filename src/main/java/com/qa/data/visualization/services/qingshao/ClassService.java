@@ -3,13 +3,12 @@ package com.qa.data.visualization.services.qingshao;
 import com.qa.data.visualization.entities.qingshao.AutoComplete;
 import com.qa.data.visualization.entities.qingshao.CostClass;
 import com.qa.data.visualization.entities.qingshao.CostSaClass;
-import com.qa.data.visualization.entities.qingshao.newStudent;
+import com.qa.data.visualization.entities.qingshao.payStudent;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -28,7 +27,9 @@ public interface ClassService {
 
     DataSet<CostSaClass> getCostSaClass(String data, DatatablesCriterias criterias) throws ParseException;
 
-    DataSet<newStudent> getNewStudent(String data, DatatablesCriterias criterias) throws ParseException;
+    DataSet<payStudent> getNewStudent(String data, DatatablesCriterias criterias) throws ParseException;
+
+    DataSet<payStudent> getOldStudent(String data, DatatablesCriterias criterias) throws ParseException;
 
     Long getCostClassCnt();
 
@@ -36,11 +37,17 @@ public interface ClassService {
 
     Long getNewStudentCnt();
 
+    Long getOldStudentCnt();
+
     String getWholeSql();
 
     String getWholeSaSql();
 
     String getNewStudentSql();
 
+    String getOldStudentSql();
+
     String getNewStudentPayCnt();
+
+    String getOldStudentPayCnt();
 }

@@ -3,7 +3,7 @@ package com.qa.data.visualization.controllers;
 import com.qa.data.visualization.entities.qingshao.AutoComplete;
 import com.qa.data.visualization.entities.qingshao.CostClass;
 import com.qa.data.visualization.entities.qingshao.CostSaClass;
-import com.qa.data.visualization.entities.qingshao.newStudent;
+import com.qa.data.visualization.entities.qingshao.payStudent;
 import com.qa.data.visualization.services.qingshao.ClassService;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
@@ -64,9 +64,16 @@ public class CostClassController {
     }
     @RequestMapping("/get_new_student/{data}")
     @ResponseBody
-    public DatatablesResponse<newStudent> getNewStudent(@PathVariable String data, HttpServletRequest request) throws ParseException {
+    public DatatablesResponse<payStudent> getNewStudent(@PathVariable String data, HttpServletRequest request) throws ParseException {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<newStudent> dataSet = classService.getNewStudent(data,criterias);
+        DataSet<payStudent> dataSet = classService.getNewStudent(data,criterias);
+        return DatatablesResponse.build(dataSet, criterias);
+    }
+    @RequestMapping("/get_old_student/{data}")
+    @ResponseBody
+    public DatatablesResponse<payStudent> getOldStudent(@PathVariable String data, HttpServletRequest request) throws ParseException {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<payStudent> dataSet = classService.getOldStudent(data,criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
     @RequestMapping("/get_cost_class_cnt")
@@ -87,6 +94,12 @@ public class CostClassController {
         return classService.getNewStudentCnt();
     }
 
+    @RequestMapping("/get_old_student_cnt")
+    @ResponseBody
+    public Long getOldStudentCnt(){
+        return classService.getOldStudentCnt();
+    }
+
     @RequestMapping("/get_whole_sql")
     @ResponseBody
     public String getWholeSql(){
@@ -104,11 +117,20 @@ public class CostClassController {
     public String getNewStudentSql(){
         return classService.getNewStudentSql();
     }
-
+    @RequestMapping("/get_old_student_sql")
+    @ResponseBody
+    public String getOldStudentSql(){
+        return classService.getOldStudentSql();
+    }
     @RequestMapping("/get_new_student_pay_cnt")
     @ResponseBody
     public String getNewStudentPayCnt(){
         return classService.getNewStudentPayCnt();
+    }
+    @RequestMapping("/get_old_student_pay_cnt")
+    @ResponseBody
+    public String getOldStudentPayCnt(){
+        return classService.getOldStudentPayCnt();
     }
 
 }

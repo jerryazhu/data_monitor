@@ -18,7 +18,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -33,6 +32,9 @@ public class ClassServiceImpl implements ClassService {
     private Long newStudentCnt;
     private String newStudentSql;
     private String newStudentPayCnt;
+    private Long oldStudentCnt;
+    private String oldStudentSql;
+    private String oldStudentPayCnt;
     @PersistenceContext(unitName = "secondaryPersistenceUnit")
     private EntityManager entityManager;
     @Autowired
@@ -283,7 +285,7 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public DataSet<newStudent> getNewStudent(String data, DatatablesCriterias criterias) throws ParseException {
+    public DataSet<payStudent> getNewStudent(String data, DatatablesCriterias criterias) throws ParseException {
         Date now = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");//可以方便地修改日期格式
         String today = dateFormat.format( now );
@@ -331,8 +333,8 @@ public class ClassServiceImpl implements ClassService {
             case "销售量及购买人数": sql=sql+"\n"+"and eao.payed=1";break;
         }
         sql=sql+"\n"+"group by es.id";
-        TableQuery query = new TableQuery(entityManager, newStudent.class, criterias, sql);
-        DataSet<newStudent> result=query.getResultDataSet();
+        TableQuery query = new TableQuery(entityManager, payStudent.class, criterias, sql);
+        DataSet<payStudent> result=query.getResultDataSet();
         newStudentCnt=query.getTotalCount();
         newStudentSql=sql;
         if(tableShow.equals("销售量及购买人数")){
@@ -343,6 +345,78 @@ public class ClassServiceImpl implements ClassService {
             }else{
                 newStudentPayCnt=list.get(0).toString();
             }
+        }
+        return result;
+    }
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataSet<payStudent> getOldStudent(String data, DatatablesCriterias criterias) throws ParseException {
+        Date now = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");//可以方便地修改日期格式
+        String today = dateFormat.format( now );
+        Date date=dateFormat .parse(today);
+        long todayUnix=date.getTime();
+        long yesterdayUnix=todayUnix/1000-86400;
+        String sql="select eao.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ifnull(sum(eao.tmoney),0) as cnt \n" +
+                "from ebk_students es\n" +
+                "LEFT JOIN ebk_acoin_orders eao on eao.sid=es.id\n" +
+                "LEFT JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id\n" +
+                "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
+                "LEFT JOIN ebk_rbac_user eru on eru.id=es.adviser\n" +
+                "where esi.study_aim=1\n" +
+                "and eao.payed=1\n" +
+                "and eao.order_flag!=1";
+        String []cutData=data.split("\\+");
+        String bTime=cutData[0];
+        String tTime=cutData[1];
+        String teacherType=cutData[2];
+        String classType=cutData[3];
+        String studentStatus=cutData[4];
+        String classShowType=cutData[5];
+        if(bTime.equals("all")||tTime.equals("all")){
+            sql=sql+"\n"+"and eao.create_time>"+yesterdayUnix;
+        }else{
+            sql=sql+"\n"+"and eao.create_time between "+bTime+" and "+tTime;
+        }
+        if(!teacherType.equals("不限")){
+            if(teacherType.equals("菲律宾")){
+                sql=sql+"\n"+"and eaod.tch_from=1";
+            }else{
+                sql=sql+"\n"+"and eaod.tch_from=2";
+            }
+        }
+        if(!classType.equals("不限")){
+            if(classType.equals("套餐课")){
+                sql=sql+"\n"+"and eaod.combo_name!='自由套餐'";
+            }else{
+                sql=sql+"\n"+"and eaod.combo_name='自由套餐'";
+            }
+        }
+        if(!studentStatus.equals("不限")){
+            if(studentStatus.equals("上课中学员")){
+                sql=sql+"\n"+"and es.status=1";
+            }else{
+                sql=sql+"\n"+"and es.status=4";
+            }
+        }
+        if(!classShowType.equals("总人数")){
+            if(classShowType.equals("补升人数和金额")){
+                sql=sql+"\n"+"and eao.upgrade_from!=0";
+            }else{
+                sql=sql+"\n"+"and eao.upgrade_from=0";
+            }
+        }
+        sql=sql+"\n"+"group by es.id";
+        TableQuery query = new TableQuery(entityManager, payStudent.class, criterias, sql);
+        DataSet<payStudent> result=query.getResultDataSet();
+        oldStudentCnt=query.getTotalCount();
+        oldStudentSql=sql;
+        Query q=entityManager.createNativeQuery("select sum(result.cnt) from ("+sql+") result");
+        List list=q.getResultList();
+        if(list.get(0)==null){
+            oldStudentPayCnt="0";
+        }else{
+            oldStudentPayCnt=list.get(0).toString();
         }
         return result;
     }
@@ -363,6 +437,11 @@ public class ClassServiceImpl implements ClassService {
     }
     @Override
     @SuppressWarnings("unchecked")
+    public Long getOldStudentCnt(){
+        return oldStudentCnt;
+    }
+    @Override
+    @SuppressWarnings("unchecked")
     public String getWholeSql(){
         return wholeSql;
     }
@@ -378,7 +457,17 @@ public class ClassServiceImpl implements ClassService {
     }
     @Override
     @SuppressWarnings("unchecked")
+    public String getOldStudentSql(){
+        return oldStudentSql;
+    }
+    @Override
+    @SuppressWarnings("unchecked")
     public String getNewStudentPayCnt(){
         return newStudentPayCnt;
+    }
+    @Override
+    @SuppressWarnings("unchecked")
+    public String getOldStudentPayCnt(){
+        return oldStudentPayCnt;
     }
 }

@@ -3,7 +3,7 @@ package com.qa.data.visualization.entities.qingshao;
 /**
  * Created by dykj on 2016/11/24.
  */
-public class newStudent {
+public class payStudent {
     private String create_time;
     private String sid;
     private String sname;

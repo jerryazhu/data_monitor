@@ -10,7 +10,7 @@
     <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> PC系统分布
+                <i class="fa fa-bar-chart-o fa-fw"></i> PC学生端系统分布
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
@@ -22,11 +22,37 @@
     <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> PC软件版本分布
+                <i class="fa fa-bar-chart-o fa-fw"></i> PC学生端软件版本分布
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
                 <div id="pc_app"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> PC教师端系统分布
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="tch_pc_system"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> PC教师端软件版本分布
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="tch_pc_app"></div>
             </div>
             <!-- /.panel-body -->
         </div>
@@ -61,6 +87,34 @@
                 });
                 pc_system_map.set('firstLevelSeriesName', "App");
                 creteSimplePieHighChart(pc_system_element,pc_system_map);
+            });
+
+            var tch_pc_system_element=$('#tch_pc_system');
+            var tch_pc_system_count_map=new HashMap();
+            var firstTchPCSystemName=new Array();
+            var tch_pc_system_total=0;
+            $.getJSON('get_tch_pc_system',function (pcTchSystemJSONObjects) {
+                $.each(pcTchSystemJSONObjects,function (i,pcTchSystemJSONObject) {
+                    tch_pc_system_count_map.set(pcTchSystemJSONObject.name,pcTchSystemJSONObject.count);
+                    tch_pc_system_total=tch_pc_system_total+pcTchSystemJSONObject.count;
+                    firstTchPCSystemName.push(pcTchSystemJSONObject.name);
+                });
+                var tch_pc_system_map=new HashMap();
+
+                $.each(firstTchPCSystemName, function (i, name) {
+                    var sub_map = new HashMap();
+                    sub_map.set('drilldownCategories', name);
+                    var drilldownData = [];
+                    var firstLevelCount = 0;
+                    var cnt = tch_pc_system_count_map.get(name) / tch_pc_system_total * 100;
+                    drilldownData.push(round(cnt, 2));
+                    firstLevelCount = firstLevelCount + round(cnt, 2);
+                    sub_map.set('drilldownData', drilldownData);
+                    sub_map.set('y', round(firstLevelCount, 2));
+                    tch_pc_system_map.set(name, sub_map);
+                });
+                tch_pc_system_map.set('firstLevelSeriesName', "App");
+                creteSimplePieHighChart(tch_pc_system_element,tch_pc_system_map);
             });
 
             var pc_app_element=$('#pc_app');
@@ -102,6 +156,47 @@
                 pc_app_map.set('firstLevelSeriesName', "App");
                 pc_app_map.set('secondLevelSeriesName', "Versions");
                 createPieHighChart(pc_app_element, pc_app_map);
+            });
+
+            var tch_pc_app_element=$('#tch_pc_app');
+            var tch_pc_app_count_map=new HashMap();
+            var tch_pc_app_big=new HashMap();
+            var firstTchPCAppName=new Array();
+            var tch_pc_app_total=0;
+            $.getJSON('get_tch_pc_app',function (tchPCAppJSONObjects) {
+                $.each(tchPCAppJSONObjects,function (i,tchPCAppJSONObject) {
+                    tch_pc_app_count_map.set(tchPCAppJSONObject.name,tchPCAppJSONObject.count);
+                    tch_pc_app_total=tch_pc_app_total+tchPCAppJSONObject.count;
+                    var array=tchPCAppJSONObject.name.slice(0,1);
+                    var array2=tchPCAppJSONObject.name.slice(1,20);
+                    var arr=[];
+                    if(tch_pc_app_big.has(array)){
+                        tch_pc_app_big.get(array).push(array2);
+                    }else{
+                        arr.push(array2);
+                        firstTchPCAppName.push(array);
+                        tch_pc_app_big.set(array,arr);
+                    }
+                });
+                var tch_pc_app_map=new HashMap();
+                $.each(firstTchPCAppName, function (i, name) {
+                    var sub_map = new HashMap();
+                    var drilldownCategories = tch_pc_app_big.get(name);
+                    sub_map.set('drilldownCategories', drilldownCategories);
+                    var drilldownData = [];
+                    var firstLevelCount = 0;
+                    $.each(drilldownCategories, function (i, cate) {
+                        var cnt = tch_pc_app_count_map.get(name+cate) / tch_pc_app_total * 100;
+                        drilldownData.push(round(cnt, 2));
+                        firstLevelCount = firstLevelCount + round(cnt, 2);
+                    });
+                    sub_map.set('drilldownData', drilldownData);
+                    sub_map.set('y', round(firstLevelCount, 2));
+                    tch_pc_app_map.set(name, sub_map);
+                });
+                tch_pc_app_map.set('firstLevelSeriesName', "App");
+                tch_pc_app_map.set('secondLevelSeriesName', "Versions");
+                createPieHighChart(tch_pc_app_element, tch_pc_app_map);
             });
         });
     </script>

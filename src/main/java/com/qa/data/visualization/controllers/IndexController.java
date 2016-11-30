@@ -340,4 +340,37 @@ public class IndexController {
         }
         return list;
     }
+
+    @RequestMapping("get_tch_pc_system")
+    @ResponseBody
+    public ArrayList getTchPcSystem() {
+        ArrayList<Object> list = new ArrayList<Object>();
+        LinkedHashMap<String, String> tchPCSystem = pcService.getTchPCSystem();
+        for (Map.Entry<String, String> entry : tchPCSystem.entrySet()) {
+            HashMap<String, Object> map = new HashMap<>();
+            String[] a = entry.getKey().split(" ");
+            String b = a[1];
+            for (int i = 2; i < a.length; i++) {
+                b = b + a[i];
+            }
+            map.put("name", b);
+            map.put("count", Integer.parseInt(entry.getValue()));
+            list.add(map);
+        }
+        return list;
+    }
+
+    @RequestMapping("get_tch_pc_app")
+    @ResponseBody
+    public ArrayList getTchPcApp() {
+        ArrayList<Object> list = new ArrayList<Object>();
+        LinkedHashMap<String, String> tchPcApp = pcService.getTchPCApp();
+        for (Map.Entry<String, String> entry : tchPcApp.entrySet()) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("name", entry.getKey().substring(0, 1) + entry.getKey());
+            map.put("count", Integer.parseInt(entry.getValue()));
+            list.add(map);
+        }
+        return list;
+    }
 }

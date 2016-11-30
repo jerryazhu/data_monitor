@@ -18,4 +18,8 @@ public interface PCService {
     LinkedHashMap<String, String> getPCApp();
 
     LinkedHashMap<String, String> getPCSystem();
+
+    LinkedHashMap<String,String> getTchPCApp();
+
+    LinkedHashMap<String,String> getTchPCSystem();
 }

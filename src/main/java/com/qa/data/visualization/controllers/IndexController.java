@@ -52,10 +52,10 @@ public class IndexController {
 
     @RequestMapping("/")
     String index(Model model) {
-        //long lastError = lastErrorRepository.count();
-        model.addAttribute("lastError", 1);
-        //long lastDebug = lastDebugRepository.count();
-        model.addAttribute("lastDebug", 1);
+        long lastError = lastErrorRepository.count();
+        model.addAttribute("lastError", lastError);
+        long lastDebug = lastDebugRepository.count();
+        model.addAttribute("lastDebug", lastDebug);
         model.addAttribute("templateName", "indexContent");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName();

@@ -9,6 +9,7 @@ public class CostClass {
     private String tname;
     private String sid;
     private String sname;
+    private String book;
 
 
     public String getBegin_time() {
@@ -49,5 +50,13 @@ public class CostClass {
 
     public void setSname(String sname) {
         this.sname = sname;
+    }
+
+    public String getBook() {
+        return book;
+    }
+
+    public void setBook(String book) {
+        this.book = book;
     }
 }

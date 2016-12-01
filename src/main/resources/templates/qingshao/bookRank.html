@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/css/qingshao.css}" rel="stylesheet"/>
+    <link th:href="@{/css/datepicker/bootstrap-datetimepicker.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="row">
+    <div class="col-lg-1">
+        <p class="control-label"><strong class="height"> 时间：</strong></p>
+    </div>
+    <div class="col-lg-11">
+        <div class='col-md-3'>
+            <div class="form-group">
+                <label class="sr-only" for="begin-time">BeginTime</label>
+                <div class='input-group date' id='begin-time'>
+                    <input class="form-control" type="text" id="bTimeInput"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class='col-md-3'>
+            <div class="form-group">
+                <label class="sr-only" for="to-time">ToTime</label>
+                <div class='input-group date' id='to-time'>
+                    <input class="form-control" type="text" id="tTimeInput"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-1 height">
+        <p class="control-label"><strong class="height">教材：</strong></p>
+    </div>
+    <div class="col-lg-11" id="books">
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-1 height">
+        <p class="control-label"><strong class="height">学生等级：</strong></p>
+    </div>
+    <div class="col-lg-11" id="studentLevels">
+        <span class="option-text active">all</span>
+    </div>
+</div>
+<div class="row">
+    <div style="height: 50px"></div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-map-marker fa-fw"></i> 选课量
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="book_rank_choose_class" style="height:400px"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-map-marker fa-fw"></i> 年龄分布
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="book_rank_age" style="height:400px"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div style="float: right">
+            <select id='compare_select' class="selectpicker">
+                <option>month</option>
+                <option>week</option>
+                <option>day</option>
+            </select>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-map-marker fa-fw"></i> 选课分布对比
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="book_rank_choose_class_compare" style="height:400px"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/datepicker/moment.min.js}"></script>
+<script th:src="@{/js/datepicker/bootstrap-datetimepicker.min.js}"></script>
+<script th:src="@{/js/datatables/jquery.dataTables.js}"></script>
+<script>
+    $(document).ready(function () {
+        var beginTime = $('#begin-time');
+        var toTime = $('#to-time');
+        var date = new Date();
+        var yDay;
+        if(date.getDate()==1){
+            yDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate())+" 00:00";
+        }else{
+            yDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1)+" 00:00";
+        }
+        var tDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate())+" "+date.getHours()+":"+date.getMinutes();
+        $('#bTimeInput').val(yDay);
+        $('#tTimeInput').val(tDay);
+        beginTime.datetimepicker({
+            format: 'YYYY-MM-DD HH:mm',
+            useCurrent: false
+        });
+        toTime.datetimepicker({
+            format: 'YYYY-MM-DD HH:mm',
+            useCurrent: false
+        });
+        beginTime.on("dp.change", function (e) {
+            toTime.data("DateTimePicker").minDate(e.date);
+            createDraw();
+        });
+        toTime.on("dp.change", function (e) {
+            toTime.data("DateTimePicker").maxDate(e.date);
+            createDraw();
+        });
+        var dateformatted_to;
+        var dateformatted_from;
+        if (date.getDate() == 1) {
+            dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-1";
+        }
+        else {
+            dateformatted_from = date.getFullYear() + "-" + (date.getMonth() + 1) + "-1";
+        }
+        if (date.getDate() == 1) {
+            dateformatted_to = date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth());
+        }
+        else {
+            dateformatted_to = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1);
+        }
+        var time = dateformatted_from + "---" + dateformatted_to;
+        var books=$('#books');
+        $.ajax({
+            url: '/class/get_book/'+time,
+            type:'GET',
+            data:'',
+            success:function (data) {
+                data.forEach(function (element) {
+                    addBooks(books,element[0]);
+                });
+                books.find("> span").each(function (index) {
+                    $(this).unbind('click');
+                    $(this).on("click", function () {
+                        $(this).addClass("active");
+                        $(this).nextAll().removeClass("active");
+                        $(this).prevAll().removeClass("active");
+                        createDraw();
+                    });
+                });
+                createDraw();
+            },
+            error:function () {
+            }
+        });
+        var studentLevels=$('#studentLevels');
+        $.ajax({
+            url: '/class/get_student_levels',
+            type:'GET',
+            data:'',
+            success:function (data) {
+                $.each(data,function (n,value){
+                    addBooks(studentLevels,value);
+                });
+                studentLevels.find("> span").each(function (index) {
+                    $(this).unbind('click');
+                    $(this).on("click", function () {
+                        $(this).addClass("active");
+                        $(this).nextAll().removeClass("active");
+                        $(this).prevAll().removeClass("active");
+                        createDraw();
+                    });
+                });
+            },
+            error:function () {
+            }
+        });
+    });
+    function createDraw() {
+        $('.selectpicker').selectpicker();
+        var book_url="/class/get_book/";
+        var chooseBook=$('#books').find('span[class="option-text active"]').text();
+        var studentLevel=$('#studentLevels').find('span[class="option-text active"]').text();
+        var bTime=$('#begin-time').find("> input").val();
+        var tTime=$('#to-time').find("> input").val();
+        var class_element=$('#book_rank_choose_class');
+        var class_url="/class/get_book_rank_choose_class/";
+        var age_element=$('#book_rank_age');
+        var age_url="/class/get_book_rank_age/";
+        var compare_element=$('#book_rank_choose_class_compare');
+        var compare_url="/class/get_book_rank_choose_class_compare/";
+        var time=bTime+"---"+tTime;
+        var data=bTime+"---"+tTime+"---"+chooseBook+"---"+studentLevel;
+        createDifferentHighchart(class_element,class_url,data);
+        createAgeHighchart(age_element,age_url,data);
+        var compare=$('#compare_select').find("option:selected").val();
+        createComplexHighStock(compare_element,book_url,compare_url,compare,data);
+        $('#compare_select').on('change', function () {
+            var compare=$('#compare_select').find("option:selected").val();
+            createComplexHighStock(compare_element,book_url,compare_url,compare,data);
+        });
+
+    }
+    function addBooks(obj,data) {
+        //添加 li
+        var span = document.createElement("span");
+        //设置 li 属性，如 id
+        if(data=='Smile Junior 青少系列日常生活口语教程'){
+            span.setAttribute("class","option-text active");
+        }else{
+            span.setAttribute("class", "option-text");
+        }
+        span.innerHTML = data;
+        obj.append(span);
+    }
+</script>
+</body>
+</html>

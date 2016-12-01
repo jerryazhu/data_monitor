@@ -270,7 +270,11 @@ function createComplexHighStock(element, url1, url2, by, type) {
                 if (type == "all") {
                     condition = name;
                 } else {
-                    condition = name + "---" + get_type_by(type);
+                    if(type.indexOf("---")>0){
+                        condition=name+"---"+type;
+                    }else{
+                        condition = name + "---" + get_type_by(type);
+                    }
                 }
                 $.getJSON(url2 + condition, function (data) {
                     if (by == "month") {

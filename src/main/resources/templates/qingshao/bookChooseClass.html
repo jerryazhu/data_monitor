@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<div class="row">
+    <h2>教材选课</h2>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div style="float:right">
+            <div class="input-group input-daterange">
+                <input id="from_date" type="text" class="form-control" value=""/>
+                <span class="input-group-addon">to</span>
+                <input id="to_date" type="text" class="form-control" value=""/>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> 教材每月选课量
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="book_month_choose" ></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div style="float: right">
+            <select id='book_choose_class_time' class="selectpicker">
+                <option>month</option>
+                <option>week</option>
+                <option>day</option>
+            </select>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-map-marker fa-fw"></i> 教材选课量走势
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="book_choose_class_stock" style="height:400px"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.selectpicker').selectpicker();
+        var book_url="/class/get_book/";
+        var book_month_choose_element=$('#book_month_choose');
+        var book_month_choose_url="/class/get_book_month_choose/";
+        var fromDate=$('#from_date');
+        var toDate=$('#to_date');
+        fromDate.datepicker({
+            startDate: "-3y",
+            todayHighlight: true,
+            format: 'yyyy-m-d',
+            autoclose: true
+        });
+        toDate.datepicker({
+            startDate: "-3y",
+            todayHighlight: true,
+            format: 'yyyy-m-d',
+            autoclose: true
+        });
+        var date = new Date();
+        var dateformatted_to_all;
+        var dateformatted_from_all;
+        if (date.getDate() == 1) {
+            dateformatted_from_all = date.getFullYear() + "-" + date.getMonth() + "-1";
+        }
+        else {
+            dateformatted_from_all = date.getFullYear() + "-" + (date.getMonth() + 1) + "-1";
+        }
+        if (date.getDate() == 1) {
+            dateformatted_to_all = date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth());
+        }
+        else {
+            dateformatted_to_all = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1);
+        }
+        fromDate.datepicker('setDate', dateformatted_from_all);
+        toDate.datepicker('setDate', dateformatted_to_all);
+        var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');
+        createDifferentHighchart(book_month_choose_element,book_month_choose_url,data);
+        fromDate.on("changeDate", function () {
+            var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');
+            createDifferentHighchart(book_month_choose_element,book_month_choose_url,data);
+        });
+        toDate.on("changeDate", function () {
+            var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');
+            createDifferentHighchart(book_month_choose_element,book_month_choose_url,data);
+        });
+
+        var book_choose_class_stock_element=$('#book_choose_class_stock');
+        var book_choose_class_stock_url="/class/get_book_choose_class_stock/";
+        var bookChooseClassTime=$('#book_choose_class_time').find("option:selected").val();
+        createComplexHighStock(book_choose_class_stock_element, book_url, book_choose_class_stock_url, bookChooseClassTime,"all");
+        $('#book_choose_class_time').on('change', function () {
+            var bookChooseClassTime=$('#book_choose_class_time').find("option:selected").val();
+            createComplexHighStock(book_choose_class_stock_element, book_url, book_choose_class_stock_url, bookChooseClassTime,"all");
+        });
+
+
+
+    });
+
+</script>
+</body>
+</html>

@@ -38,7 +38,9 @@
     <div class="col-lg-1 height">
         <p class="control-label"><strong class="height">教材：</strong></p>
     </div>
-    <div class="col-lg-11" id="books">
+    <div class="col-lg-11">
+        <select class="selectpicker" data-live-search="true" id="book">
+        </select>
     </div>
 </div>
 <div class="row">
@@ -134,39 +136,26 @@
             toTime.data("DateTimePicker").maxDate(e.date);
             createDraw();
         });
+        $('#book').on("change",function () {
+            createDraw();
+        });
         var dateformatted_to;
         var dateformatted_from;
-        if (date.getDate() == 1) {
-            dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-1";
-        }
-        else {
-            dateformatted_from = date.getFullYear() + "-" + (date.getMonth() + 1) + "-1";
-        }
-        if (date.getDate() == 1) {
-            dateformatted_to = date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth());
-        }
-        else {
-            dateformatted_to = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1);
-        }
+
+        dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-"+date.getDay();
+        dateformatted_to=date.getFullYear() + "-" + (date.getMonth()+1) + "-"+date.getDay();
         var time = dateformatted_from + "---" + dateformatted_to;
-        var books=$('#books');
+        var books=document.getElementById("book");
         $.ajax({
             url: '/class/get_book/'+time,
             type:'GET',
             data:'',
             success:function (data) {
                 data.forEach(function (element) {
-                    addBooks(books,element[0]);
+                    var objOption = new Option(element[0]);
+                    books.add(objOption);
                 });
-                books.find("> span").each(function (index) {
-                    $(this).unbind('click');
-                    $(this).on("click", function () {
-                        $(this).addClass("active");
-                        $(this).nextAll().removeClass("active");
-                        $(this).prevAll().removeClass("active");
-                        createDraw();
-                    });
-                });
+                $('.selectpicker').selectpicker();
                 createDraw();
             },
             error:function () {
@@ -198,7 +187,7 @@
     function createDraw() {
         $('.selectpicker').selectpicker();
         var book_url="/class/get_book/";
-        var chooseBook=$('#books').find('span[class="option-text active"]').text();
+        var chooseBook= $('#book').find("option:selected").val();
         var studentLevel=$('#studentLevels').find('span[class="option-text active"]').text();
         var bTime=$('#begin-time').find("> input").val();
         var tTime=$('#to-time').find("> input").val();

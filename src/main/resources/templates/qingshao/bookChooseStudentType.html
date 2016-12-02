@@ -40,7 +40,9 @@
         <p class="text-right control-label"><strong class="height">教材：</strong></p>
     </div>
     <div class="col-lg-10" id="books">
-        <span class="option-text active">不限</span>
+        <select class="selectpicker" data-live-search="true" id="book">
+            <option>不限</option>
+        </select>
     </div>
 </div>
 <div class="row">
@@ -138,7 +140,7 @@
         });
         var bTime=$('#begin-time').find("> input").val();
         var tTime=$('#to-time').find("> input").val();
-        var books=$('#books');
+        var books=document.getElementById("book");
         var time=bTime+"---"+tTime;
         $.ajax({
             url: '/class/get_book/'+time,
@@ -146,17 +148,10 @@
             data:'',
             success:function (data) {
                 data.forEach(function (element) {
-                    addBooks(books,element[0]);
+                    var objOption = new Option(element[0]);
+                    books.add(objOption);
                 });
-                books.find("> span").each(function (index) {
-                    $(this).unbind('click');
-                    $(this).on("click", function () {
-                        $(this).addClass("active");
-                        $(this).nextAll().removeClass("active");
-                        $(this).prevAll().removeClass("active");
-                        createTable();
-                    });
-                });
+                $('.selectpicker').selectpicker();
                 createTable();
             },
             error:function () {
@@ -190,6 +185,10 @@
                 $('#costClassCnt').html('<span  class="cntNumber">  </span>');
                 createTable();
             });
+        });
+        $('#book').on("change",function () {
+            $('#costClassCnt').html('<span  class="cntNumber">  </span>');
+            createTable();
         });
         combo.find("> span").each(function (index) {
             $(this).unbind('click');
@@ -290,7 +289,7 @@
                 tTime=dateToUnix(tTime);
             }
         }
-        var chooseBook=$('#books').find('span[class="option-text active"]').text();
+        var chooseBook= $('#book').find("option:selected").val();
         var classStatus=$('#class_status').find('span[class="option-text active"]').text();
         var combo=$('#combo').find('span[class="option-text active"]').text();
         switch (combo){

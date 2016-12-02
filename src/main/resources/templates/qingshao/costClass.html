@@ -102,7 +102,7 @@
     </div>
     <div class="col-lg-10 height" id="teacherGroup">
         <span class="option-text active" id="teacherGroupAll">不限</span>
-        <select class="form-control" id="group">
+        <select class="selectpicker" data-live-search="true" id="group">
             <option>Group</option>
         </select>
     </div>
@@ -199,6 +199,7 @@
                     var objOption = new Option(value);
                     teacherGroup.add(objOption);
                 });
+                $('.selectpicker').selectpicker();
             },
             error:function () {
             }

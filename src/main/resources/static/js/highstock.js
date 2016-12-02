@@ -207,18 +207,8 @@ function createComplexHighStock(element, url1, url2, by, type) {
     var date = new Date();
     var dateformatted_to;
     var dateformatted_from;
-    if (date.getDate() == 1) {
-        dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-1";
-    }
-    else {
-        dateformatted_from = date.getFullYear() + "-" + (date.getMonth() + 1) + "-1";
-    }
-    if (date.getDate() == 1) {
-        dateformatted_to = date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth());
-    }
-    else {
-        dateformatted_to = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1);
-    }
+    dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-"+date.getDay();
+    dateformatted_to=date.getFullYear() + "-" + (date.getMonth()+1) + "-"+date.getDay();
     var time = dateformatted_from + "---" + dateformatted_to;
     $.ajax({
         type: "get",

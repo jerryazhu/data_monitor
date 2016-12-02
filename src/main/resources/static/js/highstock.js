@@ -254,7 +254,6 @@ function createComplexHighStock(element, url1, url2, by, type) {
                     series: seriesOptions
                 });
             }
-
             $.each(names, function (i, name) {
                 var condition = "";
                 if (type == "all") {
@@ -342,14 +341,14 @@ function createComplexHighStock(element, url1, url2, by, type) {
                                 $.each(this.points, function (i, point) {
                                     total = total + point.y;
                                 });
-                                var s = '<strong>' + Highcharts.dateFormat('%Y-%m-%d', new Date(this.x)) + " " + total + '</strong>';
+                                var s = '<strong>' + Highcharts.dateFormat('%Y-%m-%d', new Date(this.x)) + " " + total.toFixed(2) + '</strong>';
 
                                 var sortedPoints = this.points.sort(function (a, b) {
                                     return ((a.y < b.y) ? -1 : ((a.y > b.y) ? 1 : 0));
                                 });
                                 sortedPoints.reverse();
                                 $.each(sortedPoints, function (i, point) {
-                                    s += '<br/><span style="color:' + point.series.color + '"> ' + point.series.name + ' </span>: <b> ' + point.y;
+                                    s += '<br/><span style="color:' + point.series.color + '"> ' + point.series.name + ' </span>: <b> ' + point.y.toFixed(2);
                                 });
 
                                 return s;

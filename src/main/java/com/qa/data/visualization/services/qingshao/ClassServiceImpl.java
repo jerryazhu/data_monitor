@@ -125,9 +125,7 @@ public class ClassServiceImpl implements ClassService {
                 "LEFT JOIN ebk_student_info esi on ecr.sid = esi.sid\n" +
                 "LEFT JOIN ebk_teachers et on ecr.tid = et.id\n" +
                 "LEFT JOIN ebk_teacher_group etg on et.workgroup = etg.id\n" +
-                "where \n" +
-                "ecr.status=3\n" +
-                "and esi.study_aim=1 and ecr.free_try=0";
+                "where" ;
         String[] cutData = data.split("\\+");
         String bTime = cutData[0];
         String tTime = cutData[1];
@@ -140,10 +138,11 @@ public class ClassServiceImpl implements ClassService {
         String group = cutData[8];
         String teacherType = cutData[9];
         if (bTime.equals("all") || tTime.equals("all")) {
-            sql = sql + "\n" + "and ecr.begin_time>" + yesterdayUnix;
+            sql = sql + "\n" + "ecr.begin_time>" + yesterdayUnix;
         } else {
-            sql = sql + "\n" + "and ecr.begin_time between " + bTime + " and " + tTime;
+            sql = sql + "\n" + "ecr.begin_time>=" + bTime + " and ecr.begin_time<=" + tTime;
         }
+        sql=sql+"\n"+"and ecr.status=3\n" +"and esi.study_aim=1 and ecr.free_try=0";
         if (!studentMessage.equals("all")) {
             sql = sql + "\n" + "and es.id= " + studentMessage;
         }
@@ -260,8 +259,7 @@ public class ClassServiceImpl implements ClassService {
                 "LEFT JOIN ebk_student_info esi on ecr.sid = esi.sid\n" +
                 "LEFT JOIN ebk_teachers et on ecr.tid = et.id\n" +
                 "LEFT JOIN ebk_teacher_group etg on et.workgroup = etg.id\n" +
-                "where \n" +
-                "esi.study_aim=1";
+                "where ";
         String[] cutData = data.split("\\+");
         String bTime = cutData[0];
         String tTime = cutData[1];
@@ -273,10 +271,11 @@ public class ClassServiceImpl implements ClassService {
         String classType = cutData[7];
         String classStatus = cutData[8];
         if (bTime.equals("all") || tTime.equals("all")) {
-            sql = sql + "\n" + "and ecr.begin_time>" + yesterdayUnix;
+            sql = sql + "\n" + "ecr.begin_time>" + yesterdayUnix;
         } else {
-            sql = sql + "\n" + "and ecr.begin_time between " + bTime + " and " + tTime;
+            sql = sql + "\n" + "ecr.begin_time>=" + bTime + " and ecr.begin_time<=" + tTime;
         }
+        sql=sql+"\n"+"and esi.study_aim=1";
         if (!studentMessage.equals("all")) {
             sql = sql + "\n" + "and es.id= " + studentMessage;
         }
@@ -353,7 +352,7 @@ public class ClassServiceImpl implements ClassService {
                 "LEFT JOIN ebk_advertisement_source eas on eas.id=esi.knowus\n" +
                 "LEFT JOIN ebk_acoin_orders eao on es.id = eao.sid\n" +
                 "LEFT JOIN ebk_rbac_user eru on eru.id=es.adviser\n" +
-                "where esi.study_aim=1";
+                "where ";
         String[] cutData = data.split("\\+");
         String bTime = cutData[0];
         String tTime = cutData[1];
@@ -361,10 +360,11 @@ public class ClassServiceImpl implements ClassService {
         String changeData = cutData[3];
         String tableShow = cutData[4];
         if (bTime.equals("all") || tTime.equals("all")) {
-            sql = sql + "\n" + "and es.create_time>" + yesterdayUnix;
+            sql = sql + "\n" + "es.create_time>" + yesterdayUnix;
         } else {
-            sql = sql + "\n" + "and es.create_time between " + bTime + " and " + tTime;
+            sql = sql + "\n" + "es.create_time >=" + bTime + " and es.create_time<=" + tTime;
         }
+        sql=sql+"\n"+"and esi.study_aim=1";
         if (!regWay.equals("不限")) {
             if (regWay.equals("转介绍")) {
                 sql = sql + "\n" + "and esi.referral=1";
@@ -427,9 +427,7 @@ public class ClassServiceImpl implements ClassService {
                 "LEFT JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id\n" +
                 "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
                 "LEFT JOIN ebk_rbac_user eru on eru.id=es.adviser\n" +
-                "where esi.study_aim=1\n" +
-                "and eao.payed=1\n" +
-                "and eao.order_flag!=1";
+                "where ";
         String[] cutData = data.split("\\+");
         String bTime = cutData[0];
         String tTime = cutData[1];
@@ -438,10 +436,11 @@ public class ClassServiceImpl implements ClassService {
         String studentStatus = cutData[4];
         String classShowType = cutData[5];
         if (bTime.equals("all") || tTime.equals("all")) {
-            sql = sql + "\n" + "and eao.create_time>" + yesterdayUnix;
+            sql = sql + "\n" + "eao.create_time>" + yesterdayUnix;
         } else {
-            sql = sql + "\n" + "and eao.create_time between " + bTime + " and " + tTime;
+            sql = sql + "\n" + "eao.create_time >=" + bTime + " and eao.create_time<=" + tTime;
         }
+        sql=sql+"\n"+"and esi.study_aim=1 \n"+"and eao.payed=1\n" +"and eao.order_flag!=1";
         if (!teacherType.equals("不限")) {
             if (teacherType.equals("菲律宾")) {
                 sql = sql + "\n" + "and eaod.tch_from=1";

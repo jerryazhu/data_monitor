@@ -48,7 +48,7 @@
         <p class="control-label"><strong class="height">学生等级：</strong></p>
     </div>
     <div class="col-lg-11" id="studentLevels">
-        <span class="option-text active">all</span>
+        <span class="option-text active">ALL</span>
     </div>
 </div>
 <div class="row">
@@ -111,13 +111,8 @@
         var beginTime = $('#begin-time');
         var toTime = $('#to-time');
         var date = new Date();
-        var yDay;
-        if(date.getDate()==1){
-            yDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate())+" 00:00";
-        }else{
-            yDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1)+" 00:00";
-        }
-        var tDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate())+" "+date.getHours()+":"+date.getMinutes();
+        var yDay= date.getFullYear() + "-" + date.getMonth() + "-1 00:00";
+        var tDay= date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth())+" 23:59";
         $('#bTimeInput').val(yDay);
         $('#tTimeInput').val(tDay);
         beginTime.datetimepicker({
@@ -141,7 +136,6 @@
         });
         var dateformatted_to;
         var dateformatted_from;
-
         dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-"+date.getDay();
         dateformatted_to=date.getFullYear() + "-" + (date.getMonth()+1) + "-"+date.getDay();
         var time = dateformatted_from + "---" + dateformatted_to;

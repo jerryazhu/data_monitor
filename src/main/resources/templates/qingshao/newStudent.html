@@ -114,12 +114,8 @@
         var regWay=$('#regWay');
         var tableShow=$('#tableShow');
         var date = new Date();
-        if(date.getDate()==1){
-            yDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate())+" 00:00";
-        }else{
-            yDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1)+" 00:00";
-        }
-        var tDay=date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate())+" "+date.getHours()+":"+date.getMinutes();
+        var yDay= date.getFullYear() + "-" + date.getMonth() + "-1 00:00";
+        var tDay= date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth())+" 23:59";
         $('#bTimeInput').val(yDay);
         $('#tTimeInput').val(tDay);
         beginTime.datetimepicker({

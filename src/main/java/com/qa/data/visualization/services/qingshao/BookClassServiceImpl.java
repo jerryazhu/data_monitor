@@ -4,6 +4,7 @@ import com.qa.data.visualization.entities.qingshao.CostClass;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.TableQuery;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -26,17 +27,28 @@ public class BookClassServiceImpl implements BookClassService {
 
     @Override
     @RequestMapping
-    public LinkedHashMap<String, String> getBook(String data) {
+    @Cacheable(value = "get_book", keyGenerator = "wiselyKeyGenerator")
+    public LinkedHashMap<String, String> getBook(String data) throws ParseException {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         String[] cutTime = data.split("---");
+        SimpleDateFormat dateFormat;
+        if(cutTime[0].contains(":")){
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        }else{
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        }
+        Date bDate = dateFormat.parse(cutTime[0]);
+        long bTime = bDate.getTime()/1000;
+        Date tDate=dateFormat.parse(cutTime[1]);
+        long tTime=tDate.getTime()/1000;
         Query q = entityManager.createNativeQuery("select empt.name,count(ecr.id) as cnt from ebk_class_records ecr\n" +
                 "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                 "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                 "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                "where esi.study_aim=1 and ecr.stype!=''\n" +
+                "where ecr.begin_time >=" + bTime + " and ecr.begin_time<=" + tTime + "\n" +
                 "and ecr.status=3\n" +
-                "and ecr.begin_time between UNIX_TIMESTAMP('" + cutTime[0] + "') and UNIX_TIMESTAMP('" + cutTime[1] + "')\n" +
+                "and  esi.study_aim=1 and ecr.stype!=''\n"+
                 "group by empt.name \n" +
                 "order by cnt desc");
         List<Object[]> list = q.getResultList();
@@ -49,18 +61,25 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
-    public ArrayList getBookMonthChoose(String data) {
+    @Cacheable(value = "get_book_month_choose", keyGenerator = "wiselyKeyGenerator")
+    public ArrayList getBookMonthChoose(String data) throws ParseException {
         ArrayList bookName = new ArrayList();
         ArrayList number0 = new ArrayList();
         ArrayList number1 = new ArrayList();
         String[] cutTime = data.split("---");
+        SimpleDateFormat dateFormat;
+        if(cutTime[0].contains(":")){
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        }else{
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        }
+        Date bDate = dateFormat.parse(cutTime[0]);
+        long bTime = bDate.getTime()/1000;
+        Date tDate=dateFormat.parse(cutTime[1]);
+        long tTime=tDate.getTime()/1000;
         LinkedHashMap<String, String> getBook = getBook(data);
         for (Map.Entry<String, String> entry : getBook.entrySet()) {
-            if (entry.getKey().contains("'")) {
-                bookName.add(entry.getKey().replace("'", "\'"));
-            } else {
                 bookName.add(entry.getKey());
-            }
         }
         for (Object aBookName : bookName) {
             String s = String.format("select empt.name,count(ecr.id)from ebk_class_records ecr\n" +
@@ -68,11 +87,11 @@ public class BookClassServiceImpl implements BookClassService {
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                     "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                    "where esi.study_aim=1 and ecr.stype!=''\n" +
+                    "where ecr.begin_time >=(%s) and ecr.begin_time <=(%s)\n" +
                     "and ecr.status=3\n" +
-                    "and ecr.begin_time between UNIX_TIMESTAMP('%s') and UNIX_TIMESTAMP('%s')\n" +
+                    "and esi.study_aim=1 and ecr.stype!=''\n" +
                     "and empt.name=\"%s\"" +
-                    "group by empt.name", cutTime[0], cutTime[1], aBookName.toString());
+                    "group by empt.name", bTime, tTime, aBookName.toString());
             Query q = entityManager.createNativeQuery(s);
             List<Object[]> list1 = q.getResultList();
             if (list1.size() < 1) {
@@ -88,9 +107,9 @@ public class BookClassServiceImpl implements BookClassService {
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                     "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                    "where esi.study_aim=1 and ecr.stype!=''\n" +
+                    "where ecr.begin_time >=" + bTime + " and ecr.begin_time <=" + tTime + "\n" +
                     "and ecr.status=3\n" +
-                    "and ecr.begin_time between UNIX_TIMESTAMP('" + cutTime[0] + "') and UNIX_TIMESTAMP('" + cutTime[1] + "')\n" +
+                    "and esi.study_aim=1 and ecr.stype!=''\n" +
                     "and empt.name=\"" + aBookName + "\"\n" +
                     "GROUP BY ecr.sid) re");
             List<Object[]> list2 = q.getResultList();
@@ -112,6 +131,7 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
+    @Cacheable(value = "get_book_choose_class_stock", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getBookChooseClassStock(String data) {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         Query q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records ecr\n" +
@@ -135,6 +155,7 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
+    @Cacheable(value = "get_student_levels", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getStudentLevels() {
         ArrayList resultList = new ArrayList();
         Query q = entityManager.createNativeQuery("select concat(es.level,es.sub_level) as levels from ebk_students es\n" +
@@ -151,14 +172,25 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
-    public ArrayList getBookRankChooseClass(String data) {
+    @Cacheable(value = "get_book_rank_choose_class", keyGenerator = "wiselyKeyGenerator")
+    public ArrayList getBookRankChooseClass(String data) throws ParseException {
         ArrayList xName = new ArrayList();
         ArrayList levels = new ArrayList();
         ArrayList number0 = new ArrayList();
         ArrayList number1 = new ArrayList();
         ArrayList message = new ArrayList();
         String[] cutData = data.split("---");
-        if (cutData[3].equals("all")) {
+        SimpleDateFormat dateFormat;
+        if(cutData[0].contains(":")){
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        }else{
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        }
+        Date bDate = dateFormat.parse(cutData[0]);
+        long bTime = bDate.getTime()/1000;
+        Date tDate=dateFormat.parse(cutData[1]);
+        long tTime=tDate.getTime()/1000;
+        if (cutData[3].equals("ALL")) {
             levels = getStudentLevels();
         } else {
             levels.add(cutData[3]);
@@ -169,10 +201,10 @@ public class BookClassServiceImpl implements BookClassService {
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                     "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                    "where esi.study_aim=1 and ecr.stype!=''\n" +
+                    "where ecr.begin_time >=" + bTime + " and ecr.begin_time <=" + tTime + "\n" +
+                    "and esi.study_aim=1 and ecr.stype!=''\n" +
                     "and ecr.status=3\n" +
                     "and concat(es.level,es.sub_level)='" + aLevels + "'\n" +
-                    "and ecr.begin_time between UNIX_TIMESTAMP('" + cutData[0] + "') and UNIX_TIMESTAMP('" + cutData[1] + "')\n" +
                     "and empt.name=\"" + cutData[2] + "\" \n" +
                     "GROUP BY empt.name");
             List<Object[]> list1 = q.getResultList();
@@ -189,10 +221,10 @@ public class BookClassServiceImpl implements BookClassService {
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                     "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                    "where esi.study_aim=1 and ecr.stype!=''\n" +
+                    "where ecr.begin_time >=" + bTime + " and ecr.begin_time <=" + tTime + "\n" +
                     "and ecr.status=3\n" +
                     "and concat(es.level,es.sub_level)='" + aLevels + "'\n" +
-                    "and ecr.begin_time between UNIX_TIMESTAMP('" + cutData[0] + "') and UNIX_TIMESTAMP('" + cutData[1] + "')\n" +
+                    "and esi.study_aim=1 and ecr.stype!=''\n" +
                     "and empt.name=\"" + cutData[2] + "\"\n" +
                     "GROUP BY ecr.sid) re");
             List<Object[]> list2 = q.getResultList();
@@ -213,7 +245,8 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
-    public ArrayList getBookRankAge(String data) {
+    @Cacheable(value = "get_book_rank_age", keyGenerator = "wiselyKeyGenerator")
+    public ArrayList getBookRankAge(String data) throws ParseException {
         ArrayList xName = new ArrayList();
         ArrayList levels = new ArrayList();
         ArrayList number0 = new ArrayList();
@@ -228,7 +261,17 @@ public class BookClassServiceImpl implements BookClassService {
         ArrayList number9 = new ArrayList();
         ArrayList message = new ArrayList();
         String[] cutData = data.split("---");
-        if (cutData[3].equals("all")) {
+        SimpleDateFormat dateFormat;
+        if(cutData[0].contains(":")){
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        }else{
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        }
+        Date bDate = dateFormat.parse(cutData[0]);
+        long bTime = bDate.getTime()/1000;
+        Date tDate=dateFormat.parse(cutData[1]);
+        long tTime=tDate.getTime()/1000;
+        if (cutData[3].equals("ALL")) {
             levels = getStudentLevels();
         } else {
             levels.add(cutData[3]);
@@ -241,10 +284,10 @@ public class BookClassServiceImpl implements BookClassService {
                         "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                         "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                         "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                        "where esi.study_aim=1 and ecr.stype!=''\n" +
+                        "where ecr.begin_time >=" + bTime + " and ecr.begin_time <=" + tTime + "\n" +
                         "and ecr.status=3\n" +
                         "and concat(es.level,es.sub_level)='" + aLevels + "'\n" +
-                        "and ecr.begin_time between UNIX_TIMESTAMP('" + cutData[0] + "') and UNIX_TIMESTAMP('" + cutData[1] + "')\n" +
+                        "and esi.study_aim=1 and ecr.stype!=''\n" +
                         "and empt.name=\"" + cutData[2] + "\"\n" +
                         "and esi.age_duration=" + i + "\n" +
                         "GROUP BY ecr.sid) re");
@@ -319,10 +362,10 @@ public class BookClassServiceImpl implements BookClassService {
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                     "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                    "where esi.study_aim=1 and ecr.stype!=''\n" +
+                    "where ecr.begin_time >=" + bTime + " and ecr.begin_time <=" + tTime + "\n" +
                     "and ecr.status=3\n" +
                     "and concat(es.level,es.sub_level)='" + aLevels + "'\n" +
-                    "and ecr.begin_time between UNIX_TIMESTAMP('" + cutData[0] + "') and UNIX_TIMESTAMP('" + cutData[1] + "')\n" +
+                    "and esi.study_aim=1 and ecr.stype!=''\n" +
                     "and empt.name=\"" + cutData[2] + "\"\n" +
                     "and esi.age_duration>8 \n" +
                     "GROUP BY ecr.sid) re");
@@ -353,10 +396,11 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
+    @Cacheable(value = "get_book_rank_choose_class_compare", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getBookRankChooseClassCompare(String data) {
         String[] cutData = data.split("---");
         String sql;
-        if (cutData[cutData.length - 1].equals("all")) {
+        if (cutData[cutData.length - 1].equals("ALL")) {
             sql = "concat(es.level,es.sub_level) in( '0', '1', '2', '3A', '3B', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7A', '7B', '7C', '8A', '8B')";
         } else {
             sql = "concat(es.level,es.sub_level)='" + cutData[cutData.length - 1] + "'";
@@ -395,8 +439,7 @@ public class BookClassServiceImpl implements BookClassService {
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                 "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                 "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                "where esi.study_aim=1 and ecr.stype!=''\n" +
-                "and ecr.status=3 ";
+                "where" ;
         String[] cutData = data.split("\\+");
         String bTime = cutData[0];
         String tTime = cutData[1];
@@ -404,10 +447,11 @@ public class BookClassServiceImpl implements BookClassService {
         String classStatus = cutData[3];
         String combo = cutData[4];
         if (bTime.equals("all") || tTime.equals("all")) {
-            sql = sql + "\n" + "and ecr.begin_time>" + yesterdayUnix;
+            sql = sql + "\n" + "ecr.begin_time>" + yesterdayUnix;
         } else {
-            sql = sql + "\n" + "and ecr.begin_time between " + bTime + " and " + tTime;
+            sql = sql + "\n" + "ecr.begin_time>=" + bTime + " and ecr.begin_time<=" + tTime;
         }
+        sql=sql+"\n"+ "and esi.study_aim=1 and ecr.stype!=''\n" +"and ecr.status=3 ";
         if (!book.equals("不限")) {
             sql = sql + "\n" + "and empt.name=\"" + book + "\" ";
         }

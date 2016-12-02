@@ -72,7 +72,7 @@
         var dateformatted_to;
         var dateformatted_from;
         dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-1";
-        dateformatted_to = date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth());
+        dateformatted_to = date.getFullYear() + "-" + (date.getMonth()+1) + "-1";
         fromDate.datepicker('setDate', dateformatted_from);
         toDate.datepicker('setDate', dateformatted_to);
         var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');

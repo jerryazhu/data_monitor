@@ -170,7 +170,6 @@ public class CostClassController {
 
     @RequestMapping("/get_book/{data}")
     @ResponseBody
-    @Cacheable(value = "get_book", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getBook(@PathVariable String data) throws Exception {
         ArrayList<Object> list = new ArrayList<Object>();
         LinkedHashMap<String, String> book = bookClassService.getBook(data);
@@ -186,11 +185,10 @@ public class CostClassController {
     @RequestMapping("/get_book_month_choose/{data}")
     @ResponseBody
     @SuppressWarnings("unchecked")
-    @Cacheable(value = "get_book_month_choose", keyGenerator = "wiselyKeyGenerator")
     public HashMap getBookMonthChoose(@PathVariable String data) throws Exception {
         ArrayList message = bookClassService.getBookMonthChoose(data);
         HashMap bookMessage = new HashMap();
-        bookMessage.put("bookNames", message.get(0));
+        bookMessage.put("xName", message.get(0));
         bookMessage.put("type0", message.get(1));
         bookMessage.put("type1", message.get(2));
         return bookMessage;
@@ -198,7 +196,6 @@ public class CostClassController {
 
     @RequestMapping(value = "/get_book_choose_class_stock/{data}")
     @ResponseBody
-    @Cacheable(value = "get_book_choose_class_stock", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getBookChooseClassStock(@PathVariable String data) throws Exception {
         ArrayList<Object> list = new ArrayList<Object>();
         String now = String.valueOf(System.currentTimeMillis());
@@ -223,7 +220,6 @@ public class CostClassController {
     @RequestMapping(value = "/get_book_rank_choose_class/{data}")
     @ResponseBody
     @SuppressWarnings("unchecked")
-    @Cacheable(value = "get_book_rank_choose_class", keyGenerator = "wiselyKeyGenerator")
     public HashMap getBookRankChooseClass(@PathVariable String data) throws Exception {
         ArrayList message = bookClassService.getBookRankChooseClass(data);
         HashMap bookClassMessage = new HashMap();
@@ -236,7 +232,6 @@ public class CostClassController {
     @RequestMapping(value = "/get_book_rank_age/{data}")
     @ResponseBody
     @SuppressWarnings("unchecked")
-    @Cacheable(value = "get_book_rank_age", keyGenerator = "wiselyKeyGenerator")
     public HashMap getBookRankAge(@PathVariable String data) throws Exception {
         ArrayList message = bookClassService.getBookRankAge(data);
         HashMap bookClassMessage = new HashMap();
@@ -250,7 +245,6 @@ public class CostClassController {
     @RequestMapping(value = "/get_book_rank_choose_class_compare/{data}")
     @ResponseBody
     @SuppressWarnings("unchecked")
-    @Cacheable(value = "get_book_rank_choose_class_compare", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getBookRankChooseClassCompare(@PathVariable String data) throws Exception {
         ArrayList<Object> list = new ArrayList<Object>();
         LinkedHashMap<String, String> bookRankChooseClassCompare = bookClassService.getBookRankChooseClassCompare(data);

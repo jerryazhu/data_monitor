@@ -23,7 +23,7 @@ public interface ClassService {
 
     ArrayList getSaTeacherGroup();
 
-    DataSet<CostClass> getCostClass(String data,DatatablesCriterias criterias) throws ParseException;
+    DataSet<CostClass> getCostClass(String data, DatatablesCriterias criterias) throws ParseException;
 
     DataSet<CostSaClass> getCostSaClass(String data, DatatablesCriterias criterias) throws ParseException;
 

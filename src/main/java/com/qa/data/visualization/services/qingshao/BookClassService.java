@@ -12,14 +12,23 @@ import java.util.LinkedHashMap;
  * Created by dykj on 2016/11/30.
  */
 public interface BookClassService {
-    LinkedHashMap<String,String> getBook(String data);
+    LinkedHashMap<String, String> getBook(String data);
+
     ArrayList getBookMonthChoose(String data);
+
     LinkedHashMap<String, String> getBookChooseClassStock(String data);
+
     ArrayList getStudentLevels();
+
     ArrayList getBookRankChooseClass(String data);
+
     ArrayList getBookRankAge(String data);
+
     LinkedHashMap<String, String> getBookRankChooseClassCompare(String data);
+
     DataSet<CostClass> getBookChooseCostClass(String data, DatatablesCriterias criterias) throws ParseException;
+
     public Long getChooseBookCostClassCnt();
+
     public String getChooseBookWholeSql();
 }

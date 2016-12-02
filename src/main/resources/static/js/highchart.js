@@ -128,7 +128,167 @@ function createColumnHighcharts(element, url, data, type) {
             console.log(errorMsg);
         }
     });
+}
+function createDifferentHighchart(element, url, data) {
+    $.ajax({
+        type: "get",
+        url: url + data,
+        data: "",
+        datatype: "json",
+        success: function (returnData) {
+            var JSONObject = returnData;
+            $(element).highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: data
+                },
+                xAxis: {
+                    categories: JSONObject.xName
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: ''
+                    },
+                    stackLabels: {
+                        enabled: true,
+                        style: {
+                            fontWeight: 'bold',
+                            color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                        }
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        var total = 0;
+                        $.each(this.points, function (i, point) {
+                            total = total + point.y;
+                        });
+                        var s = '<strong>' + this.x +  '</strong>';
 
+                        var sortedPoints = this.points.sort(function (a, b) {
+                            return ((a.y < b.y) ? -1 : ((a.y > b.y) ? 1 : 0));
+                        });
+                        sortedPoints.reverse();
+                        $.each(sortedPoints, function (i, point) {
+                            if (point.y != 0) {
+                                s += '<br/><span style="color:' + point.series.color + '"> ' + point.series.name + ' </span>: <b> ' + point.y ;
+                            }
+                        });
+
+                        return s;
+                    },
+                    shared: true
+                },
+                series: [{
+                    name: '选课量',
+                    data: JSONObject.type0
+                }, {
+                    name: '选课人数',
+                    data: JSONObject.type1
+                }]
+
+            });
+        },
+        error: function (errorMsg) {
+            console.log(errorMsg);
+        }
+    });
+}
+function createAgeHighchart(element, url, data) {
+    $.ajax({
+        type: "get",
+        url: url + data,
+        data: "",
+        datatype: "json",
+        success: function (returnData) {
+            var JSONObject = returnData;
+            $(element).highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: data
+                },
+                xAxis: {
+                    categories: JSONObject.xName
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: ''
+                    },
+                    stackLabels: {
+                        enabled: true,
+                        style: {
+                            fontWeight: 'bold',
+                            color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                        }
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        var total = 0;
+                        $.each(this.points, function (i, point) {
+                            total = total + point.y;
+                        });
+                        var s = '<strong>' + this.x + '总计 ' + total + '</strong>';
+
+                        var sortedPoints = this.points.sort(function (a, b) {
+                            return ((a.y < b.y) ? -1 : ((a.y > b.y) ? 1 : 0));
+                        });
+                        sortedPoints.reverse();
+                        $.each(sortedPoints, function (i, point) {
+                            if (point.y != 0) {
+                                s += '<br/><span style="color:' + point.series.color + '"> ' + point.series.name + ' </span>: <b> ' + point.y + " (" + (point.y / total * 100).toFixed(0) + '%)';
+                            }
+                        });
+
+                        return s;
+                    },
+                    shared: true
+                },
+                series: [{
+                    name: '3-6岁',
+                    data: JSONObject.type0
+                }, {
+                    name: '7-9岁',
+                    data: JSONObject.type1
+                }, {
+                    name: '10-12岁',
+                    data: JSONObject.type2
+                }, {
+                    name: '13-15岁',
+                    data: JSONObject.type3
+                }, {
+                    name: '16-18岁',
+                    data: JSONObject.type4
+                }, {
+                    name: '19-24岁',
+                    data: JSONObject.type5
+                }, {
+                    name: '25-35岁',
+                    data: JSONObject.type6
+                }, {
+                    name: '35-45岁',
+                    data: JSONObject.type7
+                }, {
+                    name: '46岁以上',
+                    data: JSONObject.type8
+                },{
+                    name:'其他',
+                    data:JSONObject.type9
+                }
+                ]
+
+            });
+        },
+        error: function (errorMsg) {
+            console.log(errorMsg);
+        }
+    });
 }
 function creteSimplePieHighChart(element, map) {
     var colors;

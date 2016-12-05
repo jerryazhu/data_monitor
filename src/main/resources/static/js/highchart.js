@@ -275,10 +275,10 @@ function createAgeHighchart(element, url, data) {
                     name: '35-45岁',
                     data: JSONObject.type7
                 }, {
-                    name: '46岁以上',
+                    name: '46-55岁',
                     data: JSONObject.type8
                 },{
-                    name:'其他',
+                    name:'55岁以上',
                     data:JSONObject.type9
                 }
                 ]

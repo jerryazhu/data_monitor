@@ -174,8 +174,8 @@ public class BookClassServiceImpl implements BookClassService {
     @SuppressWarnings("unchecked")
     @Cacheable(value = "get_book_rank_choose_class", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getBookRankChooseClass(String data) throws ParseException {
-        ArrayList xName = new ArrayList();
         ArrayList levels = new ArrayList();
+        ArrayList relLevels=new ArrayList();
         ArrayList number0 = new ArrayList();
         ArrayList number1 = new ArrayList();
         ArrayList message = new ArrayList();
@@ -195,48 +195,36 @@ public class BookClassServiceImpl implements BookClassService {
         } else {
             levels.add(cutData[3]);
         }
-        for (Object aLevels : levels) {
-            Query q = entityManager.createNativeQuery("select empt.name as name,count(ecr.id) from ebk_class_records ecr\n" +
-                    "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
-                    "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
-                    "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
-                    "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                    "where ecr.begin_time >=" + bTime + " and ecr.begin_time <=" + tTime + "\n" +
-                    "and esi.study_aim=1 and ecr.stype!=''\n" +
-                    "and ecr.status=3\n" +
-                    "and concat(es.level,es.sub_level)='" + aLevels + "'\n" +
-                    "and empt.name=\"" + cutData[2] + "\" \n" +
-                    "GROUP BY empt.name");
-            List<Object[]> list1 = q.getResultList();
-            if (list1.size() < 1) {
-                number0.add(0);
-            } else {
-                for (Object[] result : list1) {
+        Query q=entityManager.createNativeQuery("select concat(es.level,es.sub_level) AS level,count(ecr.id),count(DISTINCT ecr.sid) from ebk_class_records ecr\n" +
+                "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
+                "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
+                "where ecr.begin_time >="+bTime+" and ecr.begin_time <="+tTime+"\n" +
+                "and ecr.status=3\n" +
+                "and es.sub_level is not null\n" +
+                "and esi.study_aim=1 and ecr.stype!=''\n" +
+                "and empt.name=\""+cutData[2]+"\"\n" +
+                "group by concat(es.level,es.sub_level)");
+        List<Object[]> list=q.getResultList();
+        for (Object level : levels) {
+            boolean find=false;
+            for (Object[] result : list) {
+                if (result[0].equals(level)) {
+                    relLevels.add(result[0]);
                     number0.add(result[1]);
+                    number1.add(result[2]);
+                    find = true;
+                    break;
                 }
             }
-            q = entityManager.createNativeQuery("select re.name,count(re.name) FROM\n" +
-                    "(select empt.name as name,ecr.sid from ebk_class_records ecr\n" +
-                    "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
-                    "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
-                    "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
-                    "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                    "where ecr.begin_time >=" + bTime + " and ecr.begin_time <=" + tTime + "\n" +
-                    "and ecr.status=3\n" +
-                    "and concat(es.level,es.sub_level)='" + aLevels + "'\n" +
-                    "and esi.study_aim=1 and ecr.stype!=''\n" +
-                    "and empt.name=\"" + cutData[2] + "\"\n" +
-                    "GROUP BY ecr.sid) re");
-            List<Object[]> list2 = q.getResultList();
-            if (list2.size() < 1) {
+            if (!find) {
+                relLevels.add(level);
+                number0.add(0);
                 number1.add(0);
-            } else {
-                for (Object[] result : list2) {
-                    number1.add(result[1]);
-                }
             }
         }
-        message.add(levels);
+        message.add(relLevels);
         message.add(number0);
         message.add(number1);
         return message;
@@ -247,7 +235,6 @@ public class BookClassServiceImpl implements BookClassService {
     @SuppressWarnings("unchecked")
     @Cacheable(value = "get_book_rank_age", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getBookRankAge(String data) throws ParseException {
-        ArrayList xName = new ArrayList();
         ArrayList levels = new ArrayList();
         ArrayList number0 = new ArrayList();
         ArrayList number1 = new ArrayList();
@@ -276,105 +263,66 @@ public class BookClassServiceImpl implements BookClassService {
         } else {
             levels.add(cutData[3]);
         }
+        String [] ageDuration={"1","2","3","10","11","12","6","7","8","9"};
         for (Object aLevels : levels) {
-            for (int i = 0; i < 9; i++) {
-                Query q = entityManager.createNativeQuery("select re.name,count(re.name) FROM\n" +
-                        "(select empt.name as name,ecr.sid from ebk_class_records ecr\n" +
-                        "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
-                        "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
-                        "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
-                        "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                        "where ecr.begin_time >=" + bTime + " and ecr.begin_time <=" + tTime + "\n" +
-                        "and ecr.status=3\n" +
-                        "and concat(es.level,es.sub_level)='" + aLevels + "'\n" +
-                        "and esi.study_aim=1 and ecr.stype!=''\n" +
-                        "and empt.name=\"" + cutData[2] + "\"\n" +
-                        "and esi.age_duration=" + i + "\n" +
-                        "GROUP BY ecr.sid) re");
-                List<Object[]> list1 = q.getResultList();
-                if (list1.size() < 1) {
-                    switch (i) {
-                        case 0:
-                            number0.add(0);
-                            break;
-                        case 1:
-                            number1.add(0);
-                            break;
-                        case 2:
-                            number2.add(0);
-                            break;
-                        case 3:
-                            number3.add(0);
-                            break;
-                        case 4:
-                            number4.add(0);
-                            break;
-                        case 5:
-                            number5.add(0);
-                            break;
-                        case 6:
-                            number6.add(0);
-                            break;
-                        case 7:
-                            number7.add(0);
-                            break;
-                        case 8:
-                            number8.add(0);
-                            break;
-                    }
-                } else {
-                    for (Object[] result : list1) {
-                        switch (i) {
-                            case 0:
-                                number0.add(result[1]);
-                                break;
-                            case 1:
-                                number1.add(result[1]);
-                                break;
-                            case 2:
-                                number2.add(result[1]);
-                                break;
-                            case 3:
-                                number3.add(result[1]);
-                                break;
-                            case 4:
-                                number4.add(result[1]);
-                                break;
-                            case 5:
-                                number5.add(result[1]);
-                                break;
-                            case 6:
-                                number6.add(result[1]);
-                                break;
-                            case 7:
-                                number7.add(result[1]);
-                                break;
-                            case 8:
-                                number8.add(result[1]);
-                                break;
-                        }
-                    }
-                }
-            }
-            Query q = entityManager.createNativeQuery("select re.name,count(re.name) FROM\n" +
-                    "(select empt.name as name,ecr.sid from ebk_class_records ecr\n" +
+            Query q=entityManager.createNativeQuery("select count(DISTINCT ecr.sid),esi.age_duration from ebk_class_records ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                     "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                    "where ecr.begin_time >=" + bTime + " and ecr.begin_time <=" + tTime + "\n" +
+                    "where ecr.begin_time >="+bTime+" and ecr.begin_time <="+tTime+"\n" +
                     "and ecr.status=3\n" +
-                    "and concat(es.level,es.sub_level)='" + aLevels + "'\n" +
+                    "and concat(es.level,es.sub_level)='"+aLevels+"'\n" +
                     "and esi.study_aim=1 and ecr.stype!=''\n" +
-                    "and empt.name=\"" + cutData[2] + "\"\n" +
-                    "and esi.age_duration>8 \n" +
-                    "GROUP BY ecr.sid) re");
-            List<Object[]> list2 = q.getResultList();
-            if (list2.size() < 1) {
+                    "and empt.name=\""+cutData[2]+"\"\n" +
+                    "GROUP BY esi.age_duration");
+            List<Object[]> list=q.getResultList();
+            if(list.size()==0){
+                number0.add(0);
+                number1.add(0);
+                number2.add(0);
+                number3.add(0);
+                number4.add(0);
+                number5.add(0);
+                number6.add(0);
+                number7.add(0);
+                number8.add(0);
                 number9.add(0);
-            } else {
-                for (Object[] result : list2) {
-                    number9.add(result[1]);
+            }else{
+                for (String anAgeDuration : ageDuration) {
+                    boolean find=false;
+                    for (Object[] result : list) {
+                        if (result[1].toString().equals(anAgeDuration)) {
+                            switch (anAgeDuration){
+                                case "1":number0.add(result[0]);break;
+                                case "2":number1.add(result[0]);break;
+                                case "3":number2.add(result[0]);break;
+                                case "10":number3.add(result[0]);break;
+                                case "11":number4.add(result[0]);break;
+                                case "12":number5.add(result[0]);break;
+                                case "6":number6.add(result[0]);break;
+                                case "7":number7.add(result[0]);break;
+                                case "8":number8.add(result[0]);break;
+                                case "9":number9.add(result[0]);break;
+                            }
+                            find = true;
+                            break;
+                        }
+                    }
+                    if(!find){
+                        switch (anAgeDuration){
+                            case "1":number0.add(0);break;
+                            case "2":number1.add(0);break;
+                            case "3":number2.add(0);break;
+                            case "10":number3.add(0);break;
+                            case "11":number4.add(0);break;
+                            case "12":number5.add(0);break;
+                            case "6":number6.add(0);break;
+                            case "7":number7.add(0);break;
+                            case "8":number8.add(0);break;
+                            case "9":number9.add(0);break;
+                        }
+                    }
                 }
             }
         }
@@ -406,7 +354,7 @@ public class BookClassServiceImpl implements BookClassService {
             sql = "concat(es.level,es.sub_level)='" + cutData[cutData.length - 1] + "'";
         }
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records ecr\n" +
+        Query q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>1475251200 ) ecr\n" +
                 "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                 "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +

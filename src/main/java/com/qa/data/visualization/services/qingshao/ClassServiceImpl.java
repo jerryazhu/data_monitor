@@ -376,9 +376,16 @@ public class ClassServiceImpl implements ClassService {
                     }
                 }
             } else {
+                int levelNumber=0;
                 sql = sql + "\n" + "and esi.referral=-1";
                 if (!changeData.equals("不限")) {
-                    sql = sql + "\n" + "and eas.level='" + changeData + "'";
+                    switch(changeData){
+                        case "S":levelNumber=1;break;
+                        case "A":levelNumber=2;break;
+                        case "B":levelNumber=3;break;
+                        case "C":levelNumber=4;break;
+                    }
+                    sql = sql + "\n" + "and eas.level=" + levelNumber + "";
                 }
             }
         }
@@ -440,7 +447,7 @@ public class ClassServiceImpl implements ClassService {
         } else {
             sql = sql + "\n" + "eao.create_time >=" + bTime + " and eao.create_time<=" + tTime;
         }
-        sql=sql+"\n"+"and esi.study_aim=1 \n"+"and eao.payed=1\n" +"and eao.order_flag!=1";
+        sql=sql+"\n"+"and esi.study_aim=1 \n"+"and eao.payed=1";
         if (!teacherType.equals("不限")) {
             if (teacherType.equals("菲律宾")) {
                 sql = sql + "\n" + "and eaod.tch_from=1";

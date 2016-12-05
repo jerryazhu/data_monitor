@@ -190,6 +190,8 @@
         var class_element=$('#book_rank_choose_class');
         var class_url="/class/get_book_rank_choose_class/";
         var age_element=$('#book_rank_age');
+        class_element.html("");
+        age_element.html("");
         var age_url="/class/get_book_rank_age/";
         var time=bTime+"---"+tTime;
         var data=bTime+"---"+tTime+"---"+chooseBook+"---"+studentLevel;
@@ -198,6 +200,7 @@
     }
     function createCompare() {
         var compare_element=$('#book_rank_choose_class_compare');
+        compare_element.html("");
         var book_url="/class/get_book/";
         var compare_url="/class/get_book_rank_choose_class_compare/";
         var compare=$('#compare_select').find("option:selected").val();

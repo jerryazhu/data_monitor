@@ -373,7 +373,7 @@ public class BookClassServiceImpl implements BookClassService {
     @RequestMapping
     @SuppressWarnings("unchecked")
     @Cacheable(value = "get_book_rank_choose_class_compare", keyGenerator = "wiselyKeyGenerator")
-    public LinkedHashMap<String, String> getBookRankChooseClassCompare(String data) {
+    public LinkedHashMap<String, String> getBookRankChooseClassCompare(String data) throws ParseException {
         String[] cutData = data.split("---");
         String sql;
         if (cutData[cutData.length - 1].equals("ALL")) {
@@ -382,7 +382,28 @@ public class BookClassServiceImpl implements BookClassService {
             sql = "concat(es.level,es.sub_level)='" + cutData[cutData.length - 1] + "'";
         }
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>1475251200 ) ecr\n" +
+        Calendar cal = Calendar.getInstance();
+        int day = cal.get(Calendar.DATE);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int year = cal.get(Calendar.YEAR);
+        String limitTime;
+        if(month==1){
+            limitTime=(year-1)+"-11-1 00:00";
+        }else{
+            limitTime=year+"-"+(month-2)+"-1 00:00";
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date bDate = dateFormat.parse(cutData[1]);
+        long bTime = bDate.getTime()/1000;
+        Date lDate=dateFormat.parse(limitTime);
+        long lTime=lDate.getTime()/1000;
+        String fromSQl;
+        if(lTime>bTime){
+            fromSQl="(select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>"+bTime+")";
+        }else{
+            fromSQl="(select * from ebk_class_records)";
+        }
+        Query q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from "+fromSQl+" ecr\n" +
                 "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                 "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +

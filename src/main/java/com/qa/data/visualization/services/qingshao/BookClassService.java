@@ -24,7 +24,7 @@ public interface BookClassService {
 
     ArrayList getBookRankAge(String data) throws ParseException;
 
-    LinkedHashMap<String, String> getBookRankChooseClassCompare(String data);
+    LinkedHashMap<String, String> getBookRankChooseClassCompare(String data) throws ParseException;
 
     DataSet<CostClass> getBookChooseCostClass(String data, DatatablesCriterias criterias) throws ParseException;
 

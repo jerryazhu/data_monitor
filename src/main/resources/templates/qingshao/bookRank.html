@@ -107,12 +107,20 @@
 <script th:src="@{/js/datepicker/bootstrap-datetimepicker.min.js}"></script>
 <script th:src="@{/js/datatables/jquery.dataTables.js}"></script>
 <script>
+    // <![CDATA[
     $(document).ready(function () {
         var beginTime = $('#begin-time');
         var toTime = $('#to-time');
         var date = new Date();
-        var yDay= date.getFullYear() + "-" + date.getMonth() + "-1 00:00";
-        var tDay= date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth())+" 23:59";
+        var yDay;
+        var tDay;
+        if(date.getMonth()==1){
+            yDay=date.getFullYear() + "-12-1 00:00";
+            tDay=date.getFullYear() + "-12-31 00:00";
+        }else{
+            yDay= date.getFullYear() + "-" + date.getMonth() + "-1 00:00";
+            tDay= date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth())+" 23:59";
+        }
         $('#bTimeInput').val(yDay);
         $('#tTimeInput').val(tDay);
         beginTime.datetimepicker({
@@ -127,10 +135,12 @@
         beginTime.on("dp.change", function (e) {
             toTime.data("DateTimePicker").minDate(e.date);
             createDraw();
+            createCompare();
         });
         toTime.on("dp.change", function (e) {
             toTime.data("DateTimePicker").maxDate(e.date);
             createDraw();
+            createCompare();
         });
         $('#book').on("change",function () {
             createDraw();
@@ -193,6 +203,16 @@
         class_element.html("");
         age_element.html("");
         var age_url="/class/get_book_rank_age/";
+        var date = new Date();
+        var limitTime;
+        if(date.getMonth()==1){
+            limitTime=(date.getFullYear()-1)+"-11-1 00:00";
+        }else{
+            limitTime=date.getFullYear() + "-" + (date.getMonth()-1) + "-1 00:00";
+        }
+        if(dateToUnix(bTime)<dateToUnix(limitTime)){
+            bTime=limitTime;
+        }
         var time=bTime+"---"+tTime;
         var data=bTime+"---"+tTime+"---"+chooseBook+"---"+studentLevel;
         createDifferentHighchart(class_element,class_url,data);
@@ -200,7 +220,7 @@
     }
     function createCompare() {
         var compare_element=$('#book_rank_choose_class_compare');
-        compare_element.html(""); 
+        compare_element.html("");
         var book_url="/class/get_book/";
         var compare_url="/class/get_book_rank_choose_class_compare/";
         var compare=$('#compare_select').find("option:selected").val();
@@ -227,6 +247,7 @@
         span.innerHTML = data;
         obj.append(span);
     }
+    // ]]>
 </script>
 </body>
 </html>

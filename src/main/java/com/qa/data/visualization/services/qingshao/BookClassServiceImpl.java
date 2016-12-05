@@ -397,23 +397,45 @@ public class BookClassServiceImpl implements BookClassService {
         long bTime = bDate.getTime()/1000;
         Date lDate=dateFormat.parse(limitTime);
         long lTime=lDate.getTime()/1000;
-        String fromSQl;
+        List<Object[]> list = null;
         if(lTime>bTime){
-            fromSQl="(select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>"+bTime+")";
+            Query q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records ecr\n" +
+                    "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
+                    "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                    "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
+                    "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
+                    "where esi.study_aim=1 and ecr.stype!=''\n" +
+                    "and ecr.status=3\n" +
+                    "and empt.name=\"" + cutData[0] + "\"\n" +
+                    "and " + sql + "\n" +
+                    "group by ecr.begin_time");
+            list = q.getResultList();
+            q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records_2016 ecr\n" +
+                    "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
+                    "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                    "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
+                    "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
+                    "where ecr.begin_time>"+bTime +"\n"+
+                    "and esi.study_aim=1 and ecr.stype!=''\n" +
+                    "and ecr.status=3\n" +
+                    "and empt.name=\"" + cutData[0] + "\"\n" +
+                    "and " + sql + "\n" +
+                    "group by ecr.begin_time");
+            List<Object[]> listMore=q.getResultList();
+            list.addAll(listMore);
         }else{
-            fromSQl="(select * from ebk_class_records)";
+            Query q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records ecr\n" +
+                    "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
+                    "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                    "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
+                    "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
+                    "where esi.study_aim=1 and ecr.stype!=''\n" +
+                    "and ecr.status=3\n" +
+                    "and empt.name=\"" + cutData[0] + "\"\n" +
+                    "and " + sql + "\n" +
+                    "group by ecr.begin_time");
+            list = q.getResultList();
         }
-        Query q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from "+fromSQl+" ecr\n" +
-                "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
-                "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
-                "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
-                "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                "where esi.study_aim=1 and ecr.stype!=''\n" +
-                "and ecr.status=3\n" +
-                "and empt.name=\"" + cutData[0] + "\"\n" +
-                "and " + sql + "\n" +
-                "group by ecr.begin_time");
-        List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             if (result[0] != null) {
                 map.put(result[0].toString(), result[1].toString());

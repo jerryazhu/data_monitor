@@ -133,12 +133,11 @@
             useCurrent: false
         });
         beginTime.on("dp.change", function (e) {
-            toTime.data("DateTimePicker").minDate(e.date);
+            beginTime.data("DateTimePicker").minDate(e.date);
             createDraw();
             createCompare();
         });
         toTime.on("dp.change", function (e) {
-            toTime.data("DateTimePicker").maxDate(e.date);
             createDraw();
             createCompare();
         });
@@ -194,6 +193,7 @@
     function createDraw() {
         $('.selectpicker').selectpicker();
         var chooseBook= $('#book').find("option:selected").val();
+        chooseBook=chooseBook.replace("?","'");
         var studentLevel=$('#studentLevels').find('span[class="option-text active"]').text();
         var bTime=$('#begin-time').find("> input").val();
         var tTime=$('#to-time').find("> input").val();
@@ -228,7 +228,7 @@
         var tTime=$('#to-time').find("> input").val();
         var chooseBook= $('#book').find("option:selected").val();
         var studentLevel=$('#studentLevels').find('span[class="option-text active"]').text();
-        var data=bTime+"---"+tTime+"---"+chooseBook+"---"+studentLevel;
+        var data=bTime+"---"+tTime+"---"+studentLevel;
         createComplexHighStock(compare_element,book_url,compare_url,compare,data);
         $('#compare_select').on('change', function () {
             var compare=$('#compare_select').find("option:selected").val();

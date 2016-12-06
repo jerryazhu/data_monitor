@@ -149,7 +149,7 @@
         recoverCnt();
         createTable();
         beginTime.on("dp.change", function (e) {
-            toTime.data("DateTimePicker").minDate(e.date);
+            beginTime.data("DateTimePicker").minDate(e.date);
             var bTime=$('#begin-time').find("> input").val();
             var tTime=$('#to-time').find("> input").val();
             if(bTime!='' && tTime!='' && tTime>bTime){
@@ -158,7 +158,6 @@
             }
         });
         toTime.on("dp.change", function (e) {
-            toTime.data("DateTimePicker").maxDate(e.date);
             var bTime=$('#begin-time').find("> input").val();
             var tTime=$('#to-time').find("> input").val();
             if(bTime!='' && tTime!=''&& tTime>bTime){

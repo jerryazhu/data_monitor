@@ -21,9 +21,10 @@ public class RegServiceImpl implements RegService {
     @Cacheable(value = "reg_cache", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getDailyActivityMap() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select concat(year,'-',month,'-',day) as time,sum(cnt) as count from ABC360_REG_CITY_DAILY_TBL\n" +
+        String s = String.format("select concat(year,'-',month,'-',day) as time,sum(cnt) as count from ABC360_REG_CITY_DAILY_TBL\n" +
                 "where concat(year,'-',month,'-',day) > '2012-01-01'\n" +
                 "group by year,month,day");
+        Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             map.put(result[0].toString(), result[1].toString());
@@ -37,9 +38,10 @@ public class RegServiceImpl implements RegService {
     public LinkedHashMap<String, String> getRegCity(String time) {
         String[] cutTime = time.split("---");
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select city,sum(cnt) as cnt from ABC360_REG_CITY_DAILY_TBL \n" +
-                "where UNIX_TIMESTAMP(" + "'" + cutTime[0] + "'" + ")<=UNIX_TIMESTAMP(concat(year,'-',month,'-',day)) and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP(" + "'" + cutTime[1] + "'" + ") and city!='' \n" +
-                "group by city order by cnt desc limit 20");
+        String s = String.format("select city,sum(cnt) as cnt from ABC360_REG_CITY_DAILY_TBL \n" +
+                "where UNIX_TIMESTAMP('%s')<=UNIX_TIMESTAMP(concat(year,'-',month,'-',day)) and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('%s') and city!='' \n" +
+                "group by city order by cnt desc limit 20", cutTime[0], cutTime[1]);
+        Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             map.put(result[0].toString(), result[1].toString());
@@ -61,19 +63,21 @@ public class RegServiceImpl implements RegService {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         String type = cutData[2];
         Query q = null;
+        String s = null;
         if (!type.equals("all")) {
-            q = entityManager.createNativeQuery("select city,count(A.study_aim) as cnt from(\n" +
+            s = String.format("select city,count(A.study_aim) as cnt from(\n" +
                     "select rcr.city,IFNULL(si.study_aim,0) as study_aim\n" +
                     "from ABC360_REG_CITY_RECORD_TBL rcr\n" +
                     "left join ebk_student_info si on rcr.sid=si.sid\n" +
                     "left join ebk_students s on si.sid=s.id\n" +
-                    "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('" + cutData[0] + "')\n" +
-                    "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('" + cutData[1] + "')\n" +
+                    "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('%s')\n" +
+                    "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('%s')\n" +
                     "and s.status=0\n" +
-                    "and study_aim=" + type + "\n" +
+                    "and study_aim=%s\n" +
                     ")A\n" +
                     "group by city,study_aim\n" +
-                    "order by cnt DESC limit 20");
+                    "order by cnt DESC limit 20", cutData[0], cutData[1], type);
+            q = entityManager.createNativeQuery(s);
             List<Object[]> list = q.getResultList();
             for (Object[] result : list) {
                 cityName.add(result[0]);
@@ -98,34 +102,36 @@ public class RegServiceImpl implements RegService {
                 }
             }
         } else {
-            q = entityManager.createNativeQuery("select city,count(A.study_aim) as cnt from(\n" +
+            s = String.format("select city,count(A.study_aim) as cnt from(\n" +
                     "select rcr.city,IFNULL(si.study_aim,0) as study_aim\n" +
                     "from ABC360_REG_CITY_RECORD_TBL rcr\n" +
                     "left join ebk_student_info si on rcr.sid=si.sid\n" +
                     "left join ebk_students s on si.sid=s.id\n" +
-                    "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('" + cutData[0] + "')\n" +
-                    "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('" + cutData[1] + "')\n" +
+                    "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('%s')\n" +
+                    "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('%s')\n" +
                     "and s.status=0\n" +
                     ")A\n" +
                     "group by city\n" +
-                    "order by cnt DESC limit 20");
+                    "order by cnt DESC limit 20", cutData[0], cutData[1]);
+            q = entityManager.createNativeQuery(s);
             List<Object[]> list = q.getResultList();
             for (Object[] result : list) {
                 cityName.add(result[0]);
             }
             for (Object aCityName : cityName) {
-                q = entityManager.createNativeQuery("select city,A.study_aim,count(A.study_aim) as cnt from(\n" +
+                s = String.format("select city,A.study_aim,count(A.study_aim) as cnt from(\n" +
                         "select rcr.city,IFNULL(si.study_aim,0) as study_aim\n" +
                         "from ABC360_REG_CITY_RECORD_TBL rcr\n" +
                         "left join ebk_student_info si on rcr.sid=si.sid\n" +
                         "left join ebk_students s on si.sid=s.id\n" +
-                        "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('" + cutData[0] + "')\n" +
-                        "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('" + cutData[1] + "')\n" +
+                        "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('%s')\n" +
+                        "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('%s')\n" +
                         "and s.status=0\n" +
-                        "and rcr.city='" + aCityName + "'\n" +
+                        "and rcr.city='%s'\n" +
                         ")A\n" +
                         "group by city,study_aim\n" +
-                        "order by cnt DESC limit 20");
+                        "order by cnt DESC limit 20", cutData[0], cutData[1], aCityName);
+                q = entityManager.createNativeQuery(s);
                 List<Object[]> cityMessage = q.getResultList();
                 for (Object[] result : cityMessage) {
                     switch (result[1].toString()) {
@@ -199,8 +205,9 @@ public class RegServiceImpl implements RegService {
             groupBy = "year,month,day";
         }
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select UNIX_TIMESTAMP(CONVERT_TZ(concat(year,'-',month,'-',day),'+00:00','SYSTEM'))*1000 as time,sum(cnt) as cnt " +
-                "from ABC360_REG_CITY_DAILY_TBL  " + citySql + "group by " + groupBy + "");
+        String s = String.format("select UNIX_TIMESTAMP(CONVERT_TZ(concat(year,'-',month,'-',day),'+00:00','SYSTEM'))*1000 as time,sum(cnt) as cnt " +
+                "from ABC360_REG_CITY_DAILY_TBL %s group by %s", citySql, groupBy);
+        Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             if (result[0] != null) {
@@ -226,15 +233,16 @@ public class RegServiceImpl implements RegService {
             sqlType = "study_aim=" + type + "";
         }
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select UNIX_TIMESTAMP(CONVERT_TZ(concat(year,'-',month,'-',day), '+00:00', 'SYSTEM'))*1000  as time,count(A.study_aim) as cnt from (\n" +
+        String s = String.format("select UNIX_TIMESTAMP(CONVERT_TZ(concat(year,'-',month,'-',day), '+00:00', 'SYSTEM'))*1000  as time,count(A.study_aim) as cnt from (\n" +
                 "        select year,month,day,IFNULL(si.study_aim,0) as study_aim\n" +
                 "        from ABC360_REG_CITY_RECORD_TBL rcr\n" +
                 "        left join ebk_student_info si on rcr.sid = si.sid\n" +
                 "        left join ebk_students s on si.sid = s.id\n" +
-                "        where " + sqlType + " and rcr.city='" + cutDate[0] + "'\n" +
+                "        where %s and rcr.city='%s'\n" +
                 "        and s.status = 0\n" +
                 "    ) A\n" +
-                "    group by year,month,day");
+                "    group by year,month,day", sqlType, cutDate[0]);
+        Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             if (result[0] != null) {

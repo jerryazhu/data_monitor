@@ -260,6 +260,7 @@ function createComplexHighStock(element, url1, url2, by, type) {
                     condition = name;
                 } else {
                     if(type.indexOf("---")>0){
+                        name=name.replace("?","'");
                         condition=name+"---"+type;
                     }else{
                         condition = name + "---" + get_type_by(type);

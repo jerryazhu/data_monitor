@@ -86,9 +86,10 @@ public class ClassServiceImpl implements ClassService {
     @SuppressWarnings("unchecked")
     public ArrayList getTeacherGroup() {
         ArrayList getGroup = new ArrayList();
-        Query q = entityManager.createNativeQuery("select distinct ebk_teacher_group.title\n" +
+        String s = String.format("select distinct ebk_teacher_group.title\n" +
                 "from ebk_teachers inner join ebk_teacher_group on ebk_teachers.workgroup = ebk_teacher_group.id\n" +
                 "where ebk_teachers.tch_course = 1 and ebk_teachers.is_tester=0 order by title ");
+        Query q = entityManager.createNativeQuery(s);
         List list = q.getResultList();
         for (Object aList : list) {
             getGroup.add(aList.toString());
@@ -100,9 +101,10 @@ public class ClassServiceImpl implements ClassService {
     @SuppressWarnings("unchecked")
     public ArrayList getSaTeacherGroup() {
         ArrayList getGroup = new ArrayList();
-        Query q = entityManager.createNativeQuery("select distinct ebk_teacher_group.title\n" +
+        String s = String.format("select distinct ebk_teacher_group.title\n" +
                 "from ebk_teachers inner join ebk_teacher_group on ebk_teachers.workgroup = ebk_teacher_group.id\n" +
                 "where ebk_teachers.tch_course = 1 and ebk_teachers.is_tester=1 order by title");
+        Query q = entityManager.createNativeQuery(s);
         List list = q.getResultList();
         for (Object aList : list) {
             getGroup.add(aList.toString());
@@ -347,12 +349,12 @@ public class ClassServiceImpl implements ClassService {
         Date date = dateFormat.parse(today);
         long todayUnix = date.getTime();
         long yesterdayUnix = todayUnix / 1000 - 86400;
-        String sql = "select es.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ifnull(sum(eao.tmoney),0) as cnt from ebk_students es\n" +
+        String sql = String.format("select es.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ifnull(sum(eao.tmoney),0) as cnt from ebk_students es\n" +
                 "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
                 "LEFT JOIN ebk_advertisement_source eas on eas.id=esi.knowus\n" +
                 "LEFT JOIN ebk_acoin_orders eao on es.id = eao.sid\n" +
                 "LEFT JOIN ebk_rbac_user eru on eru.id=es.adviser\n" +
-                "where ";
+                "where ");
         String[] cutData = data.split("\\+");
         String bTime = cutData[0];
         String tTime = cutData[1];
@@ -408,7 +410,8 @@ public class ClassServiceImpl implements ClassService {
         newStudentCnt = query.getTotalCount();
         newStudentSql = sql;
         if (tableShow.equals("销售量及购买人数")) {
-            Query q = entityManager.createNativeQuery("select sum(result.cnt) from (" + sql + ") result");
+            String s = String.format("select sum(result.cnt) from (%s) result", sql);
+            Query q = entityManager.createNativeQuery(s);
             List list = q.getResultList();
             if (list.get(0) == null) {
                 newStudentPayCnt = "0";
@@ -428,13 +431,13 @@ public class ClassServiceImpl implements ClassService {
         Date date = dateFormat.parse(today);
         long todayUnix = date.getTime();
         long yesterdayUnix = todayUnix / 1000 - 86400;
-        String sql = "select eao.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ifnull(sum(eao.tmoney),0) as cnt \n" +
+        String sql = String.format("select eao.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ifnull(sum(eao.tmoney),0) as cnt \n" +
                 "from ebk_students es\n" +
                 "LEFT JOIN ebk_acoin_orders eao on eao.sid=es.id\n" +
                 "LEFT JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id\n" +
                 "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
                 "LEFT JOIN ebk_rbac_user eru on eru.id=es.adviser\n" +
-                "where ";
+                "where ");
         String[] cutData = data.split("\\+");
         String bTime = cutData[0];
         String tTime = cutData[1];
@@ -481,7 +484,8 @@ public class ClassServiceImpl implements ClassService {
         DataSet<payStudent> result = query.getResultDataSet();
         oldStudentCnt = query.getTotalCount();
         oldStudentSql = sql;
-        Query q = entityManager.createNativeQuery("select sum(result.cnt) from (" + sql + ") result");
+        String s = String.format("select sum(result.cnt) from (%s) result", sql);
+        Query q = entityManager.createNativeQuery(s);
         List list = q.getResultList();
         if (list.get(0) == null) {
             oldStudentPayCnt = "0";

@@ -21,7 +21,7 @@ public class PayServiceImpl implements PayService {
     @Cacheable(value = "pay_cache", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getDailyActivityMap() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select concat(year,'-',month,'-',day) as time,sum(tmoney) from (\n" +
+        String s = String.format("select concat(year,'-',month,'-',day) as time,sum(tmoney) from (\n" +
                 "\tselect year,month,day,tmoney,orderid,IFNULL(si.study_aim,0) as study_aim \n" +
                 "\tfrom ABC360_PAY_CITY_RECORD_TBL pcr\n" +
                 "\tleft join ebk_student_info si on pcr.sid = si.sid \n" +
@@ -29,6 +29,7 @@ public class PayServiceImpl implements PayService {
                 "\tand concat(year,'-',month,'-',day) > '2012-01-01'\n" +
                 ") A\n" +
                 "group by year,month,day");
+        Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             map.put(result[0].toString(), result[1].toString());
@@ -47,12 +48,13 @@ public class PayServiceImpl implements PayService {
             sqlType = "study_aim=" + name;
         }
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select UNIX_TIMESTAMP(CONVERT_TZ(concat(year,'-',month,'-',day),'+00:00','SYSTEM'))*1000 as time,sum(tmoney) from\n" +
+        String s = String.format("select UNIX_TIMESTAMP(CONVERT_TZ(concat(year,'-',month,'-',day),'+00:00','SYSTEM'))*1000 as time,sum(tmoney) from\n" +
                 "(select year,month,day,tmoney,orderid,IFNULL(si.study_aim,0) as study_aim\n" +
                 "from ABC360_PAY_CITY_RECORD_TBL pcr\n" +
                 "left join ebk_student_info si on pcr.sid=si.sid\n" +
-                "where " + sqlType + ")A\n" +
-                "group by year,month,day");
+                "where %s)A\n" +
+                "group by year,month,day", sqlType);
+        Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             if (result[0] != null) {
@@ -73,12 +75,13 @@ public class PayServiceImpl implements PayService {
             sqlType = "study_aim=" + name;
         }
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select UNIX_TIMESTAMP(CONVERT_TZ(concat(year,'-',month,'-',day),'+00:00','SYSTEM'))*1000 as time, count(orderid) from\n" +
+        String s = String.format("select UNIX_TIMESTAMP(CONVERT_TZ(concat(year,'-',month,'-',day),'+00:00','SYSTEM'))*1000 as time, count(orderid) from\n" +
                 "(select year,month,day,tmoney,orderid,IFNULL(si.study_aim,0) as study_aim\n" +
                 "from ABC360_PAY_CITY_RECORD_TBL pcr\n" +
                 "left join ebk_student_info si on pcr.sid=si.sid\n" +
-                "where " + sqlType + ")A\n" +
-                "group by year,month,day");
+                "where %s )A\n" +
+                "group by year,month,day", sqlType);
+        Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             if (result[0] != null) {
@@ -102,17 +105,19 @@ public class PayServiceImpl implements PayService {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         String type = cutData[2];
         Query q = null;
+        String s = null;
         if (!type.equals("all")) {
-            q = entityManager.createNativeQuery("select city,sum(A.tmoney) as money from(\n" +
+            s = String.format("select city,sum(A.tmoney) as money from(\n" +
                     "select pcr.city,tmoney,IFNULL(si.study_aim,0) as study_aim\n" +
                     "from ABC360_PAY_CITY_RECORD_TBL pcr\n" +
                     "left join ebk_student_info si on pcr.sid=si.sid\n" +
-                    "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('" + cutData[0] + "')\n" +
-                    "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('" + cutData[1] + "')\n" +
-                    "and study_aim=" + type + "\n" +
+                    "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('%s')\n" +
+                    "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('%s')\n" +
+                    "and study_aim=%s\n" +
                     ")A\n" +
                     "group by city,study_aim\n" +
-                    "order by money DESC limit 20");
+                    "order by money DESC limit 20", cutData[0], cutData[1], type);
+            q = entityManager.createNativeQuery(s);
             List<Object[]> list = q.getResultList();
             for (Object[] result : list) {
                 cityName.add(result[0]);
@@ -137,30 +142,32 @@ public class PayServiceImpl implements PayService {
                 }
             }
         } else {
-            q = entityManager.createNativeQuery("select city,sum(A.tmoney) as money from(\n" +
+            s = String.format("select city,sum(A.tmoney) as money from(\n" +
                     "select pcr.city,tmoney,IFNULL(si.study_aim,0) as study_aim\n" +
                     "from ABC360_PAY_CITY_RECORD_TBL pcr\n" +
                     "left join ebk_student_info si on pcr.sid=si.sid\n" +
-                    "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('" + cutData[0] + "')\n" +
-                    "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('" + cutData[1] + "')\n" +
+                    "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('%s')\n" +
+                    "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('%s')\n" +
                     ")A\n" +
                     "group by city\n" +
-                    "order by money DESC limit 20");
+                    "order by money DESC limit 20", cutData[0], cutData[1]);
+            q = entityManager.createNativeQuery(s);
             List<Object[]> list = q.getResultList();
             for (Object[] result : list) {
                 cityName.add(result[0]);
             }
             for (Object aCityName : cityName) {
-                q = entityManager.createNativeQuery("select city,A.study_aim,sum(A.tmoney) as money  from(\n" +
+                s = String.format("select city,A.study_aim,sum(A.tmoney) as money  from(\n" +
                         "select pcr.city,tmoney,IFNULL(si.study_aim,0) as study_aim\n" +
                         "from ABC360_PAY_CITY_RECORD_TBL pcr\n" +
                         "left join ebk_student_info si on pcr.sid=si.sid\n" +
-                        "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('" + cutData[0] + "')\n" +
-                        "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('" + cutData[1] + "')\n" +
-                        "and pcr.city='" + aCityName + "'\n" +
+                        "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day))>=UNIX_TIMESTAMP('%s')\n" +
+                        "and UNIX_TIMESTAMP(concat(year,'-',month,'-',day))<=UNIX_TIMESTAMP('%s')\n" +
+                        "and pcr.city='%s'\n" +
                         ")A\n" +
                         "group by city,study_aim\n" +
-                        "order by money DESC limit 20");
+                        "order by money DESC limit 20", cutData[0], cutData[1], aCityName);
+                q = entityManager.createNativeQuery(s);
                 List<Object[]> cityMessage = q.getResultList();
                 for (Object[] result : cityMessage) {
                     switch (result[1].toString()) {
@@ -232,13 +239,14 @@ public class PayServiceImpl implements PayService {
             typeSql = "study_aim=" + cutData[1];
         }
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select UNIX_TIMESTAMP(CONVERT_TZ(concat(year,'-',month,'-',day),'+00:00','SYSTEM'))*1000 as time, sum(tmoney) from\n" +
+        String s = String.format("select UNIX_TIMESTAMP(CONVERT_TZ(concat(year,'-',month,'-',day),'+00:00','SYSTEM'))*1000 as time, sum(tmoney) from\n" +
                 "(select year,month,day,tmoney,orderid,IFNULL(si.study_aim,0) as study_aim\n" +
                 "from ABC360_PAY_CITY_RECORD_TBL pcr\n" +
                 "left join ebk_student_info si on pcr.sid=si.sid\n" +
-                "where " + typeSql + "\n" +
-                "and city='" + cutData[0] + "')A\n" +
-                "group by year,month,day");
+                "where %s\n" +
+                "and city='%s')A\n" +
+                "group by year,month,day", typeSql, cutData[0]);
+        Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             if (result[0] != null) {
@@ -254,9 +262,10 @@ public class PayServiceImpl implements PayService {
     public LinkedHashMap<String, String> getPayCity(String time) {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         String[] cutTime = time.split("---");
-        Query q = entityManager.createNativeQuery("select city,sum(tmoney) as money from ABC360_PAY_CITY_DAILY_TBL \n" +
-                "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day)) >= UNIX_TIMESTAMP('" + cutTime[0] + "') and UNIX_TIMESTAMP(concat(year,'-',month,'-',day)) <= UNIX_TIMESTAMP('" + cutTime[1] + "') \n" +
-                "and city!='' group by city order by money DESC  limit 20;");
+        String s = String.format("select city,sum(tmoney) as money from ABC360_PAY_CITY_DAILY_TBL \n" +
+                "where UNIX_TIMESTAMP(concat(year,'-',month,'-',day)) >= UNIX_TIMESTAMP('%s') and UNIX_TIMESTAMP(concat(year,'-',month,'-',day)) <= UNIX_TIMESTAMP('%s') \n" +
+                "and city!='' group by city order by money DESC  limit 20;", cutTime[0], cutTime[1]);
+        Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             map.put(result[0].toString(), result[1].toString());

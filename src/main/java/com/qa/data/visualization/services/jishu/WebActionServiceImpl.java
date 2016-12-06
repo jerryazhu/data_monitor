@@ -22,7 +22,8 @@ public class WebActionServiceImpl implements WebActionService {
     @Cacheable(value = "web_hotspot_cache", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getHotSpot() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        javax.persistence.Query q = entityManager.createNativeQuery("select left(right(time,8),5) as min,count(*) as cnt,time  from ABC360_WEB_STUDENT_ACTION_LAST_TBL group by min ORDER BY time ASC");
+        String s = String.format("select left(right(time,8),5) as min,count(*) as cnt,time  from ABC360_WEB_STUDENT_ACTION_LAST_TBL group by min ORDER BY time ASC");
+        javax.persistence.Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             map.put(result[2].toString(), result[1].toString());

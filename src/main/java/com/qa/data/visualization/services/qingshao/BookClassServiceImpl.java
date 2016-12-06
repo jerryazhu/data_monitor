@@ -41,16 +41,17 @@ public class BookClassServiceImpl implements BookClassService {
         long bTime = bDate.getTime()/1000;
         Date tDate=dateFormat.parse(cutTime[1]);
         long tTime=tDate.getTime()/1000;
-        Query q = entityManager.createNativeQuery("select empt.name,count(ecr.id) as cnt from ebk_class_records ecr\n" +
+        String s = String.format("select empt.name,count(ecr.id) as cnt from ebk_class_records ecr\n" +
                 "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                 "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                 "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                "where ecr.begin_time >=" + bTime + " and ecr.begin_time<=" + tTime + "\n" +
+                "where ecr.begin_time >=(%s)and ecr.begin_time<=(%s)\n" +
                 "and ecr.status=3\n" +
                 "and  esi.study_aim=1 and ecr.stype!=''\n"+
                 "group by empt.name \n" +
-                "order by cnt desc");
+                "order by cnt desc", bTime, tTime);
+        Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             map.put(result[0].toString(), result[1].toString());
@@ -81,44 +82,29 @@ public class BookClassServiceImpl implements BookClassService {
         for (Map.Entry<String, String> entry : getBook.entrySet()) {
                 bookName.add(entry.getKey());
         }
+        String s = String.format("select empt.name,count(ecr.id),count(DISTINCT ecr.sid) from ebk_class_records ecr\n" +
+                "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
+                "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
+                "where ecr.begin_time >=(%s) and ecr.begin_time <=(%s)\n" +
+                "and ecr.status=3\n" +
+                "and esi.study_aim=1 and ecr.stype!=''\n" +
+                "group by empt.name", bTime, tTime);
+        List<Object[]> list = entityManager.createNativeQuery(s).getResultList();
         for (Object aBookName : bookName) {
-            String s = String.format("select empt.name,count(ecr.id)from ebk_class_records ecr\n" +
-                    "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
-                    "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
-                    "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
-                    "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                    "where ecr.begin_time >=(%s) and ecr.begin_time <=(%s)\n" +
-                    "and ecr.status=3\n" +
-                    "and esi.study_aim=1 and ecr.stype!=''\n" +
-                    "and empt.name=\"%s\"" +
-                    "group by empt.name", bTime, tTime, aBookName.toString());
-            Query q = entityManager.createNativeQuery(s);
-            List<Object[]> list1 = q.getResultList();
-            if (list1.size() < 1) {
-                number0.add(0);
-            } else {
-                for (Object[] result : list1) {
+            boolean find = false;
+            for (Object[] result : list) {
+                if (result[0].equals(aBookName)) {
                     number0.add(result[1]);
+                    number1.add(result[2]);
+                    find = true;
+                    break;
                 }
             }
-            q = entityManager.createNativeQuery("select re.name,count(re.name) FROM\n" +
-                    "(select empt.name as name,ecr.sid from ebk_class_records ecr\n" +
-                    "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
-                    "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
-                    "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
-                    "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                    "where ecr.begin_time >=" + bTime + " and ecr.begin_time <=" + tTime + "\n" +
-                    "and ecr.status=3\n" +
-                    "and esi.study_aim=1 and ecr.stype!=''\n" +
-                    "and empt.name=\"" + aBookName + "\"\n" +
-                    "GROUP BY ecr.sid) re");
-            List<Object[]> list2 = q.getResultList();
-            if (list2.size() < 1) {
+            if (!find) {
+                number0.add(0);
                 number1.add(0);
-            } else {
-                for (Object[] result : list2) {
-                    number1.add(result[1]);
-                }
             }
         }
         ArrayList message = new ArrayList();
@@ -134,15 +120,16 @@ public class BookClassServiceImpl implements BookClassService {
     @Cacheable(value = "get_book_choose_class_stock", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getBookChooseClassStock(String data) {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        Query q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records ecr\n" +
+        String s = String.format("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records ecr\n" +
                 "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                 "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                 "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
                 "where esi.study_aim=1 and ecr.stype!=''\n" +
                 "and ecr.status=3\n" +
-                "and empt.name=\"" + data + "\"\n" +
-                "group by ecr.begin_time");
+                "and empt.name=\"%s\"\n" +
+                "group by ecr.begin_time", data);
+        Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
             if (result[0] != null) {
@@ -158,10 +145,11 @@ public class BookClassServiceImpl implements BookClassService {
     @Cacheable(value = "get_student_levels", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getStudentLevels() {
         ArrayList resultList = new ArrayList();
-        Query q = entityManager.createNativeQuery("select concat(es.level,es.sub_level) as levels from ebk_students es\n" +
+        String s = String.format("select concat(es.level,es.sub_level) as levels from ebk_students es\n" +
                 "LEFT JOIN ebk_class_records ecr on es.id=ecr.sid\n" +
                 "where es.level is not null and es.sub_level is not null\n" +
                 "GROUP BY levels\n");
+        Query q = entityManager.createNativeQuery(s);
         List list = q.getResultList();
         for (Object aList : list) {
             resultList.add(aList.toString());
@@ -180,6 +168,7 @@ public class BookClassServiceImpl implements BookClassService {
         ArrayList number1 = new ArrayList();
         ArrayList message = new ArrayList();
         String[] cutData = data.split("---");
+        String book = cutData[2].replace("'", "?");
         SimpleDateFormat dateFormat;
         if(cutData[0].contains(":")){
             dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -195,17 +184,18 @@ public class BookClassServiceImpl implements BookClassService {
         } else {
             levels.add(cutData[3]);
         }
-        Query q=entityManager.createNativeQuery("select concat(es.level,es.sub_level) AS level,count(ecr.id),count(DISTINCT ecr.sid) from ebk_class_records ecr\n" +
+        String s = String.format("select concat(es.level,es.sub_level) AS level,count(ecr.id),count(DISTINCT ecr.sid) from ebk_class_records ecr\n" +
                 "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                 "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                 "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                "where ecr.begin_time >="+bTime+" and ecr.begin_time <="+tTime+"\n" +
+                "where ecr.begin_time >=%s and ecr.begin_time <=%s\n" +
                 "and ecr.status=3\n" +
                 "and es.sub_level is not null\n" +
                 "and esi.study_aim=1 and ecr.stype!=''\n" +
-                "and empt.name=\""+cutData[2]+"\"\n" +
-                "group by concat(es.level,es.sub_level)");
+                "and empt.name=\"%s\"\n" +
+                "group by concat(es.level,es.sub_level)", bTime, tTime, book);
+        Query q = entityManager.createNativeQuery(s);
         List<Object[]> list=q.getResultList();
         for (Object level : levels) {
             boolean find=false;
@@ -248,6 +238,7 @@ public class BookClassServiceImpl implements BookClassService {
         ArrayList number9 = new ArrayList();
         ArrayList message = new ArrayList();
         String[] cutData = data.split("---");
+        String book = cutData[2].replace("'", "?");
         SimpleDateFormat dateFormat;
         if(cutData[0].contains(":")){
             dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -264,18 +255,19 @@ public class BookClassServiceImpl implements BookClassService {
             levels.add(cutData[3]);
         }
         String [] ageDuration={"1","2","3","10","11","12","6","7","8","9"};
-        Query q = entityManager.createNativeQuery("select count(DISTINCT ecr.sid),esi.age_duration,concat(es.level,es.sub_level) from ebk_class_records ecr\n" +
-                    "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
-                    "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
-                    "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
-                    "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
-                    "where ecr.begin_time >=" + bTime + " and ecr.begin_time <=" + tTime + "\n" +
-                    "and ecr.status=3\n" +
-                    "and es.sub_level is not null \n" +
-                    "and esi.study_aim=1 and ecr.stype!=''\n" +
-                    "and empt.name=\"" + cutData[2] + "\"\n" +
-                    "GROUP BY esi.age_duration,concat(es.level,es.sub_level) \n" +
-                    "order by concat(es.level,es.sub_level)");
+        String s = String.format("select count(DISTINCT ecr.sid),esi.age_duration,concat(es.level,es.sub_level) from ebk_class_records ecr\n" +
+                "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
+                "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
+                "where ecr.begin_time >=%s and ecr.begin_time <=%s\n" +
+                "and ecr.status=3\n" +
+                "and es.sub_level is not null \n" +
+                "and esi.study_aim=1 and ecr.stype!=''\n" +
+                "and empt.name=\"%s\"\n" +
+                "GROUP BY esi.age_duration,concat(es.level,es.sub_level) \n" +
+                "order by concat(es.level,es.sub_level)", bTime, tTime, book);
+        Query q = entityManager.createNativeQuery(s);
             List<Object[]> list = q.getResultList();
             for (Object level : levels) {
                 for (String anAgeDuration : ageDuration) {
@@ -374,7 +366,9 @@ public class BookClassServiceImpl implements BookClassService {
     @SuppressWarnings("unchecked")
     @Cacheable(value = "get_book_rank_choose_class_compare", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getBookRankChooseClassCompare(String data) throws ParseException {
+        System.out.println("获取的data为" + data);
         String[] cutData = data.split("---");
+        String book = cutData[0].replace("'", "?");
         String sql;
         if (cutData[cutData.length - 1].equals("ALL")) {
             sql = "concat(es.level,es.sub_level) in( '0', '1', '2', '3A', '3B', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7A', '7B', '7C', '8A', '8B')";
@@ -399,18 +393,19 @@ public class BookClassServiceImpl implements BookClassService {
         long lTime=lDate.getTime()/1000;
         List<Object[]> list = null;
         if(lTime>bTime){
-            Query q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records ecr\n" +
+            String s = String.format("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                     "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
                     "where esi.study_aim=1 and ecr.stype!=''\n" +
                     "and ecr.status=3\n" +
-                    "and empt.name=\"" + cutData[0] + "\"\n" +
-                    "and " + sql + "\n" +
-                    "group by ecr.begin_time");
+                    "and empt.name=\"%s\"\n" +
+                    "and %s \n" +
+                    "group by ecr.begin_time", book, sql);
+            Query q = entityManager.createNativeQuery(s);
             list = q.getResultList();
-            q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records_2016 ecr\n" +
+            s = String.format("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records_2016 ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
@@ -418,22 +413,24 @@ public class BookClassServiceImpl implements BookClassService {
                     "where ecr.begin_time>"+bTime +"\n"+
                     "and esi.study_aim=1 and ecr.stype!=''\n" +
                     "and ecr.status=3\n" +
-                    "and empt.name=\"" + cutData[0] + "\"\n" +
-                    "and " + sql + "\n" +
-                    "group by ecr.begin_time");
+                    "and empt.name=\"%s\"\n" +
+                    "and %s\n" +
+                    "group by ecr.begin_time", book, sql);
+            q = entityManager.createNativeQuery(s);
             List<Object[]> listMore=q.getResultList();
             list.addAll(listMore);
         }else{
-            Query q = entityManager.createNativeQuery("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records ecr\n" +
+            String s = String.format("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                     "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
                     "where esi.study_aim=1 and ecr.stype!=''\n" +
                     "and ecr.status=3\n" +
-                    "and empt.name=\"" + cutData[0] + "\"\n" +
-                    "and " + sql + "\n" +
-                    "group by ecr.begin_time");
+                    "and empt.name=\"%s\"\n" +
+                    "and %s\n" +
+                    "group by ecr.begin_time", book, sql);
+            Query q = entityManager.createNativeQuery(s);
             list = q.getResultList();
         }
         for (Object[] result : list) {
@@ -463,6 +460,7 @@ public class BookClassServiceImpl implements BookClassService {
         String bTime = cutData[0];
         String tTime = cutData[1];
         String book = cutData[2];
+        book = book.replace("'", "?");
         String classStatus = cutData[3];
         String combo = cutData[4];
         if (bTime.equals("all") || tTime.equals("all")) {

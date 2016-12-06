@@ -155,7 +155,7 @@
         });
 
         beginTime.on("dp.change", function (e) {
-            toTime.data("DateTimePicker").minDate(e.date);
+            beginTime.data("DateTimePicker").minDate(e.date);
             var bTime=$('#begin-time').find("> input").val();
             var tTime=$('#to-time').find("> input").val();
             if(bTime!='' && tTime!='' && tTime>bTime){
@@ -164,7 +164,6 @@
             }
         });
         toTime.on("dp.change", function (e) {
-            toTime.data("DateTimePicker").maxDate(e.date);
             var bTime=$('#begin-time').find("> input").val();
             var tTime=$('#to-time').find("> input").val();
             if(bTime!='' && tTime!=''&& tTime>bTime){
@@ -286,6 +285,7 @@
             }
         }
         var chooseBook= $('#book').find("option:selected").val();
+        chooseBook=chooseBook.replace("?","'");
         var classStatus=$('#class_status').find('span[class="option-text active"]').text();
         var combo=$('#combo').find('span[class="option-text active"]').text();
         switch (combo){

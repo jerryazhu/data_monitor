@@ -114,12 +114,15 @@
         var date = new Date();
         var yDay;
         var tDay;
-        if(date.getMonth()==1){
-            yDay=date.getFullYear() + "-12-1 00:00";
-            tDay=date.getFullYear() + "-12-31 00:00";
+        var limitDay;
+        if(date.getMonth()==0){
+            yDay=(date.getFullYear()-1) + "-12-1 00:00";
+            tDay=(date.getFullYear()-1) + "-12-31 00:00";
+            limitDay=(date.getFullYear()-1) + "-11-01 00:00";
         }else{
             yDay= date.getFullYear() + "-" + date.getMonth() + "-1 00:00";
             tDay= date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth())+" 23:59";
+            limitDay=date.getFullYear()+"-"+(date.getMonth()-1)+"-1 00:00";
         }
         $('#bTimeInput').val(yDay);
         $('#tTimeInput').val(tDay);
@@ -133,21 +136,24 @@
             useCurrent: false
         });
         beginTime.on("dp.change", function (e) {
-            beginTime.data("DateTimePicker").minDate(e.date);
             createDraw();
-            createCompare();
+            if(checkTime(limitDay)){
+                createCompare();
+            }
         });
         toTime.on("dp.change", function (e) {
             createDraw();
-            createCompare();
+            if(checkTime(limitDay)){
+                createCompare();
+            }
         });
         $('#book').on("change",function () {
             createDraw();
         });
         var dateformatted_to;
         var dateformatted_from;
-        dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-"+date.getDay();
-        dateformatted_to=date.getFullYear() + "-" + (date.getMonth()+1) + "-"+date.getDay();
+        dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-"+(date.getDate()-1);
+        dateformatted_to=date.getFullYear() + "-" + (date.getMonth()+1) + "-"+(date.getDate()-1);
         var time = dateformatted_from + "---" + dateformatted_to;
         var books=document.getElementById("book");
         $.ajax({
@@ -190,6 +196,10 @@
             }
         });
     });
+    function checkTime(lTime) {
+        var bTime=$('#begin-time').find("> input").val();
+        return dateToUnix(bTime) < dateToUnix(lTime);
+    }
     function createDraw() {
         $('.selectpicker').selectpicker();
         var chooseBook= $('#book').find("option:selected").val();

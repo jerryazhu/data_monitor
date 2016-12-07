@@ -16,7 +16,7 @@ public interface BookClassService {
 
     ArrayList getBookMonthChoose(String data) throws ParseException;
 
-    LinkedHashMap<String, String> getBookChooseClassStock(String data);
+    LinkedHashMap<String, String> getBookChooseClassStock(String data) throws ParseException;
 
     ArrayList getStudentLevels();
 

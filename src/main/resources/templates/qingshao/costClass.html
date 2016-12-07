@@ -174,8 +174,15 @@
         var studentInput=$('#student-id-mobile');
         var teacherInput=$('#teacher-id-email');
         var date = new Date();
-        var yDay= date.getFullYear() + "-" + date.getMonth() + "-1 00:00";
-        var tDay= date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth())+" 23:59";
+        var yDay;
+        var tDay;
+        if(date.getMonth()==0){
+            yDay=(date.getFullYear()-1) + "-12-1 00:00";
+            tDay=(date.getFullYear()-1) + "-12-31 00:00";
+        }else{
+            yDay= date.getFullYear() + "-" + date.getMonth() + "-1 00:00";
+            tDay= date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth())+" 23:59";
+        }
         $('#bTimeInput').val(yDay);
         $('#tTimeInput').val(tDay);
         beginTime.datetimepicker({
@@ -202,7 +209,6 @@
         });
         createTable();
         beginTime.on("dp.change", function (e) {
-            beginTime.data("DateTimePicker").minDate(e.date);
             var bTime=$('#begin-time').find("> input").val();
             var tTime=$('#to-time').find("> input").val();
             if(bTime!='' && tTime!='' && tTime>bTime){

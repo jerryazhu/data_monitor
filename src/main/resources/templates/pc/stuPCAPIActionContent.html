@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link th:href="@{/css/datatables/jquery.dataTables.css}" rel="stylesheet"/>
     <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
     <link th:href="@{/css/font-awesome/font-awesome.min.css}" rel="stylesheet"/>
 </head>
@@ -76,10 +77,11 @@
 <script th:src="@{/js/datatables/jquery.dataTables.js}"></script>
 <script th:src="@{/js/datatables/dataTables.bootstrap.min.js}"></script>
 <script>
-    function format(d) {
+    function format(d,res) {
         return '<table cellpadding="5" cellspacing="0" border="0" style="padding_left:50px;">'+
                 '<tr>'+
-                '<td>Full Parameters : '+d.parameters+'</td>'+
+                '<td> <i class="fa fa-align-justify" aria-hidden="true"></i>      Full Parameters : <br/>'+d.parameters.replace(/\n/g,"<br/>")+'<br/>  <br/>' +
+                ' <i class="fa fa-align-justify" aria-hidden="true"></i>      Full Response : <br/>'+res+'</td>'+
                 '</tr>'+
                 '</table>';
     }
@@ -175,6 +177,7 @@
         });
         var selected=[];
         $('#stuPCApiActionTable tbody').on( 'click', 'tr', function () {
+            var res;
             var id=this.id;
             var tr = $(this).closest('tr');
             var row = table.row( tr );
@@ -186,7 +189,20 @@
                 // Remove from the 'open' array
             }
             else {
-                row.child( format( row.data() ) ).show();
+                var rIdx=tr.find("i").parent().prev().text();
+                $.ajax({
+                    url:"/pc/get_pc_api_response/"+rIdx ,
+                    type:"GET",
+                    success:function (data) {
+                        res=data.replace(/\n/g,'<br/>');
+                        row.child( format( row.data(),res) ).show();
+                    },
+                    error:function () {
+                        res='获取超时，请重试';
+                        row.child( format( row.data(),res) ).show();
+                    }
+                });
+                row.child( format( row.data() ,res) ).show();
                 tr.find("i").attr("class","fa fa-angle-up fa-2x");
                 if ( idx === -1 ) {
                     selected.push( id );

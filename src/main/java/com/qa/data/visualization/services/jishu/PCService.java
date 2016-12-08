@@ -6,6 +6,7 @@ import com.qa.data.visualization.entities.jishu.pc.PCTeaAPIAction;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public interface PCService {
@@ -22,4 +23,6 @@ public interface PCService {
     LinkedHashMap<String, String> getTchPCApp();
 
     LinkedHashMap<String, String> getTchPCSystem();
+
+    HashMap<String,String> getPcApiResponse(String data);
 }

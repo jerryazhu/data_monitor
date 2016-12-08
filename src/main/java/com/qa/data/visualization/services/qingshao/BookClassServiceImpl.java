@@ -197,7 +197,7 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
-//    @Cacheable(value = "get_book_rank_choose_class", keyGenerator = "wiselyKeyGenerator")
+    @Cacheable(value = "get_book_rank_choose_class", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getBookRankChooseClass(String data) throws ParseException {
         ArrayList levels = new ArrayList();
         ArrayList relLevels=new ArrayList();
@@ -259,7 +259,7 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
-//    @Cacheable(value = "get_book_rank_age", keyGenerator = "wiselyKeyGenerator")
+    @Cacheable(value = "get_book_rank_age", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getBookRankAge(String data) throws ParseException {
         ArrayList levels = new ArrayList();
         ArrayList number0 = new ArrayList();

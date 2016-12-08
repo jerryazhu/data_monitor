@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -106,4 +107,16 @@ public class PCServiceImpl implements PCService {
         return map;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public HashMap<String,String> getPcApiResponse(String data){
+        HashMap<String, String> map = new HashMap<String, String>();
+        String s = String.format("select idx,response from ABC360_APP_API_CLASSPLAT_RESPONCE_TBL where idx='%s'", data);
+        Query q = entityManager.createNativeQuery(s);
+        List<Object[]> list = q.getResultList();
+        for (Object[] result : list) {
+            map.put(result[0].toString(), result[1].toString());
+        }
+        return map;
+    }
 }

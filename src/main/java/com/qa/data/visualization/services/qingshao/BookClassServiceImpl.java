@@ -22,8 +22,11 @@ import java.util.*;
 public class BookClassServiceImpl implements BookClassService {
     private Long chooseBookCostClassCnt;
     private String chooseBookWholeSql;
+    List<Object[]> sqlResult = null;
+    List<Object[]> sqlCompareResult=null;
     @PersistenceContext(unitName = "secondaryPersistenceUnit")
     private EntityManager entityManager;
+
 
     @Override
     @RequestMapping
@@ -118,8 +121,7 @@ public class BookClassServiceImpl implements BookClassService {
     @RequestMapping
     @SuppressWarnings("unchecked")
     @Cacheable(value = "get_book_choose_class_stock", keyGenerator = "wiselyKeyGenerator")
-    public LinkedHashMap<String, String> getBookChooseClassStock(String data) throws ParseException {
-        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+    public List<Object[]> getBookChooseClassStockSql(String data) throws ParseException {
         String [] cutData=data.split("---");
         Calendar cal = Calendar.getInstance();
         int day = cal.get(Calendar.DATE);
@@ -132,38 +134,42 @@ public class BookClassServiceImpl implements BookClassService {
             limitTime=year+"-"+(month-2)+"-1";
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date bDate = dateFormat.parse(cutData[1]);
+        Date bDate = dateFormat.parse(cutData[0]);
         long bTime = bDate.getTime()/1000;
         Date lDate=dateFormat.parse(limitTime);
         long lTime=lDate.getTime()/1000;
-        List<Object[]> list = null;
         if(bTime<lTime){
-            String s = String.format("select ecr.begin_time*1000,count(ecr.id)from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>%s) ecr\n" +
+            String s = String.format("select ecr.begin_time*1000,count(ecr.id),empt.name as name from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>%s) ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                     "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
                     "where esi.study_aim=1 and ecr.stype!=''\n" +
                     "and ecr.status=3\n" +
-                    "and empt.name=\"%s\"\n" +
-                    "group by from_unixtime(ecr.begin_time, '%%Y-%%m-%%d')", bTime,cutData[0]);
+                    "group by name,from_unixtime(ecr.begin_time, '%%Y-%%m-%%d')",bTime);
             Query q = entityManager.createNativeQuery(s);
-            list = q.getResultList();
+            sqlResult = q.getResultList();
         }else{
-            String s = String.format("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records ecr\n" +
+            String s = String.format("select ecr.begin_time*1000 as time,count(ecr.id),empt.name as name from ebk_class_records ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                     "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
                     "where esi.study_aim=1 and ecr.stype!=''\n" +
                     "and ecr.status=3\n" +
-                    "and empt.name=\"%s\"\n" +
-                    "group by from_unixtime(ecr.begin_time, '%%Y-%%m-%%d')",cutData[0]);
+                    "group by name,from_unixtime(ecr.begin_time, '%%Y-%%m-%%d')");
             Query q = entityManager.createNativeQuery(s);
-            list = q.getResultList();
+            sqlResult = q.getResultList();
         }
-        for (Object[] result : list) {
-            if (result[0] != null) {
+        return sqlResult;
+    }
+    @Override
+    @RequestMapping
+    @SuppressWarnings("unchecked")
+    public LinkedHashMap<String, String> getBookChooseClassStock(String data) throws ParseException {
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        for (Object[] result : sqlResult) {
+            if (result[2].equals(data)) {
                 map.put(result[0].toString(), result[1].toString());
             }
         }
@@ -396,7 +402,7 @@ public class BookClassServiceImpl implements BookClassService {
     @RequestMapping
     @SuppressWarnings("unchecked")
     @Cacheable(value = "get_book_rank_choose_class_compare", keyGenerator = "wiselyKeyGenerator")
-    public LinkedHashMap<String, String> getBookRankChooseClassCompare(String data) throws ParseException {
+    public List<Object[]> getBookRankChooseCompareSql(String data) throws ParseException {
         String[] cutData = data.split("---");
         String book = cutData[0].replace("'", "?");
         String sql;
@@ -405,7 +411,6 @@ public class BookClassServiceImpl implements BookClassService {
         } else {
             sql = "concat(es.level,es.sub_level)='" + cutData[cutData.length - 1] + "'";
         }
-        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         Calendar cal = Calendar.getInstance();
         int day = cal.get(Calendar.DATE);
         int month = cal.get(Calendar.MONTH) + 1;
@@ -417,40 +422,45 @@ public class BookClassServiceImpl implements BookClassService {
             limitTime=year+"-"+(month-2)+"-1 00:00";
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date bDate = dateFormat.parse(cutData[1]);
+        Date bDate = dateFormat.parse(cutData[0]);
         long bTime = bDate.getTime()/1000;
         Date lDate=dateFormat.parse(limitTime);
         long lTime=lDate.getTime()/1000;
-        List<Object[]> list = null;
         if(lTime>bTime){
-            String s = String.format("select ecr.begin_time*1000,count(ecr.id)from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>%s) ecr "+
+            String s = String.format("select ecr.begin_time*1000,count(ecr.id),empt.name from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>%s) ecr "+
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                     "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
                     "where esi.study_aim=1 and ecr.stype!=''\n" +
                     "and ecr.status=3\n" +
-                    "and empt.name=\"%s\"\n" +
                     "and %s \n" +
-                    "group by from_unixtime(ecr.begin_time, '%%Y-%%m-%%d')",bTime,book, sql);
+                    "group by from_unixtime(ecr.begin_time, '%%Y-%%m-%%d'),empt.name",bTime, sql);
             Query q = entityManager.createNativeQuery(s);
-            list = q.getResultList();
+            sqlCompareResult = q.getResultList();
         }else{
-            String s = String.format("select ecr.begin_time*1000,count(ecr.id)from ebk_class_records ecr\n" +
+            String s = String.format("select ecr.begin_time*1000,count(ecr.id),empt.name from ebk_class_records ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
                     "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
                     "where esi.study_aim=1 and ecr.stype!=''\n" +
                     "and ecr.status=3\n" +
-                    "and empt.name=\"%s\"\n" +
                     "and %s\n" +
-                    "group by from_unixtime(ecr.begin_time, '%%Y-%%m-%%d')", book, sql);
+                    "group by from_unixtime(ecr.begin_time, '%%Y-%%m-%%d'),empt.name", sql);
             Query q = entityManager.createNativeQuery(s);
-            list = q.getResultList();
+            sqlCompareResult = q.getResultList();
         }
-        for (Object[] result : list) {
-            if (result[0] != null) {
+        return sqlCompareResult;
+    }
+
+    @Override
+    @RequestMapping
+    @SuppressWarnings("unchecked")
+    public LinkedHashMap<String, String> getBookRankChooseClassCompare(String data) throws ParseException {
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        for (Object[] result : sqlCompareResult) {
+            if (result[2].equals(data)) {
                 map.put(result[0].toString(), result[1].toString());
             }
         }

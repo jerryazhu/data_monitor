@@ -101,6 +101,7 @@
 
         var book_choose_class_stock_element=$('#book_choose_class_stock');
         var book_choose_class_stock_url="/class/get_book_choose_class_stock/";
+        var book_choose_class_stock_sql_url="/class/get_book_choose_class_stock_sql/";
         var bookChooseClassTime=$('#book_choose_class_time').find("option:selected").val();
         var fromDate1=$('#from_date1');
         var toDate1=$('#to_date1');
@@ -127,11 +128,11 @@
         fromDate1.datepicker('setDate', dateformatted_from1);
         toDate1.datepicker('setDate', dateformatted_to1);
         var time = fromDate1.datepicker('getFormattedDate') + "---" + toDate1.datepicker('getFormattedDate');
-        createComplexHighStock(book_choose_class_stock_element, book_url, book_choose_class_stock_url, bookChooseClassTime,time);
+        createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time);
         $('#book_choose_class_time').on('change', function () {
             var bookChooseClassTime=$('#book_choose_class_time').find("option:selected").val();
             var time = fromDate1.datepicker('getFormattedDate') + "---" + toDate1.datepicker('getFormattedDate');
-            createComplexHighStock(book_choose_class_stock_element, book_url, book_choose_class_stock_url, bookChooseClassTime,time);
+            createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time);
         });
         fromDate1.on("changeDate", function () {
             book_choose_class_stock_element.html("");
@@ -139,7 +140,7 @@
             var time = fromDate1.datepicker('getFormattedDate') + "---" + toDate1.datepicker('getFormattedDate');
             var bTime=fromDate1.datepicker('getFormattedDate');
             if(dateToUnix(bTime) < dateToUnix(dateformatted_from1)){
-                createComplexHighStock(book_choose_class_stock_element, book_url, book_choose_class_stock_url, bookChooseClassTime,time);
+                createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time);
             }
         });
         toDate1.on("changeDate", function () {
@@ -148,7 +149,7 @@
             var time = fromDate1.datepicker('getFormattedDate') + "---" + toDate1.datepicker('getFormattedDate');
             var bTime=fromDate1.datepicker('getFormattedDate');
             if(dateToUnix(bTime) < dateToUnix(dateformatted_from1)){
-                createComplexHighStock(book_choose_class_stock_element, book_url, book_choose_class_stock_url, bookChooseClassTime,time);
+                createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time);
             }
         });
 

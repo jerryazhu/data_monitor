@@ -235,8 +235,10 @@ function createTimeHighStock(element, url1, url2,url3, by, type) {
                         tooltipOptions = [];
                     var seriesCounter = 0;
                     var names = [];
+                    var id=[];
                     returnData.forEach(function (element) {
                         names.push(element[0]);
+                        id.push(element[1]);
                     });
                     /**
                      * Create the chart when all data is loaded
@@ -270,7 +272,7 @@ function createTimeHighStock(element, url1, url2,url3, by, type) {
                         });
                     }
                     $.each(names, function (i, name) {
-                        $.getJSON(url3 + name, function (data) {
+                        $.getJSON(url3 + id[i], function (data) {
                             if (by == "month") {
                                 seriesOptions[i] = {
                                     name: name,

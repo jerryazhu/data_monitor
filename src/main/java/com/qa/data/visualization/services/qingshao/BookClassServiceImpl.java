@@ -44,7 +44,7 @@ public class BookClassServiceImpl implements BookClassService {
         long bTime = bDate.getTime()/1000;
         Date tDate=dateFormat.parse(cutTime[1]);
         long tTime=tDate.getTime()/1000;
-        String s = String.format("select empt.name,count(ecr.id) as cnt from ebk_class_records ecr\n" +
+        String s = String.format("select empt.name,count(ecr.id) as cnt,empt.id from ebk_class_records ecr\n" +
                 "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                 "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
@@ -57,7 +57,7 @@ public class BookClassServiceImpl implements BookClassService {
         Query q = entityManager.createNativeQuery(s);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
-            map.put(result[0].toString(), result[1].toString());
+            map.put(result[0].toString(), result[2].toString());
         }
         return map;
     }
@@ -120,7 +120,7 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
-    @Cacheable(value = "get_book_choose_class_stock", keyGenerator = "wiselyKeyGenerator")
+//    @Cacheable(value = "get_book_choose_class_stock", keyGenerator = "wiselyKeyGenerator")
     public List<Object[]> getBookChooseClassStockSql(String data) throws ParseException {
         String [] cutData=data.split("---");
         Calendar cal = Calendar.getInstance();
@@ -139,7 +139,7 @@ public class BookClassServiceImpl implements BookClassService {
         Date lDate=dateFormat.parse(limitTime);
         long lTime=lDate.getTime()/1000;
         if(bTime<lTime){
-            String s = String.format("select ecr.begin_time*1000,count(ecr.id),empt.name as name from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>%s) ecr\n" +
+            String s = String.format("select ecr.begin_time*1000,count(ecr.id),empt.id as name from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>%s) ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
@@ -150,7 +150,7 @@ public class BookClassServiceImpl implements BookClassService {
             Query q = entityManager.createNativeQuery(s);
             sqlResult = q.getResultList();
         }else{
-            String s = String.format("select ecr.begin_time*1000 as time,count(ecr.id),empt.name as name from ebk_class_records ecr\n" +
+            String s = String.format("select ecr.begin_time*1000 as time,count(ecr.id),empt.id as name from ebk_class_records ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
@@ -169,7 +169,7 @@ public class BookClassServiceImpl implements BookClassService {
     public LinkedHashMap<String, String> getBookChooseClassStock(String data) throws ParseException {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         for (Object[] result : sqlResult) {
-            if (result[2].equals(data)) {
+            if (result[2].toString().equals(data)) {
                 map.put(result[0].toString(), result[1].toString());
             }
         }
@@ -205,7 +205,6 @@ public class BookClassServiceImpl implements BookClassService {
         ArrayList number1 = new ArrayList();
         ArrayList message = new ArrayList();
         String[] cutData = data.split("---");
-        String book = cutData[2].replace("'", "?");
         SimpleDateFormat dateFormat;
         if(cutData[0].contains(":")){
             dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -230,8 +229,8 @@ public class BookClassServiceImpl implements BookClassService {
                 "and ecr.status=3\n" +
                 "and es.sub_level is not null\n" +
                 "and esi.study_aim=1 and ecr.stype!=''\n" +
-                "and empt.name=\"%s\"\n" +
-                "group by concat(es.level,es.sub_level)", bTime, tTime, book);
+                "and empt.id=\"%s\"\n" +
+                "group by concat(es.level,es.sub_level)", bTime, tTime, cutData[2]);
         Query q = entityManager.createNativeQuery(s);
         List<Object[]> list=q.getResultList();
         for (Object level : levels) {
@@ -275,7 +274,6 @@ public class BookClassServiceImpl implements BookClassService {
         ArrayList number9 = new ArrayList();
         ArrayList message = new ArrayList();
         String[] cutData = data.split("---");
-        String book = cutData[2].replace("'", "?");
         SimpleDateFormat dateFormat;
         if(cutData[0].contains(":")){
             dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -301,9 +299,9 @@ public class BookClassServiceImpl implements BookClassService {
                 "and ecr.status=3\n" +
                 "and es.sub_level is not null \n" +
                 "and esi.study_aim=1 and ecr.stype!=''\n" +
-                "and empt.name=\"%s\"\n" +
+                "and empt.id=\"%s\"\n" +
                 "GROUP BY esi.age_duration,concat(es.level,es.sub_level) \n" +
-                "order by concat(es.level,es.sub_level)", bTime, tTime, book);
+                "order by concat(es.level,es.sub_level)", bTime, tTime, cutData[2]);
         Query q = entityManager.createNativeQuery(s);
             List<Object[]> list = q.getResultList();
             for (Object level : levels) {
@@ -401,7 +399,7 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
-    @Cacheable(value = "get_book_rank_choose_class_compare", keyGenerator = "wiselyKeyGenerator")
+//    @Cacheable(value = "get_book_rank_choose_class_compare", keyGenerator = "wiselyKeyGenerator")
     public List<Object[]> getBookRankChooseCompareSql(String data) throws ParseException {
         String[] cutData = data.split("---");
         String book = cutData[0].replace("'", "?");
@@ -427,7 +425,7 @@ public class BookClassServiceImpl implements BookClassService {
         Date lDate=dateFormat.parse(limitTime);
         long lTime=lDate.getTime()/1000;
         if(lTime>bTime){
-            String s = String.format("select ecr.begin_time*1000,count(ecr.id),empt.name from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>%s) ecr "+
+            String s = String.format("select ecr.begin_time*1000,count(ecr.id),empt.id from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>%s) ecr "+
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
@@ -439,7 +437,7 @@ public class BookClassServiceImpl implements BookClassService {
             Query q = entityManager.createNativeQuery(s);
             sqlCompareResult = q.getResultList();
         }else{
-            String s = String.format("select ecr.begin_time*1000,count(ecr.id),empt.name from ebk_class_records ecr\n" +
+            String s = String.format("select ecr.begin_time*1000,count(ecr.id),empt.id from ebk_class_records ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
@@ -460,7 +458,7 @@ public class BookClassServiceImpl implements BookClassService {
     public LinkedHashMap<String, String> getBookRankChooseClassCompare(String data) throws ParseException {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         for (Object[] result : sqlCompareResult) {
-            if (result[2].equals(data)) {
+            if (result[2].toString().equals(data)) {
                 map.put(result[0].toString(), result[1].toString());
             }
         }
@@ -486,7 +484,6 @@ public class BookClassServiceImpl implements BookClassService {
         String bTime = cutData[0];
         String tTime = cutData[1];
         String book = cutData[2];
-        book = book.replace("'", "?");
         String classStatus = cutData[3];
         String combo = cutData[4];
         if (bTime.equals("all") || tTime.equals("all")) {
@@ -496,7 +493,7 @@ public class BookClassServiceImpl implements BookClassService {
         }
         sql=sql+"\n"+ "and esi.study_aim=1 and ecr.stype!=''\n" +"and ecr.status=3 ";
         if (!book.equals("不限")) {
-            sql = sql + "\n" + "and empt.name=\"" + book + "\" ";
+            sql = sql + "\n" + "and empt.id='" + book + "' ";
         }
         if (!classStatus.equals("不限")) {
             if (classStatus.equals("菲律宾")) {

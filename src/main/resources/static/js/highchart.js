@@ -129,7 +129,7 @@ function createColumnHighcharts(element, url, data, type) {
         }
     });
 }
-function createDifferentHighchart(element, url, data) {
+function createDifferentHighchart(element, url, data,title) {
     $.ajax({
         type: "get",
         url: url + data,
@@ -142,7 +142,7 @@ function createDifferentHighchart(element, url, data) {
                     type: 'column'
                 },
                 title: {
-                    text: data
+                    text: title
                 },
                 xAxis: {
                     categories: JSONObject.xName
@@ -197,7 +197,7 @@ function createDifferentHighchart(element, url, data) {
         }
     });
 }
-function createAgeHighchart(element, url, data) {
+function createAgeHighchart(element, url, data,title) {
     $.ajax({
         type: "get",
         url: url + data,
@@ -210,7 +210,7 @@ function createAgeHighchart(element, url, data) {
                     type: 'column'
                 },
                 title: {
-                    text: data
+                    text: title
                 },
                 xAxis: {
                     categories: JSONObject.xName

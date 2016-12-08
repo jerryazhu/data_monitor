@@ -7,6 +7,7 @@ import com.web.spring.datatable.DatatablesCriterias;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Created by dykj on 2016/11/30.
@@ -18,6 +19,8 @@ public interface BookClassService {
 
     LinkedHashMap<String, String> getBookChooseClassStock(String data) throws ParseException;
 
+    List<Object[]> getBookChooseClassStockSql(String data) throws ParseException;
+
     ArrayList getStudentLevels();
 
     ArrayList getBookRankChooseClass(String data) throws ParseException;
@@ -25,6 +28,8 @@ public interface BookClassService {
     ArrayList getBookRankAge(String data) throws ParseException;
 
     LinkedHashMap<String, String> getBookRankChooseClassCompare(String data) throws ParseException;
+
+    List<Object[]> getBookRankChooseCompareSql(String data) throws ParseException;
 
     DataSet<CostClass> getBookChooseCostClass(String data, DatatablesCriterias criterias) throws ParseException;
 

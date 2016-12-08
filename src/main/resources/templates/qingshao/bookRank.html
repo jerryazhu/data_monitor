@@ -233,16 +233,17 @@
         compare_element.html("");
         var book_url="/class/get_book/";
         var compare_url="/class/get_book_rank_choose_class_compare/";
+        var compare_url_sql="/class/get_book_rank_choose_class_compare_sql/";
         var compare=$('#compare_select').find("option:selected").val();
         var bTime=$('#begin-time').find("> input").val();
         var tTime=$('#to-time').find("> input").val();
         var chooseBook= $('#book').find("option:selected").val();
         var studentLevel=$('#studentLevels').find('span[class="option-text active"]').text();
         var data=bTime+"---"+tTime+"---"+studentLevel;
-        createComplexHighStock(compare_element,book_url,compare_url,compare,data);
+        createTimeHighStock(compare_element,compare_url_sql,book_url,compare_url,compare,data);
         $('#compare_select').on('change', function () {
             var compare=$('#compare_select').find("option:selected").val();
-            createComplexHighStock(compare_element,book_url,compare_url,compare,data);
+            createTimeHighStock(compare_element,compare_url_sql,book_url,compare_url,compare,data);
         });
     }
     function addBooks(obj,data) {

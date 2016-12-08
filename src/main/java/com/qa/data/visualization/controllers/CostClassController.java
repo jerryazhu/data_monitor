@@ -211,6 +211,11 @@ public class CostClassController {
         return list;
     }
 
+    @RequestMapping(value = "/get_book_choose_class_stock_sql/{data}")
+    @ResponseBody
+    public void getBookChooseClassStockSql(@PathVariable String data) throws ParseException {
+        bookClassService.getBookChooseClassStockSql(data);
+    }
     @RequestMapping(value = "/get_student_levels")
     @ResponseBody
     public ArrayList getStudentLevels() throws Exception {
@@ -257,6 +262,13 @@ public class CostClassController {
             list.add(array);
         }
         return list;
+    }
+
+    @RequestMapping(value = "/get_book_rank_choose_class_compare_sql/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public void getBookRankChooseCompareSql(@PathVariable String data) throws ParseException {
+        bookClassService.getBookRankChooseCompareSql(data);
     }
 
 }

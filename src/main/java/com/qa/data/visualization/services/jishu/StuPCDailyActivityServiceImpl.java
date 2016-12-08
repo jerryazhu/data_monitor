@@ -23,8 +23,7 @@ public class StuPCDailyActivityServiceImpl implements StuPCDailyActivityService 
     @Cacheable(value = "pc_daily_activity_cache", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, String> getDailyActivityMap() {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        String s = String.format("select FROM_UNIXTIME(login_time,'%Y-%m-%d') as time,count(distinct sid) as count from ebk_pc_stu_client group by FROM_UNIXTIME(login_time,'%Y-%m-%d') order by time asc");
-        Query q = entityManager.createNativeQuery(s);
+        Query q = entityManager.createNativeQuery("select FROM_UNIXTIME(login_time,'%Y-%m-%d') as time,count(distinct sid) as count from ebk_pc_stu_client group by FROM_UNIXTIME(login_time,'%Y-%m-%d') order by time asc");
         List<Object[]> list = q.getResultList();
         DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
         String today = dfm.format(new Date());

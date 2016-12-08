@@ -153,7 +153,7 @@
                     books.add(objOption);
                 });
                 $('.selectpicker').selectpicker();
-                createTable();
+                getData();
             },
             error:function () {
             }
@@ -164,7 +164,7 @@
             var tTime=$('#to-time').find("> input").val();
             if(bTime!='' && tTime!='' && tTime>bTime){
                 $('#costClassCnt').html('<span  class="cntNumber">  </span>');
-                createTable();
+                getData();
             }
         });
         toTime.on("dp.change", function (e) {
@@ -172,7 +172,7 @@
             var tTime=$('#to-time').find("> input").val();
             if(bTime!='' && tTime!=''&& tTime>bTime){
                 $('#costClassCnt').html('<span  class="cntNumber">  </span>');
-                createTable();
+                getData();
             }
         });
         classStatus.find("> span").each(function (index) {
@@ -182,12 +182,12 @@
                 $(this).nextAll().removeClass("active");
                 $(this).prevAll().removeClass("active");
                 $('#costClassCnt').html('<span  class="cntNumber">  </span>');
-                createTable();
+                getData();
             });
         });
         $('#book').on("change",function () {
             $('#costClassCnt').html('<span  class="cntNumber">  </span>');
-            createTable();
+            getData();
         });
         combo.find("> span").each(function (index) {
             $(this).unbind('click');
@@ -196,7 +196,7 @@
                 $(this).nextAll().removeClass("active");
                 $(this).prevAll().removeClass("active");
                 $('#costClassCnt').html('<span  class="cntNumber">  </span>');
-                createTable();
+                getData();
             });
         });
     });
@@ -208,7 +208,7 @@
         span.innerHTML = data;
         obj.append(span);
     }
-    function createTable() {
+    function createTable(dataAll) {
         var table=$('#student_type_book_choose').DataTable({
             destroy: true,
             lengthMenu: [10, 25, 50, 100],
@@ -243,7 +243,7 @@
                 }
             ],
             ajax: {
-                url: '/class/get_book_choose_cost_class/'+getData(),
+                url: '/class/get_book_choose_cost_class/'+dataAll,
                 type: 'GET'
             }
         });
@@ -289,7 +289,6 @@
             }
         }
         var chooseBook= $('#book').find("option:selected").val();
-        chooseBook=chooseBook.replace("?","'");
         var classStatus=$('#class_status').find('span[class="option-text active"]').text();
         var combo=$('#combo').find('span[class="option-text active"]').text();
         switch (combo){
@@ -299,7 +298,32 @@
             case "三天/周 二节/天":combo='32';break;
             case "自由课":combo='00';break;
         }
-        return bTime+"+"+tTime+"+"+chooseBook+"+"+classStatus+"+"+combo;
+        var date=new Date();
+        var dateformatted_to;
+        var dateformatted_from;
+        if(date.getMonth()==0){
+            dateformatted_from = (date.getFullYear()-1) + "-12-"+(date.getDate()-1);
+        }else{
+            dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-"+(date.getDate()-1);
+        }
+        dateformatted_to=date.getFullYear() + "-" + (date.getMonth()+1) + "-"+(date.getDate()-1);
+        var timeBook = dateformatted_from + "---" + dateformatted_to;
+            $.ajax({
+                url: '/class/get_book/' + timeBook,
+                type: 'GET',
+                success: function (data) {
+                    data.forEach(function (element) {
+                        if (chooseBook == element[0]) {
+                            chooseBook = element[1];
+                        }
+                    });
+                    var dataAll=bTime+"+"+tTime+"+"+chooseBook+"+"+classStatus+"+"+combo;
+                    createTable(dataAll);
+                },
+                error: function (data) {
+                }
+            });
+
     }
     // ]]>
 </script>

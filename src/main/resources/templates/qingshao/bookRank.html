@@ -108,13 +108,14 @@
 <script th:src="@{/js/datatables/jquery.dataTables.js}"></script>
 <script>
     // <![CDATA[
+
     $(document).ready(function () {
         var beginTime = $('#begin-time');
         var toTime = $('#to-time');
-        var date = new Date();
         var yDay;
         var tDay;
         var limitDay;
+        var date = new Date();
         if(date.getMonth()==0){
             yDay=(date.getFullYear()-1) + "-12-1 00:00";
             tDay=(date.getFullYear()-1) + "-12-31 00:00";
@@ -152,7 +153,11 @@
         });
         var dateformatted_to;
         var dateformatted_from;
-        dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-"+(date.getDate()-1);
+        if(date.getMonth()==0){
+            dateformatted_from = (date.getFullYear()-1) + "-12-"+(date.getDate()-1);
+        }else{
+            dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-"+(date.getDate()-1);
+        }
         dateformatted_to=date.getFullYear() + "-" + (date.getMonth()+1) + "-"+(date.getDate()-1);
         var time = dateformatted_from + "---" + dateformatted_to;
         var books=document.getElementById("book");
@@ -203,7 +208,6 @@
     function createDraw() {
         $('.selectpicker').selectpicker();
         var chooseBook= $('#book').find("option:selected").val();
-        chooseBook=chooseBook.replace("?","'");
         var studentLevel=$('#studentLevels').find('span[class="option-text active"]').text();
         var bTime=$('#begin-time').find("> input").val();
         var tTime=$('#to-time').find("> input").val();
@@ -212,8 +216,8 @@
         var age_element=$('#book_rank_age');
         class_element.html("");
         age_element.html("");
-        var age_url="/class/get_book_rank_age/";
         var date = new Date();
+        var age_url="/class/get_book_rank_age/";
         var limitTime;
         if(date.getMonth()==1){
             limitTime=(date.getFullYear()-1)+"-11-1 00:00";
@@ -223,10 +227,31 @@
         if(dateToUnix(bTime)<dateToUnix(limitTime)){
             bTime=limitTime;
         }
-        var time=bTime+"---"+tTime;
-        var data=bTime+"---"+tTime+"---"+chooseBook+"---"+studentLevel;
-        createDifferentHighchart(class_element,class_url,data);
-        createAgeHighchart(age_element,age_url,data);
+        var dateformatted_to;
+        var dateformatted_from;
+        if(date.getMonth()==0){
+            dateformatted_from = (date.getFullYear()-1) + "-12-"+(date.getDate()-1);
+        }else{
+            dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-"+(date.getDate()-1);
+        }
+        dateformatted_to=date.getFullYear() + "-" + (date.getMonth()+1) + "-"+(date.getDate()-1);
+        var timeBook = dateformatted_from + "---" + dateformatted_to;
+        var title=bTime+"---"+tTime+"---"+chooseBook+"---"+studentLevel;
+        $.ajax({
+            url: '/class/get_book/'+timeBook,
+            type:'GET',
+            success:function (data) {
+                data.forEach(function (element) {
+                    if(chooseBook==element[0]){
+                        chooseBook=element[1];
+                    }
+                });
+                var time=bTime+"---"+tTime;
+                var dataAll=bTime+"---"+tTime+"---"+chooseBook+"---"+studentLevel;
+                createDifferentHighchart(class_element,class_url,dataAll,title);
+                createAgeHighchart(age_element,age_url,dataAll,title);
+            }
+        });
     }
     function createCompare() {
         var compare_element=$('#book_rank_choose_class_compare');

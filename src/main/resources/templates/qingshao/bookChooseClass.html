@@ -89,14 +89,14 @@
         fromDate.datepicker('setDate', dateformatted_from);
         toDate.datepicker('setDate', dateformatted_to);
         var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');
-        createDifferentHighchart(book_month_choose_element,book_month_choose_url,data);
+        createDifferentHighchart(book_month_choose_element,book_month_choose_url,data,data);
         fromDate.on("changeDate", function () {
             var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');
-            createDifferentHighchart(book_month_choose_element,book_month_choose_url,data);
+            createDifferentHighchart(book_month_choose_element,book_month_choose_url,data,data);
         });
         toDate.on("changeDate", function () {
             var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');
-            createDifferentHighchart(book_month_choose_element,book_month_choose_url,data);
+            createDifferentHighchart(book_month_choose_element,book_month_choose_url,data,data);
         });
 
         var book_choose_class_stock_element=$('#book_choose_class_stock');

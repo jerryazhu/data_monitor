@@ -431,10 +431,10 @@ public class ClassServiceImpl implements ClassService {
         Date date = dateFormat.parse(today);
         long todayUnix = date.getTime();
         long yesterdayUnix = todayUnix / 1000 - 86400;
-        String sql = String.format("select eao.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ifnull(sum(eao.tmoney),0) as cnt \n" +
+        String sql = String.format("select eao.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ifnull(sum(eaod.total_money),0) as cnt \n" +
                 "from ebk_students es\n" +
                 "LEFT JOIN ebk_acoin_orders eao on eao.sid=es.id\n" +
-                "LEFT JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id\n" +
+                "INNER JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id\n" +
                 "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
                 "LEFT JOIN ebk_rbac_user eru on eru.id=es.adviser\n" +
                 "where ");
@@ -460,9 +460,9 @@ public class ClassServiceImpl implements ClassService {
         }
         if (!classType.equals("不限")) {
             if (classType.equals("套餐课")) {
-                sql = sql + "\n" + "and eaod.combo_name!='自由套餐'";
+                sql = sql + "\n" + "and eaod.combo_name not like '%自由%'";
             } else {
-                sql = sql + "\n" + "and eaod.combo_name='自由套餐'";
+                sql = sql + "\n" + "and eaod.combo_name like '%自由%'";
             }
         }
         if (!studentStatus.equals("不限")) {
@@ -474,17 +474,21 @@ public class ClassServiceImpl implements ClassService {
         }
         if (!classShowType.equals("总人数")) {
             if (classShowType.equals("补升人数和金额")) {
-                sql = sql + "\n" + "and eao.upgrade_from!=0";
+                sql = sql + "\n" + "and eao.order_flag=2 and eao.upgrade_from!=0";
             } else {
-                sql = sql + "\n" + "and eao.upgrade_from=0";
+                if(classShowType.equals("新买")){
+                    sql=sql+"\n"+"and eao.order_flag=1";
+                }else{
+                    sql = sql + "\n" + "and eao.order_flag=2 and eao.upgrade_from=0";
+                }
             }
         }
-        sql = sql + "\n" + "group by es.id";
+        sql = sql + "\n" + "group by es.id,eaod.combo_name";
         TableQuery query = new TableQuery(entityManager, payStudent.class, criterias, sql);
         DataSet<payStudent> result = query.getResultDataSet();
         oldStudentCnt = query.getTotalCount();
         oldStudentSql = sql;
-        String s = String.format("select sum(result.cnt) from (%s) result", sql);
+        String s = String.format("select sum(result.cnt) from (%s) result order by result.sid ", sql);
         Query q = entityManager.createNativeQuery(s);
         List list = q.getResultList();
         if (list.get(0) == null) {

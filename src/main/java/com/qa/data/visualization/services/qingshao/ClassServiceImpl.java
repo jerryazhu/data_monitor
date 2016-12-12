@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Created by dykj on 2016/11/17.
@@ -431,13 +432,6 @@ public class ClassServiceImpl implements ClassService {
         Date date = dateFormat.parse(today);
         long todayUnix = date.getTime();
         long yesterdayUnix = todayUnix / 1000 - 86400;
-        String sql = String.format("select eao.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ifnull(sum(eaod.total_money),0) as cnt \n" +
-                "from ebk_students es\n" +
-                "LEFT JOIN ebk_acoin_orders eao on eao.sid=es.id\n" +
-                "INNER JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id\n" +
-                "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
-                "LEFT JOIN ebk_rbac_user eru on eru.id=es.adviser\n" +
-                "where ");
         String[] cutData = data.split("\\+");
         String bTime = cutData[0];
         String tTime = cutData[1];
@@ -445,12 +439,36 @@ public class ClassServiceImpl implements ClassService {
         String classType = cutData[3];
         String studentStatus = cutData[4];
         String classShowType = cutData[5];
-        if (bTime.equals("all") || tTime.equals("all")) {
-            sql = sql + "\n" + "eao.create_time>" + yesterdayUnix;
-        } else {
-            sql = sql + "\n" + "eao.create_time >=" + bTime + " and eao.create_time<=" + tTime;
+        String sql=null;
+        if(studentStatus.equals("退款学员")){
+            sql=String.format("select er.refund_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ROUND(ifnull(sum(er.money),0),2) as cnt \n" +
+                    "from ebk_students es\n" +
+                    "LEFT JOIN ebk_rbac_user eru on eru.id=es.adviser\n" +
+                    "LEFT JOIN ebk_acoin_orders eao on eao.sid=es.id\n" +
+                    "INNER JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id\n" +
+                    "LEFT JOIN ebk_refunds er on er.sid=es.id\n" +
+                    "where ");
+            if (bTime.equals("all") || tTime.equals("all")) {
+                sql = sql + "\n" + "er.refund_time>" + yesterdayUnix;
+            } else {
+                sql = sql + "\n" + "er.refund_time >=" + bTime + " and er.refund_time<=" + tTime;
+            }
+            sql=sql+"\n"+"and er.std_course=1  \n"+"and er.status=3";
+        }else{
+            sql = String.format("select eao.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ROUND(ifnull(sum(eaod.total_money),0),2) as cnt \n" +
+                    "from ebk_students es\n" +
+                    "LEFT JOIN ebk_acoin_orders eao on eao.sid=es.id\n" +
+                    "INNER JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id\n" +
+                    "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
+                    "LEFT JOIN ebk_rbac_user eru on eru.id=es.adviser\n" +
+                    "where ");
+            if (bTime.equals("all") || tTime.equals("all")) {
+                sql = sql + "\n" + "eao.create_time>" + yesterdayUnix;
+            } else {
+                sql = sql + "\n" + "eao.create_time >=" + bTime + " and eao.create_time<=" + tTime;
+            }
+            sql=sql+"\n"+"and esi.study_aim=1 \n"+"and eao.payed=1";
         }
-        sql=sql+"\n"+"and esi.study_aim=1 \n"+"and eao.payed=1";
         if (!teacherType.equals("不限")) {
             if (teacherType.equals("菲律宾")) {
                 sql = sql + "\n" + "and eaod.tch_from=1";
@@ -465,12 +483,8 @@ public class ClassServiceImpl implements ClassService {
                 sql = sql + "\n" + "and eaod.combo_name like '%自由%'";
             }
         }
-        if (!studentStatus.equals("不限")) {
-            if (studentStatus.equals("上课中学员")) {
-                sql = sql + "\n" + "and es.status=1";
-            } else {
-                sql = sql + "\n" + "and es.status=4";
-            }
+        if (studentStatus.equals("上课中学员")) {
+            sql = sql + "\n" + "and es.status=1";
         }
         if (!classShowType.equals("总人数")) {
             if (classShowType.equals("补升人数和金额")) {
@@ -558,4 +572,5 @@ public class ClassServiceImpl implements ClassService {
     public String getOldStudentPayCnt() {
         return oldStudentPayCnt;
     }
+
 }

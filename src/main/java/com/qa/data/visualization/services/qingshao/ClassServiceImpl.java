@@ -125,6 +125,8 @@ public class ClassServiceImpl implements ClassService {
         String sql = "select ecr.begin_time as begin_time,ecr.tid as tid,ecr.tname as tname,ecr.sid as sid,ecr.sname as sname  \n" +
                 "from ebk_class_records ecr\n" +
                 "LEFT JOIN ebk_students es on ecr.sid = es.id\n" +
+                "LEFT JOIN ebk_acoin_orders eao on es.id = eao.sid\n" +
+                "LEFT JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id \n"+
                 "LEFT JOIN ebk_student_info esi on ecr.sid = esi.sid\n" +
                 "LEFT JOIN ebk_teachers et on ecr.tid = et.id\n" +
                 "LEFT JOIN ebk_teacher_group etg on et.workgroup = etg.id\n" +
@@ -181,6 +183,10 @@ public class ClassServiceImpl implements ClassService {
                     case "52":
                         sql = sql + "\n" + "and (es.lsns_per_day=2 and es.days_per_week=5)";
                         break;
+                    case "00":
+                        sql = sql + "\n" + "and (es.lsns_per_day=0 and es.days_per_week=0 and es.lsns_per_day_eu=0 and es.days_per_week_eu=0 and es.acoin!=0)";
+                        sql = sql+"\n"+"and eaod.tch_from=1";
+                        break;
                 }
             } else {
                 switch (combo) {
@@ -198,6 +204,10 @@ public class ClassServiceImpl implements ClassService {
                         break;
                     case "32":
                         sql = sql + "\n" + "and (es.lsns_per_day_eu=2 and es.days_per_week_eu=3)";
+                        break;
+                    case "00":
+                        sql = sql + "\n" + "and (es.lsns_per_day=0 and es.days_per_week=0 and es.lsns_per_day_eu=0 and es.days_per_week_eu=0 and es.acoin!=0)";
+                        sql = sql+"\n"+"and eaod.tch_from=2";
                         break;
                 }
             }
@@ -240,6 +250,7 @@ public class ClassServiceImpl implements ClassService {
                     break;
             }
         }
+        sql=sql+"\n group by ecr.sid,begin_time";
         TableQuery query = new TableQuery(entityManager, CostClass.class, criterias, sql);
         DataSet<CostClass> result = query.getResultDataSet();
         costClassCnt = query.getTotalCount();

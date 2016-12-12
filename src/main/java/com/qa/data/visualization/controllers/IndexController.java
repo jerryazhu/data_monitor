@@ -252,7 +252,14 @@ public class IndexController {
         LinkedHashMap<String, String> androidSystem = androidService.getAndroidSystem();
         for (Map.Entry<String, String> entry : androidSystem.entrySet()) {
             HashMap<String, Object> map = new HashMap<>();
-            map.put("name", entry.getKey().substring(0, 1) + entry.getKey());
+            String relSystem;
+            if(entry.getKey().contains("-")){
+                String[]cutData=entry.getKey().split("-");
+                relSystem=cutData[0];
+            }else {
+                relSystem=entry.getKey();
+            }
+            map.put("name", entry.getKey().substring(0, 1) + relSystem);
             map.put("count", Integer.parseInt(entry.getValue()));
             list.add(map);
         }

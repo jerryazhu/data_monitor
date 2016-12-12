@@ -50,23 +50,30 @@
     </div>
 
     <script>
+        // <![CDATA[
         $(document).ready(function () {
 
             var student_terminal_element = $('#student_terminal_chart');
             student_terminal_element.waypoint(function(direction) {
                 var terminal_count_map = new HashMap();
                 var total = 0;
+                var firstTerminalLevelNames=[];
+                var drilldownCategories=[];
+                firstTerminalLevelNames.push('Windows');
                 $.getJSON('get_student_terminal', function (terminalJSONObjects) {
                     $.each(terminalJSONObjects, function (i, terminalJSONObject) {
                         terminal_count_map.set(terminalJSONObject.name, terminalJSONObject.count);
+                        if(terminalJSONObject.name.toString().indexOf("Windows")<0){
+                            firstTerminalLevelNames.push(terminalJSONObject.name);
+                        }else{
+                            drilldownCategories.push(terminalJSONObject.name);
+                        }
                         total = total + terminalJSONObject.count;
                     });
                     var student_terminal_map = new HashMap();
-                    var firstTerminalLevelNames = ['Windows', 'Linux', 'Mac', 'iPhone', 'iPad', 'Android'];
                     $.each(firstTerminalLevelNames, function (i, name) {
                         var sub_map = new HashMap();
                         if (name == "Windows") {
-                            var drilldownCategories = ['Windows XP',  'Windows 7', 'Windows 8', 'Windows 10'];
                             sub_map.set('drilldownCategories', drilldownCategories);
                             var drilldownData = [];
                             var firstLevelCount = 0;
@@ -99,6 +106,7 @@
             student_browser_element.waypoint(function(direction) {
                 var browser_count_map = new HashMap();
                 var terminal_browser_map = new HashMap();
+                var firstBrowserLevelNames=[];
                 var browser_total = 0;
                 $.getJSON('get_student_browser', function (browserJSONObjects) {
                     $.each(browserJSONObjects, function (i, browserJSONObject) {
@@ -112,10 +120,13 @@
                             arr.push(array[1]);
                             terminal_browser_map.set(array[0], arr);
                         }
+                        if(firstBrowserLevelNames.indexOf(array[0])<0){
+                            firstBrowserLevelNames.push(array[0]);
+                        }
 
                     });
                     var student_browser_map = new HashMap();
-                    var firstBrowserLevelNames = ['Windows XP', 'Windows 7', 'Windows 8', 'Windows 10', 'Linux', 'Mac', 'iPhone', 'iPad', 'Android'];
+//                    var firstBrowserLevelNames = ['Windows XP', 'Windows 7', 'Windows 8', 'Windows 10', 'Linux', 'Mac', 'iPhone', 'iPad', 'Android'];
                     $.each(firstBrowserLevelNames, function (i, name) {
                         var sub_map = new HashMap();
                         var drilldownCategories = terminal_browser_map.get(name);
@@ -146,6 +157,7 @@
             });
 
         });
+        // ]]>
     </script>
 
 </body>

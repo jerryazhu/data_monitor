@@ -362,7 +362,7 @@
         if(country=='菲律宾'){
             $('#31combo').hide();
             $('#32combo').hide();
-            $('#00combo').hide();
+            $('#00combo').show();
             var combo=$('#combo').find('span[class="option-text active"]').text();
             if(combo=='三天/周 一节/天' || combo=='三天/周 二节/天'){
                 $('#combo').find("span").attr("class","option-text");
@@ -372,7 +372,7 @@
             if(country=='欧美'){
                 $('#31combo').show();
                 $('#32combo').show();
-                $('#00combo').hide();
+                $('#00combo').show();
             }else{
                 $('#31combo').show();
                 $('#32combo').show();
@@ -383,8 +383,8 @@
     function showCountry(){
         var combo=$('#combo').find('span[class="option-text active"]').text();
         if(combo=='自由课'){
-            $('#eu').hide();
-            $('#ph').hide();
+            $('#eu').show();
+            $('#ph').show();
         }else {
             if (combo == '三天/周 一节/天' || combo == '三天/周 二节/天') {
                 $('#eu').show();

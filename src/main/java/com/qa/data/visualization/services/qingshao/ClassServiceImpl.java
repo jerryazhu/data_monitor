@@ -130,16 +130,6 @@ public class ClassServiceImpl implements ClassService {
                 "LEFT JOIN ebk_teacher_group etg on et.workgroup = etg.id" ;
         String bSql="";
         String sql;
-//        String sql = "select ecr.begin_time as begin_time,ecr.tid as tid,ecr.tname as tname,ecr.sid as sid,ecr.sname as sname  \n" +
-//                "from ebk_class_records ecr\n" +
-//                "LEFT JOIN ebk_students es on ecr.sid = es.id\n" +
-//                "LEFT JOIN ebk_acoin_orders eao on es.id = eao.sid\n" +
-//                "LEFT JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id \n"+
-//                "LEFT JOIN ebk_acoin_split_order easo on easo.sid=es.id\n"+
-//                "LEFT JOIN ebk_student_info esi on ecr.sid = esi.sid\n" +
-//                "LEFT JOIN ebk_teachers et on ecr.tid = et.id\n" +
-//                "LEFT JOIN ebk_teacher_group etg on et.workgroup = etg.id\n" +
-//                "where" ;
         String[] cutData = data.split("\\+");
         String bTime = cutData[0];
         String tTime = cutData[1];

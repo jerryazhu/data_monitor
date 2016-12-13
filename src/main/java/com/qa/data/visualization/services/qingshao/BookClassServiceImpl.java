@@ -1,6 +1,6 @@
 package com.qa.data.visualization.services.qingshao;
 
-import com.qa.data.visualization.entities.qingshao.CostClass;
+import com.qa.data.visualization.entities.qingshao.*;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.TableQuery;
@@ -120,8 +120,35 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
-//    @Cacheable(value = "get_book_choose_class_stock", keyGenerator = "wiselyKeyGenerator")
-    public List<Object[]> getBookChooseClassStockSql(String data) throws ParseException {
+    public DataSet<BookMonthChooseTable> getBookMonthChooseTable(DatatablesCriterias criterias, String data) throws ParseException {
+        String[] cutTime = data.split("---");
+        SimpleDateFormat dateFormat;
+        if (cutTime[0].contains(":")) {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        } else {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        }
+        Date bDate = dateFormat.parse(cutTime[0]);
+        long bTime = bDate.getTime() / 1000;
+        Date tDate = dateFormat.parse(cutTime[1]);
+        long tTime = tDate.getTime() / 1000;
+        String s = String.format("select empt.name as book,count(ecr.id) as ccnt,count(DISTINCT ecr.sid) as scnt from ebk_class_records ecr\n" +
+                "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
+                "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
+                "where ecr.begin_time >=(%s) and ecr.begin_time <=(%s)\n" +
+                "and ecr.status=3\n" +
+                "and esi.study_aim=1 and ecr.stype!=''\n" +
+                "group by empt.name", bTime, tTime);
+        TableQuery query = new TableQuery(entityManager, BookMonthChooseTable.class, criterias, s);
+        return query.getResultDataSet();
+    }
+
+    @Override
+    @RequestMapping
+    @SuppressWarnings("unchecked")
+    public DataSet<BookChooseClassStock> getBookChooseClassStockSql(DatatablesCriterias criterias, String data) throws ParseException {
         String [] cutData=data.split("---");
         Calendar cal = Calendar.getInstance();
         int day = cal.get(Calendar.DATE);
@@ -138,8 +165,9 @@ public class BookClassServiceImpl implements BookClassService {
         long bTime = bDate.getTime()/1000;
         Date lDate=dateFormat.parse(limitTime);
         long lTime=lDate.getTime()/1000;
+        String s;
         if(bTime<lTime){
-            String s = String.format("select ecr.begin_time*1000,count(ecr.id),empt.id as name from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>%s) ecr\n" +
+            s = String.format("select ecr.begin_time*1000 as time,count(ecr.id) as count,empt.id as name,empt.name as book from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>%s) ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
@@ -147,10 +175,8 @@ public class BookClassServiceImpl implements BookClassService {
                     "where esi.study_aim=1 and ecr.stype!=''\n" +
                     "and ecr.status=3\n" +
                     "group by name,from_unixtime(ecr.begin_time, '%%Y-%%m-%%d')",bTime);
-            Query q = entityManager.createNativeQuery(s);
-            sqlResult = q.getResultList();
         }else{
-            String s = String.format("select ecr.begin_time*1000 as time,count(ecr.id),empt.id as name from ebk_class_records ecr\n" +
+            s = String.format("select ecr.begin_time*1000 as time,count(ecr.id) as count,empt.id as name,empt.name as book from ebk_class_records ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
@@ -158,10 +184,15 @@ public class BookClassServiceImpl implements BookClassService {
                     "where esi.study_aim=1 and ecr.stype!=''\n" +
                     "and ecr.status=3\n" +
                     "group by name,from_unixtime(ecr.begin_time, '%%Y-%%m-%%d')");
+        }
+        if (cutData[2].equals("sql")) {
             Query q = entityManager.createNativeQuery(s);
             sqlResult = q.getResultList();
+            return null;
+        } else {
+            TableQuery query = new TableQuery(entityManager, BookChooseClassStock.class, criterias, s);
+            return query.getResultDataSet();
         }
-        return sqlResult;
     }
     @Override
     @RequestMapping
@@ -254,6 +285,95 @@ public class BookClassServiceImpl implements BookClassService {
         message.add(number0);
         message.add(number1);
         return message;
+    }
+
+    @Override
+    @RequestMapping
+    @SuppressWarnings("unchecked")
+    public DataSet<BookRankChooseClassTable> getBookRankChooseClassTable(DatatablesCriterias criterias, String data) throws ParseException {
+        String[] cutData = data.split("---");
+        SimpleDateFormat dateFormat;
+        if (cutData[0].contains(":")) {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        } else {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        }
+        Date bDate = dateFormat.parse(cutData[0]);
+        long bTime = bDate.getTime() / 1000;
+        Date tDate = dateFormat.parse(cutData[1]);
+        long tTime = tDate.getTime() / 1000;
+        String s = String.format("select concat(es.level,es.sub_level) as level,count(ecr.id) as ccnt,count(DISTINCT ecr.sid) as scnt from ebk_class_records ecr\n" +
+                "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
+                "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
+                "where ecr.begin_time >=%s and ecr.begin_time <=%s\n" +
+                "and ecr.status=3\n" +
+                "and es.sub_level is not null\n" +
+                "and esi.study_aim=1 and ecr.stype!=''\n" +
+                "and empt.id=\"%s\"\n" +
+                "group by concat(es.level,es.sub_level)", bTime, tTime, cutData[2]);
+        if (!cutData[3].equals("ALL")) {
+            s = String.format("select concat(es.level,es.sub_level) as level,count(ecr.id) as ccnt,count(DISTINCT ecr.sid) as scnt from ebk_class_records ecr\n" +
+                    "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
+                    "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                    "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
+                    "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
+                    "where ecr.begin_time >=%s and ecr.begin_time <=%s\n" +
+                    "and ecr.status=3\n" +
+                    "and es.sub_level is not null\n" +
+                    "and esi.study_aim=1 and ecr.stype!=''\n" +
+                    "and empt.id=\"%s\"\n" +
+                    "and concat(es.level,es.sub_level)='%s'", bTime, tTime, cutData[2], cutData[3]);
+        }
+        TableQuery query = new TableQuery(entityManager, BookRankChooseClassTable.class, criterias, s);
+        return query.getResultDataSet();
+    }
+
+    @Override
+    @RequestMapping
+    @SuppressWarnings("unchecked")
+    public DataSet<BookRankAgeTable> getBookRankAgeTable(DatatablesCriterias criterias, String data) throws ParseException {
+        String[] cutData = data.split("---");
+        SimpleDateFormat dateFormat;
+        if (cutData[0].contains(":")) {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        } else {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        }
+        Date bDate = dateFormat.parse(cutData[0]);
+        long bTime = bDate.getTime() / 1000;
+        Date tDate = dateFormat.parse(cutData[1]);
+        long tTime = tDate.getTime() / 1000;
+        String s = String.format("select count(DISTINCT ecr.sid) as cnt,esi.age_duration as age,concat(es.level,es.sub_level) as level from ebk_class_records ecr\n" +
+                "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
+                "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
+                "where ecr.begin_time >=%s and ecr.begin_time <=%s\n" +
+                "and ecr.status=3\n" +
+                "and es.sub_level is not null \n" +
+                "and esi.study_aim=1 and ecr.stype!=''\n" +
+                "and empt.id=\"%s\"\n" +
+                "and esi.age_duration in('1','2','3','10','11','12','6','7','8','9') \n" +
+                "GROUP BY esi.age_duration,concat(es.level,es.sub_level)", bTime, tTime, cutData[2]);
+        if (!cutData[3].equals("ALL")) {
+            s = String.format("select count(DISTINCT ecr.sid) as cnt,esi.age_duration as age,concat(es.level,es.sub_level) as level from ebk_class_records ecr\n" +
+                    "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
+                    "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                    "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
+                    "LEFT JOIN (select * from ebk_materials_small_type where parent <= 0 or parent = id) empt on emst.parent=empt.id\n" +
+                    "where ecr.begin_time >=%s and ecr.begin_time <=%s\n" +
+                    "and ecr.status=3\n" +
+                    "and es.sub_level is not null \n" +
+                    "and esi.study_aim=1 and ecr.stype!=''\n" +
+                    "and empt.id=\"%s\"\n" +
+                    "and concat(es.level,es.sub_level)='%s'\n" +
+                    "and esi.age_duration in('1','2','3','10','11','12','6','7','8','9') \n" +
+                    "GROUP BY esi.age_duration,concat(es.level,es.sub_level)", bTime, tTime, cutData[2], cutData[3]);
+        }
+        TableQuery query = new TableQuery(entityManager, BookRankAgeTable.class, criterias, s);
+        return query.getResultDataSet();
     }
 
     @Override
@@ -399,15 +519,14 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
-//    @Cacheable(value = "get_book_rank_choose_class_compare", keyGenerator = "wiselyKeyGenerator")
-    public List<Object[]> getBookRankChooseCompareSql(String data) throws ParseException {
+    public DataSet<BookChooseClassStock> getBookRankChooseCompareSql(DatatablesCriterias criterias, String data) throws ParseException {
         String[] cutData = data.split("---");
         String book = cutData[0].replace("'", "?");
         String sql;
-        if (cutData[cutData.length - 1].equals("ALL")) {
+        if (cutData[cutData.length - 2].equals("ALL")) {
             sql = "concat(es.level,es.sub_level) in( '0', '1', '2', '3A', '3B', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7A', '7B', '7C', '8A', '8B')";
         } else {
-            sql = "concat(es.level,es.sub_level)='" + cutData[cutData.length - 1] + "'";
+            sql = "concat(es.level,es.sub_level)='" + cutData[cutData.length - 2] + "'";
         }
         Calendar cal = Calendar.getInstance();
         int day = cal.get(Calendar.DATE);
@@ -424,8 +543,9 @@ public class BookClassServiceImpl implements BookClassService {
         long bTime = bDate.getTime()/1000;
         Date lDate=dateFormat.parse(limitTime);
         long lTime=lDate.getTime()/1000;
+        String s;
         if(lTime>bTime){
-            String s = String.format("select ecr.begin_time*1000,count(ecr.id),empt.id from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>%s) ecr "+
+            s = String.format("select ecr.begin_time*1000 as time,count(ecr.id) as count,empt.id as name,cmpt.name as book from (select * from ebk_class_records union all select * from ebk_class_records_2016 where begin_time>%s) ecr " +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
@@ -437,7 +557,7 @@ public class BookClassServiceImpl implements BookClassService {
             Query q = entityManager.createNativeQuery(s);
             sqlCompareResult = q.getResultList();
         }else{
-            String s = String.format("select ecr.begin_time*1000,count(ecr.id),empt.id from ebk_class_records ecr\n" +
+            s = String.format("select ecr.begin_time*1000 as time,count(ecr.id) as count,empt.id as name,empt.name as book from ebk_class_records ecr\n" +
                     "LEFT JOIN ebk_students es on ecr.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                     "LEFT JOIN ebk_materials_small_type emst on emst.id=ecr.stype\n" +
@@ -449,7 +569,14 @@ public class BookClassServiceImpl implements BookClassService {
             Query q = entityManager.createNativeQuery(s);
             sqlCompareResult = q.getResultList();
         }
-        return sqlCompareResult;
+        if (cutData[cutData.length - 1].equals("sql")) {
+            Query q = entityManager.createNativeQuery(s);
+            sqlResult = q.getResultList();
+            return null;
+        } else {
+            TableQuery query = new TableQuery(entityManager, BookChooseClassStock.class, criterias, s);
+            return query.getResultDataSet();
+        }
     }
 
     @Override

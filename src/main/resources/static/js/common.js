@@ -63,7 +63,15 @@ function unixToDate(UNIX_timestamp) {
     sec = (sec < 10 ? "0" : "") + sec;
     return year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec;
 }
-
+function unixToDay(UNIX_timestamp) {
+    var a = new Date(UNIX_timestamp * 1000);
+    var year = a.getFullYear();
+    var month = a.getMonth() + 1;
+    var day = a.getDate();
+    month = (month < 10 ? "0" : "") + month;
+    day = (day < 10 ? "0" : "") + day;
+    return year + '-' + month + '-' + day;
+}
 function dateToUnix(dateString) {
     if (dateString.length == 0) {
         return "";

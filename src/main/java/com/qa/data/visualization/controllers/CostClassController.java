@@ -1,16 +1,12 @@
 package com.qa.data.visualization.controllers;
 
-import com.qa.data.visualization.entities.qingshao.AutoComplete;
-import com.qa.data.visualization.entities.qingshao.CostClass;
-import com.qa.data.visualization.entities.qingshao.CostSaClass;
-import com.qa.data.visualization.entities.qingshao.payStudent;
+import com.qa.data.visualization.entities.qingshao.*;
 import com.qa.data.visualization.services.qingshao.BookClassService;
 import com.qa.data.visualization.services.qingshao.ClassService;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -194,6 +190,14 @@ public class CostClassController {
         return bookMessage;
     }
 
+    @RequestMapping("/get_book_month_choose_table/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getBookMonthChooseTable(@PathVariable String data, HttpServletRequest request) throws ParseException {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<BookMonthChooseTable> actions = bookClassService.getBookMonthChooseTable(criterias, data);
+        return DatatablesResponse.build(actions, criterias);
+    }
     @RequestMapping(value = "/get_book_choose_class_stock/{data}")
     @ResponseBody
     public ArrayList getBookChooseClassStock(@PathVariable String data) throws Exception {
@@ -213,8 +217,15 @@ public class CostClassController {
 
     @RequestMapping(value = "/get_book_choose_class_stock_sql/{data}")
     @ResponseBody
-    public void getBookChooseClassStockSql(@PathVariable String data) throws ParseException {
-        bookClassService.getBookChooseClassStockSql(data);
+    public DatatablesResponse getBookChooseClassStockSql(@PathVariable String data, HttpServletRequest request) throws ParseException {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<BookChooseClassStock> actions = bookClassService.getBookChooseClassStockSql(criterias, data);
+        String[] cutData = data.split("---");
+        if (cutData[2].equals("sql")) {
+            return null;
+        } else {
+            return DatatablesResponse.build(actions, criterias);
+        }
     }
     @RequestMapping(value = "/get_student_levels")
     @ResponseBody
@@ -234,6 +245,23 @@ public class CostClassController {
         return bookClassMessage;
     }
 
+    @RequestMapping(value = "/get_book_rank_choose_class_table/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getBookRankChooseClassTable(@PathVariable String data, HttpServletRequest request) throws ParseException {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<BookRankChooseClassTable> actions = bookClassService.getBookRankChooseClassTable(criterias, data);
+        return DatatablesResponse.build(actions, criterias);
+    }
+
+    @RequestMapping(value = "/get_book_rank_age_table/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getBookRankAgeTable(@PathVariable String data, HttpServletRequest request) throws ParseException {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<BookRankAgeTable> actions = bookClassService.getBookRankAgeTable(criterias, data);
+        return DatatablesResponse.build(actions, criterias);
+    }
     @RequestMapping(value = "/get_book_rank_age/{data}")
     @ResponseBody
     @SuppressWarnings("unchecked")
@@ -267,8 +295,15 @@ public class CostClassController {
     @RequestMapping(value = "/get_book_rank_choose_class_compare_sql/{data}")
     @ResponseBody
     @SuppressWarnings("unchecked")
-    public void getBookRankChooseCompareSql(@PathVariable String data) throws ParseException {
-        bookClassService.getBookRankChooseCompareSql(data);
+    public DatatablesResponse getBookRankChooseCompareSql(@PathVariable String data, HttpServletRequest request) throws ParseException {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<BookChooseClassStock> actions = bookClassService.getBookRankChooseCompareSql(criterias, data);
+        String[] cutData = data.split("---");
+        if (cutData[cutData.length - 1].equals("sql")) {
+            return null;
+        } else {
+            return DatatablesResponse.build(actions, criterias);
+        }
     }
 
 }

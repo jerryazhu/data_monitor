@@ -127,6 +127,7 @@ public class ClassServiceImpl implements ClassService {
                 "LEFT JOIN ebk_students es on ecr.sid = es.id\n" +
                 "LEFT JOIN ebk_acoin_orders eao on es.id = eao.sid\n" +
                 "LEFT JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id \n"+
+                "LEFT JOIN ebk_acoin_split_order easo on easo.sid=es.id\n"+
                 "LEFT JOIN ebk_student_info esi on ecr.sid = esi.sid\n" +
                 "LEFT JOIN ebk_teachers et on ecr.tid = et.id\n" +
                 "LEFT JOIN ebk_teacher_group etg on et.workgroup = etg.id\n" +
@@ -185,7 +186,7 @@ public class ClassServiceImpl implements ClassService {
                         break;
                     case "00":
                         sql = sql + "\n" + "and (es.lsns_per_day=0 and es.days_per_week=0 and es.lsns_per_day_eu=0 and es.days_per_week_eu=0 and es.acoin!=0)";
-                        sql = sql+"\n"+"and eaod.tch_from=1";
+                        sql = sql+"\n"+"and (eaod.tch_from=1 or easo.tch_from=1)";
                         break;
                 }
             } else {
@@ -207,7 +208,7 @@ public class ClassServiceImpl implements ClassService {
                         break;
                     case "00":
                         sql = sql + "\n" + "and (es.lsns_per_day=0 and es.days_per_week=0 and es.lsns_per_day_eu=0 and es.days_per_week_eu=0 and es.acoin!=0)";
-                        sql = sql+"\n"+"and eaod.tch_from=2";
+                        sql = sql+"\n"+"and (eaod.tch_from=2 or easo.tch_from=2)";
                         break;
                 }
             }
@@ -345,6 +346,7 @@ public class ClassServiceImpl implements ClassService {
                     break;
             }
         }
+        sql=sql+"\n"+"group by ecr.sid,ecr.begin_time";
         TableQuery query = new TableQuery(entityManager, CostSaClass.class, criterias, sql);
         DataSet<CostSaClass> result = query.getResultDataSet();
         costSaClassCnt = query.getTotalCount();
@@ -361,7 +363,7 @@ public class ClassServiceImpl implements ClassService {
         Date date = dateFormat.parse(today);
         long todayUnix = date.getTime();
         long yesterdayUnix = todayUnix / 1000 - 86400;
-        String sql = String.format("select es.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ifnull(sum(eao.tmoney),0) as cnt from ebk_students es\n" +
+        String sql = String.format("select es.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ifnull(eao.tmoney,0) as cnt from ebk_students es\n" +
                 "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
                 "LEFT JOIN ebk_advertisement_source eas on eas.id=esi.knowus\n" +
                 "LEFT JOIN ebk_acoin_orders eao on es.id = eao.sid\n" +
@@ -416,7 +418,7 @@ public class ClassServiceImpl implements ClassService {
                 sql = sql + "\n" + "and eao.payed=1";
                 break;
         }
-        sql = sql + "\n" + "group by es.id";
+        sql = sql + "\n" + "group by es.id,es.create_time";
         TableQuery query = new TableQuery(entityManager, payStudent.class, criterias, sql);
         DataSet<payStudent> result = query.getResultDataSet();
         newStudentCnt = query.getTotalCount();
@@ -452,24 +454,27 @@ public class ClassServiceImpl implements ClassService {
         String classShowType = cutData[5];
         String sql=null;
         if(studentStatus.equals("退款学员")){
-            sql=String.format("select er.refund_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ROUND(ifnull(sum(er.money),0),2) as cnt \n" +
-                    "from ebk_students es\n" +
+            sql=String.format("select er.refund_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ROUND(ifnull(er.money,0),2) as cnt \n" +
+                    "from ebk_refunds er \n" +
+                    "LEFT JOIN ebk_students es on er.sid=es.id\n" +
+                    "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
                     "LEFT JOIN ebk_rbac_user eru on eru.id=es.adviser\n" +
                     "LEFT JOIN ebk_acoin_orders eao on eao.sid=es.id\n" +
-                    "INNER JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id\n" +
-                    "LEFT JOIN ebk_refunds er on er.sid=es.id\n" +
+                    "LEFT JOIN ebk_acoin_split_order easo on easo.sid=es.id\n"+
+                    "LEFT JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id\n" +
                     "where ");
             if (bTime.equals("all") || tTime.equals("all")) {
                 sql = sql + "\n" + "er.refund_time>" + yesterdayUnix;
             } else {
                 sql = sql + "\n" + "er.refund_time >=" + bTime + " and er.refund_time<=" + tTime;
             }
-            sql=sql+"\n"+"and er.std_course=1  \n"+"and er.status=3";
+            sql=sql+"\n"+"and esi.study_aim=1 \n"+"and er.status=3";
         }else{
-            sql = String.format("select eao.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ROUND(ifnull(sum(eaod.total_money),0),2) as cnt \n" +
+            sql = String.format("select eao.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ROUND(ifnull(eao.tmoney,0),2) as cnt \n" +
                     "from ebk_students es\n" +
                     "LEFT JOIN ebk_acoin_orders eao on eao.sid=es.id\n" +
-                    "INNER JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id\n" +
+                    "LEFT JOIN ebk_acoin_order_detail eaod on eaod.order_id=eao.id\n" +
+                    "LEFT JOIN ebk_acoin_split_order easo on easo.sid=es.id\n"+
                     "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
                     "LEFT JOIN ebk_rbac_user eru on eru.id=es.adviser\n" +
                     "where ");
@@ -489,9 +494,9 @@ public class ClassServiceImpl implements ClassService {
         }
         if (!classType.equals("不限")) {
             if (classType.equals("套餐课")) {
-                sql = sql + "\n" + "and eaod.combo_name not like '%自由%'";
+                sql = sql + "\n" + "and (eaod.combo_name not like '%自由%' or easo.combo_name not like '%自由%')" ;
             } else {
-                sql = sql + "\n" + "and eaod.combo_name like '%自由%'";
+                sql = sql + "\n" + "and  (eaod.combo_name like '%自由%' or easo.combo_name like '%自由%')";
             }
         }
         if (studentStatus.equals("上课中学员")) {
@@ -508,7 +513,11 @@ public class ClassServiceImpl implements ClassService {
                 }
             }
         }
-        sql = sql + "\n" + "group by es.id,eaod.combo_name";
+        if(studentStatus.equals("退款学员")){
+            sql=sql+"\n"+"group by es.id,er.refund_time";
+        }else{
+            sql = sql + "\n" + "group by es.id,eaod.combo_name,cnt";
+        }
         TableQuery query = new TableQuery(entityManager, payStudent.class, criterias, sql);
         DataSet<payStudent> result = query.getResultDataSet();
         oldStudentCnt = query.getTotalCount();

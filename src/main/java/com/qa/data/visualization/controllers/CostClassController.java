@@ -1,5 +1,6 @@
 package com.qa.data.visualization.controllers;
 
+import com.mysql.fabric.xmlrpc.base.Data;
 import com.qa.data.visualization.entities.qingshao.*;
 import com.qa.data.visualization.services.qingshao.BookClassService;
 import com.qa.data.visualization.services.qingshao.ClassService;
@@ -122,6 +123,12 @@ public class CostClassController {
         return bookClassService.getChooseBookCostClassCnt();
     }
 
+    @RequestMapping("/get_work_student_message_cnt")
+    @ResponseBody
+    public Long getWorkStudentMessageCnt() {
+        return classService.getWorkStudentMessageCnt();
+    }
+
     @RequestMapping("/get_whole_sql")
     @ResponseBody
     public String getWholeSql() {
@@ -162,6 +169,12 @@ public class CostClassController {
     @ResponseBody
     public String getChooseBookWholeSql() {
         return bookClassService.getChooseBookWholeSql();
+    }
+
+    @RequestMapping("/get_work_student_message_sql")
+    @ResponseBody
+    public String getWorkStudentMessageSql() {
+        return classService.getWorkStudentMessageSql();
     }
 
     @RequestMapping("/get_book/{data}")
@@ -304,6 +317,15 @@ public class CostClassController {
         } else {
             return DatatablesResponse.build(actions, criterias);
         }
+    }
+
+    @RequestMapping(value = "/get_work_student_message/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getWorkStudentMessage(@PathVariable String data,HttpServletRequest request) throws ParseException{
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<PayStudentMessage> actions=classService.getWorkStudentMessage(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
     }
 
 }

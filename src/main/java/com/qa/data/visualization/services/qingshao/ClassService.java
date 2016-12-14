@@ -1,9 +1,6 @@
 package com.qa.data.visualization.services.qingshao;
 
-import com.qa.data.visualization.entities.qingshao.AutoComplete;
-import com.qa.data.visualization.entities.qingshao.CostClass;
-import com.qa.data.visualization.entities.qingshao.CostSaClass;
-import com.qa.data.visualization.entities.qingshao.payStudent;
+import com.qa.data.visualization.entities.qingshao.*;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 
@@ -31,6 +28,8 @@ public interface ClassService {
 
     DataSet<payStudent> getOldStudent(String data, DatatablesCriterias criterias) throws ParseException;
 
+    DataSet<PayStudentMessage> getWorkStudentMessage(String data,DatatablesCriterias criterias) throws ParseException;
+
     Long getCostClassCnt();
 
     Long getCostSaClassCnt();
@@ -38,6 +37,8 @@ public interface ClassService {
     Long getNewStudentCnt();
 
     Long getOldStudentCnt();
+
+    Long getWorkStudentMessageCnt();
 
     String getWholeSql();
 
@@ -50,4 +51,6 @@ public interface ClassService {
     String getNewStudentPayCnt();
 
     String getOldStudentPayCnt();
+
+    String getWorkStudentMessageSql();
 }

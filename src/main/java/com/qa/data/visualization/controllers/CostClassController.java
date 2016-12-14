@@ -1,6 +1,5 @@
 package com.qa.data.visualization.controllers;
 
-import com.mysql.fabric.xmlrpc.base.Data;
 import com.qa.data.visualization.entities.qingshao.*;
 import com.qa.data.visualization.services.qingshao.BookClassService;
 import com.qa.data.visualization.services.qingshao.ClassService;
@@ -324,7 +323,16 @@ public class CostClassController {
     @SuppressWarnings("unchecked")
     public DatatablesResponse getWorkStudentMessage(@PathVariable String data,HttpServletRequest request) throws ParseException{
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
-        DataSet<PayStudentMessage> actions=classService.getWorkStudentMessage(data,criterias);
+        DataSet<WorkStudentMessage> actions=classService.getWorkStudentMessage(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
+    @RequestMapping(value = "/get_work_student_recommend/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getWorkStudentRecommend(@PathVariable String data,HttpServletRequest request){
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<WorkStudentRecommend> actions=classService.getWorkStudentRecommend(data,criterias);
         return DatatablesResponse.build(actions,criterias);
     }
 

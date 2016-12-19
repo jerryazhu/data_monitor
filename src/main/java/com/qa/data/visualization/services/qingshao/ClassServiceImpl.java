@@ -586,7 +586,7 @@ public class ClassServiceImpl implements ClassService {
             }
         }
 
-        String sql=String.format("select es.id as id,es.nickname as name,esi.age_duration as age,IFNULL(concat(es.level,es.sub_level),'无等级') as level,esi.study_aim as aim,(("+todayUnix+"-Min(allorder.begin_time))/86400) as time from ebk_students es \n" +
+        String sql=String.format("select es.id as id,es.nickname as name,esi.age_duration as age,IFNULL(concat(es.level,es.sub_level),'无等级') as level,esi.study_aim as aim,round((("+todayUnix+"-Min(allorder.begin_time))/86400),0) as time from ebk_students es \n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                 "LEFT JOIN(select eao.create_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eaod.begin_time,eao.pay_time from ebk_acoin_orders eao\n" +
                 "INNER JOIN ebk_acoin_order_detail eaod on eao.id=eaod.order_id \n" +
@@ -614,7 +614,8 @@ public class ClassServiceImpl implements ClassService {
         String []cutData=data.split("\\+");
         String sql=String.format("select es.id,es.nickname as name,rcmd.cnt as count from ebk_students es \n" +
                 "INNER JOIN (select rcmd_id ,count(rcmd_id) as cnt from ebk_students where create_time>=%s and create_time<=%s group by rcmd_id) rcmd on rcmd.rcmd_id=es.mobile \n" +
-                "where es.mobile !=''",cutData[0],cutData[1]);
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id \n"+
+                "where es.mobile !='' and esi.study_aim=1",cutData[0],cutData[1]);
         TableQuery query = new TableQuery(entityManager, WorkStudentRecommend.class, criterias, sql);
         DataSet<WorkStudentRecommend> actions=query.getResultDataSet();
         return actions;

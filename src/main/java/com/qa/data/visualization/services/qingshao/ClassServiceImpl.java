@@ -39,6 +39,8 @@ public class ClassServiceImpl implements ClassService {
     private String oldStudentPayCnt;
     private String workStudentMessageSql;
     private Long workStudentMessageCnt;
+    private Long workClassMessageCnt;
+    private String workClassMessageSql;
     @PersistenceContext(unitName = "primaryPersistenceUnit")
     private EntityManager firstEntityManager;
     @PersistenceContext(unitName = "secondaryPersistenceUnit")
@@ -627,6 +629,41 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     @SuppressWarnings("unchecked")
+    public DataSet<WorkClassMessage> getWorkClassMessage(String data,DatatablesCriterias criterias){
+        String[]cutData=data.split("\\+");
+        String bTime =cutData[0];
+        String tTime=cutData[1];
+        String classType=cutData[2];
+        String show=cutData[3];
+        String sql=String.format("select ecr.begin_time as time,ecr.id as cid,es.id as sid,es.nickname as sname,et.id as tid,et.nickname as tname,ifNULL(eru.nickname,'无导师') as ghs from ebk_students es\n" +
+                "LEFT JOIN ebk_student_info esi on es.id=esi.sid\n" +
+                "LEFT JOIN ebk_class_records ecr on ecr.sid=es.id\n" +
+                "LEFT JOIN ebk_teachers et on ecr.tid=et.id\n" +
+                "LEFT JOIN ebk_rbac_user eru on eru.id=es.ghs\n" +
+                "LEFT JOIN ebk_class_comments ecc on ecc.cid=ecr.id \n"+
+                "where ecr.begin_time>%s and ecr.begin_time<%s",bTime,tTime);
+        if(!classType.equals("不限")){
+            if(classType.equals("菲律宾")){
+                sql=sql+"\n"+"and ecr.catalog=1";
+            }else{
+                sql=sql+"\n"+"and ecr.catalog=2";
+            }
+        }
+        switch (show){
+            case "差评数":sql=sql+"\n"+"and ecc.choice=-1";break;
+            case "缺席的课时数":sql=sql+"\n"+"and ecr.status=5";break;
+            case "测评课完成数":sql=sql+"\n"+"and ecr.status=3 and ecr.free_try=2";break;
+        }
+        sql=sql+"\n"+"group by es.id,ecr.id";
+        TableQuery query = new TableQuery(entityManager, WorkClassMessage.class, criterias, sql);
+        DataSet<WorkClassMessage> actions=query.getResultDataSet();
+        workClassMessageCnt=query.getTotalCount();
+        workClassMessageSql=sql;
+        return actions;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
     @Cacheable(value = "day_student_activity_chart", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String,String> getDayStudentActivityChart(String data){
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
@@ -711,5 +748,11 @@ public class ClassServiceImpl implements ClassService {
     @SuppressWarnings("unchecked")
     public Long getWorkStudentMessageCnt(){return workStudentMessageCnt;};
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public String getWorkClassMessageSql(){return workClassMessageSql;};
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public Long getWorkClassMessageCnt(){return workClassMessageCnt;};
 }

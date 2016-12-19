@@ -33,6 +33,8 @@ public interface ClassService {
 
     DataSet<WorkStudentRecommend> getWorkStudentRecommend(String data, DatatablesCriterias criterias);
 
+    DataSet<WorkClassMessage> getWorkClassMessage(String data,DatatablesCriterias criterias);
+
     Long getCostClassCnt();
 
     Long getCostSaClassCnt();
@@ -42,6 +44,8 @@ public interface ClassService {
     Long getOldStudentCnt();
 
     Long getWorkStudentMessageCnt();
+
+    Long getWorkClassMessageCnt();
 
     String getWholeSql();
 
@@ -56,6 +60,8 @@ public interface ClassService {
     String getOldStudentPayCnt();
 
     String getWorkStudentMessageSql();
+
+    String getWorkClassMessageSql();
 
     LinkedHashMap<String ,String> getDayStudentActivityChart(String data);
 }

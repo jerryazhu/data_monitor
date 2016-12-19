@@ -176,6 +176,18 @@ public class CostClassController {
         return classService.getWorkStudentMessageSql();
     }
 
+    @RequestMapping("/get_work_class_message_cnt")
+    @ResponseBody
+    public Long getWorkClassMessageCnt() {
+        return classService.getWorkClassMessageCnt();
+    }
+
+    @RequestMapping("/get_work_class_message_sql")
+    @ResponseBody
+    public String getWorkClassMessageSql() {
+        return classService.getWorkClassMessageSql();
+    }
+
     @RequestMapping("/get_book/{data}")
     @ResponseBody
     public ArrayList getBook(@PathVariable String data) throws Exception {
@@ -333,6 +345,16 @@ public class CostClassController {
     public DatatablesResponse getWorkStudentRecommend(@PathVariable String data,HttpServletRequest request){
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
         DataSet<WorkStudentRecommend> actions=classService.getWorkStudentRecommend(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
+    @RequestMapping(value = "/get_work_class_message/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getWorkClassMessage(@PathVariable String data,HttpServletRequest request){
+        System.out.println("获取的值为"+data);
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<WorkClassMessage> actions=classService.getWorkClassMessage(data,criterias);
         return DatatablesResponse.build(actions,criterias);
     }
 

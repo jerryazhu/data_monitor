@@ -1,5 +1,6 @@
 package com.qa.data.visualization.services.jishu;
 
+import com.qa.data.visualization.entities.jishu.mobile.AndroidModelCnt;
 import com.qa.data.visualization.entities.jishu.web.*;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
@@ -65,6 +66,19 @@ public class WebActionServiceImpl implements WebActionService {
     @Override
     public DataSet<WebUserActionGroupCount> findUserGroupCountWithDatatablesCriterias(DatatablesCriterias criterias) {
         TableQuery query = new TableQuery(entityManager, WebUserActionGroupCount.class, criterias);
+        return query.getResultDataSet();
+    }
+
+    @Override
+    public DataSet<WebCrmAction> findCrmActionsWithDatatablesCriterias(DatatablesCriterias criterias) {
+        TableQuery query = new TableQuery(entityManager, WebCrmAction.class, criterias);
+        return query.getResultDataSet();
+    }
+
+    @Override
+    public DataSet<WebCrmActionGroupCount> findCrmGroupCountWithDatatablesCriterias(DatatablesCriterias criterias){
+        String sql="select controller,method,count(id) as count from ABC360_WEB_CRM_ACTION_LAST_MONTH_WITH_TODAY_TBL group by controller,method";
+        TableQuery query = new TableQuery(entityManager, WebCrmActionGroupCount.class, criterias, sql);
         return query.getResultDataSet();
     }
 

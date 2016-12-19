@@ -22,6 +22,10 @@ public interface WebActionService {
 
     DataSet<WebUserActionGroupCount> findUserGroupCountWithDatatablesCriterias(DatatablesCriterias criterias);
 
+    DataSet<WebCrmAction> findCrmActionsWithDatatablesCriterias(DatatablesCriterias criterias);
+
+    DataSet<WebCrmActionGroupCount> findCrmGroupCountWithDatatablesCriterias(DatatablesCriterias criterias);
+
     DataSet<WebErrorAction> findErrorActionsWithDatatablesCriterias(DatatablesCriterias criterias);
 
     DataSet<WebDebugAction> findDebugActionsWithDatatablesCriterias(DatatablesCriterias criterias);

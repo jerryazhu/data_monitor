@@ -1,3 +1,4 @@
+Highcharts.setOptions({global: {useUTC: false}});
 if (!Array.prototype.shuffle) {
     Array.prototype.shuffle = function () {
         for (var j, x, i = this.length; i; j = parseInt(Math.random() * i), x = this[--i], this[i] = this[j], this[j] = x);
@@ -76,5 +77,9 @@ function dateToUnix(dateString) {
     if (dateString.length == 0) {
         return "";
     }
-    return Date.parse(dateString) / 1000;
+    if(dateString.indexOf(":")<0){
+        dateString= dateString.replace(/-/g,'/');
+    }
+    var date = new Date(dateString);
+    return Date.parse(date)/ 1000;
 }

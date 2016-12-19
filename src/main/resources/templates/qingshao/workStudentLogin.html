@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/css/qingshao.css}" rel="stylesheet"/>
+    <link th:href="@{/css/datepicker/bootstrap-datetimepicker.css}" rel="stylesheet"/>
+    <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="row">
+    <div class="col-lg-1">
+        <p class="control-label"><strong class="height"> 时间：</strong></p>
+    </div>
+    <div class="col-lg-3">
+        <div class="input-group input-daterange">
+            <input id="time" type="text" class="form-control" value=""/>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-line-chart fa-fw"></i> 学生该日各时间段行为高峰
+            </div>
+            <div class="panel-body">
+                <div id="student_daily_activity_chart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var time=$('#time');
+        time.datepicker({
+            startDate: "-3y",
+            todayHighlight: true,
+            format: 'yyyy-m-d',
+            antoclose: true
+        });
+        var date = new Date();
+        var dateFormatted_to;
+        if (date.getDate() == 1) {
+            dateFormatted_to = date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth());
+        } else {
+            dateFormatted_to = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1);
+        }
+        time.datepicker("setDate", dateFormatted_to);
+        var element=$('#student_daily_activity_chart');
+        var url="/class/get_day_student_activity_chart/";
+        var day=time.datepicker('getFormattedDate');
+        $.getJSON(url+dateToUnix(day), function (data) {
+            createScatterHighChart(element, data);
+        });
+        time.on("changeDate", function () {
+            element.html("");
+            var day=time.datepicker('getFormattedDate');
+            $.getJSON(url+dateToUnix(day), function (data) {
+                createScatterHighChart(element, data);
+            });
+        });
+    });
+</script>
+</body>
+</html>

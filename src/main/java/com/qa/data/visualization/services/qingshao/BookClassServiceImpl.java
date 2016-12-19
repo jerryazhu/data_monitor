@@ -593,6 +593,7 @@ public class BookClassServiceImpl implements BookClassService {
     }
 
     @Override
+    @RequestMapping
     @SuppressWarnings("unchecked")
     public DataSet<CostClass> getBookChooseCostClass(String data, DatatablesCriterias criterias) throws ParseException {
         Date now = new Date();
@@ -656,12 +657,14 @@ public class BookClassServiceImpl implements BookClassService {
     }
 
     @Override
+    @RequestMapping
     @SuppressWarnings("unchecked")
     public Long getChooseBookCostClassCnt() {
         return chooseBookCostClassCnt;
     }
 
     @Override
+    @RequestMapping
     @SuppressWarnings("unchecked")
     public String getChooseBookWholeSql() {
         return chooseBookWholeSql;

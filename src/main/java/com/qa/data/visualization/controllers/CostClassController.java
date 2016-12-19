@@ -336,4 +336,21 @@ public class CostClassController {
         return DatatablesResponse.build(actions,criterias);
     }
 
+    @RequestMapping(value = "/get_day_student_activity_chart/{data}")
+    @ResponseBody
+    @SuppressWarnings("uncheckede")
+    public ArrayList getDayStudentActivityChart(@PathVariable String data){
+        ArrayList<Object> list = new ArrayList<Object>();
+        LinkedHashMap<String, String> actions = classService.getDayStudentActivityChart(data);
+        for (Map.Entry<String, String> entry : actions.entrySet()) {
+            Object[] array = new Object[2];
+            String []cutTime=entry.getKey().split("\\.");
+            array[0]=Long.parseLong(cutTime[0])*1000;
+            if (Long.parseLong(array[0].toString()) < System.currentTimeMillis()) {
+                array[1] = Integer.parseInt(entry.getValue());
+                list.add(array);
+            }
+        }
+        return list;
+    }
 }

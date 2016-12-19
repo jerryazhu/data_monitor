@@ -81,8 +81,11 @@
     function format(d,res) {
         return '<table cellpadding="5" cellspacing="0" border="0" style="padding_left:50px;">'+
                 '<tr>'+
-                '<td> Full Parameters : '+d.parameters.replace(/\n/g,'<br/>')+'<br/>   <br/>' +
-                ' Full Response : '+res+'</td>'+
+                '<td>' +
+                '<i class="fa fa-align-justify" aria-hidden="true"></i>      Session Id : <br/>'+d.session_id.replace(/\n/g,"<br/>")+'<br/>  <br/>' +
+                '<i class="fa fa-align-justify" aria-hidden="true"></i>      Full Parameters : <br/>'+d.parameters.replace(/\n/g,"<br/>")+'<br/>  <br/>' +
+                ' <i class="fa fa-align-justify" aria-hidden="true"></i>      Full Response : <br/>'+res+'' +
+                '</td>'+
                 '</tr>'+
                 '</table>';
     }

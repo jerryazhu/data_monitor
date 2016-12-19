@@ -19,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Created by dykj on 2016/11/17.
@@ -558,7 +557,7 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public DataSet<PayStudentMessage> getWorkStudentMessage(String data,DatatablesCriterias criterias) throws ParseException{
+    public DataSet<WorkStudentMessage> getWorkStudentMessage(String data, DatatablesCriterias criterias) throws ParseException{
         String []cutData=data.split("\\+");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String bTime =cutData[0];
@@ -579,7 +578,7 @@ public class ClassServiceImpl implements ClassService {
         if(!cutData[3].equals("allStudyTime")){
             switch (cutData[3]){
                 case "less1": studyTime="\nand allorder.begin_time<="+(todayUnix)+" and allorder.begin_time>="+(todayUnix-86400*30);break;
-                case "lto3":studyTime="\nand allorder.begin_time<"+(todayUnix-86400)+" and allorder.begin_time>="+(todayUnix-86400*90);break;
+                case "1to3":studyTime="\nand allorder.begin_time<"+(todayUnix-86400)+" and allorder.begin_time>="+(todayUnix-86400*90);break;
                 case "3to6":studyTime="\nand allorder.begin_time<"+(todayUnix-86400*90)+" and allorder.begin_time>="+(todayUnix-86400*180);break;
                 case "6to12":studyTime="\nand allorder.begin_time<"+(todayUnix-86400*180)+" and allorder.begin_time>="+(todayUnix-86400*365);break;
                 case "1to2":studyTime="\nand allorder.begin_time<"+(todayUnix-86400*365)+" and allorder.begin_time>="+(todayUnix-86400*730);break;
@@ -587,7 +586,7 @@ public class ClassServiceImpl implements ClassService {
             }
         }
 
-        String sql=String.format("select es.id as id,es.nickname as name,esi.age_duration as age,IFNULL(concat(es.level,es.sub_level),'无等级') as level,esi.study_aim as aim,(("+todayUnix+"-Min(allorder.begin_time))/86400) as time from ebk_students es \n" +
+        String sql=String.format("select es.id as id,es.nickname as name,esi.age_duration as age,IFNULL(concat(es.level,es.sub_level),'无等级') as level,esi.study_aim as aim,round((("+todayUnix+"-Min(allorder.begin_time))/86400),0) as time from ebk_students es \n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                 "LEFT JOIN(select eao.create_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eaod.begin_time,eao.pay_time from ebk_acoin_orders eao\n" +
                 "INNER JOIN ebk_acoin_order_detail eaod on eao.id=eaod.order_id \n" +
@@ -602,10 +601,23 @@ public class ClassServiceImpl implements ClassService {
         sql=sql+ageSql;
         sql=sql+studyTime;
         sql=sql+"\ngroup by es.id";
-        TableQuery query = new TableQuery(entityManager, PayStudentMessage.class, criterias, sql);
-        DataSet<PayStudentMessage> actions=query.getResultDataSet();
+        TableQuery query = new TableQuery(entityManager, WorkStudentMessage.class, criterias, sql);
+        DataSet<WorkStudentMessage> actions=query.getResultDataSet();
         workStudentMessageCnt=actions.getTotalRecords();
         workStudentMessageSql=sql;
+        return actions;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataSet<WorkStudentRecommend> getWorkStudentRecommend(String data, DatatablesCriterias criterias){
+        String []cutData=data.split("\\+");
+        String sql=String.format("select es.id,es.nickname as name,rcmd.cnt as count from ebk_students es \n" +
+                "INNER JOIN (select rcmd_id ,count(rcmd_id) as cnt from ebk_students where create_time>=%s and create_time<=%s group by rcmd_id) rcmd on rcmd.rcmd_id=es.mobile \n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id \n"+
+                "where es.mobile !='' and esi.study_aim=1",cutData[0],cutData[1]);
+        TableQuery query = new TableQuery(entityManager, WorkStudentRecommend.class, criterias, sql);
+        DataSet<WorkStudentRecommend> actions=query.getResultDataSet();
         return actions;
     }
 

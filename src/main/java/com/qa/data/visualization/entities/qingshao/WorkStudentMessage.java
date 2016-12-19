@@ -3,7 +3,7 @@ package com.qa.data.visualization.entities.qingshao;
 /**
  * Created by dykj on 2016/12/14.
  */
-public class PayStudentMessage {
+public class WorkStudentMessage {
     private String id;
     private String name;
     private String age;

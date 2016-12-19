@@ -28,7 +28,9 @@ public interface ClassService {
 
     DataSet<payStudent> getOldStudent(String data, DatatablesCriterias criterias) throws ParseException;
 
-    DataSet<PayStudentMessage> getWorkStudentMessage(String data,DatatablesCriterias criterias) throws ParseException;
+    DataSet<WorkStudentMessage> getWorkStudentMessage(String data, DatatablesCriterias criterias) throws ParseException;
+
+    DataSet<WorkStudentRecommend> getWorkStudentRecommend(String data, DatatablesCriterias criterias);
 
     Long getCostClassCnt();
 

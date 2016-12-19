@@ -6,6 +6,7 @@ import com.web.spring.datatable.DatatablesCriterias;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -55,4 +56,6 @@ public interface ClassService {
     String getOldStudentPayCnt();
 
     String getWorkStudentMessageSql();
+
+    LinkedHashMap<String ,String> getDayStudentActivityChart(String data);
 }

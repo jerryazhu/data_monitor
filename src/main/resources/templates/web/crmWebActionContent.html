@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                查找CRM行为
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="dataTable_wrapper">
+                    <table class="table table-striped table-bordered table-hover" id="crmWebActionTable">
+                        <thead>
+                        <tr>
+                            <th>time</th>
+                            <th>operatorid</th>
+                            <th>operatorname</th>
+                            <th>Controller</th>
+                            <th>Method</th>
+                            <th>notes</th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tr>
+                            <th>time</th>
+                            <th>operatorid</th>
+                            <th>operatorname</th>
+                            <th>controller</th>
+                            <th>method</th>
+                            <th>notes</th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                CRM行为次数分布
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="dataTable_wrapper">
+                    <table class="table table-striped table-bordered table-hover" id="crmWebActionGroupOrderBy">
+                        <thead>
+                        <tr>
+                            <th>Controller</th>
+                            <th>Method</th>
+                            <th>Count</th>
+                        </tr>
+                        </thead>
+
+                    </table>
+                </div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+</div>
+<script th:src="@{/js/datatables/jquery.dataTables.js}"></script>
+<script th:src="@{/js/datatables/dataTables.bootstrap.min.js}"></script>
+<script>
+    //<![CDATA[
+    $(document).ready(function () {
+
+        $('#crmWebActionGroupOrderBy').DataTable({
+            lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"]],
+            order: [[2, "desc"]],
+            paging: true,
+            processing: true,
+            serverSide: true,
+            language: {
+                "lengthMenu": "Display _MENU_ records per page",
+                "zeroRecords": "Nothing found - sorry",
+                "info": "Showing page _PAGE_ of _PAGES_",
+                "infoEmpty": "No records available",
+                "infoFiltered": "(filtered from _MAX_ total records)"
+            },
+            "columns": [
+                {"data": "controller"},
+                {"data": "method"},
+                {"data": "count"}
+            ],
+            ajax: {
+                url: '/web/get_web_crm_action_group',
+                type: 'GET'
+            }
+        });
+
+
+        var table = $('#crmWebActionTable').DataTable({
+            destroy: true,
+            lengthMenu: [10, 25, 50, 100],
+            order: [[0, "desc"]],
+            dom: 'lrtip',
+            autoWidth: true,
+            paging: true,
+            processing: true,
+            serverSide: true,
+            language: {
+                "lengthMenu": "Display _MENU_ records per page",
+                "zeroRecords": "Nothing found - sorry",
+                "info": "Showing page _PAGE_ of _PAGES_",
+                "infoEmpty": "No records available",
+                "infoFiltered": "(filtered from _MAX_ total records)"
+            },
+            "columns": [
+                {"data": "time"},
+                {"data": "operatorid"},
+                {"data": "operatorname"},
+                {"data": "controller"},
+                {"data": "method"},
+                {"data": "notes"}
+            ],
+            ajax: {
+                url: '/web/get_web_crm_action',
+                type: 'GET'
+            }
+        });
+
+        // Setup - add a text input to each footer cell
+        $('#crmWebActionTable tfoot th').each(function () {
+            var title = $(this).text();
+            if (title != "") {
+                $(this).html('<input id="'+title+'" type="text" placeholder="Search ' + title + '" />');
+            }
+            if(title=="operatorname" || title=="controller" || title=="notes"){
+                $('#'+title).hide();
+            }
+        });
+
+        // Apply the search
+        table.columns().every(function () {
+            var that = this;
+            $('input', this.footer()).on('keyup change', function () {
+                if(this.value != "" && (this.id == "time" || this.id == "operatorid" || this.id == "method")){
+                    $.each(["operatorname","controller","notes"], function(i, id){
+                        $('#'+id).show();
+                    });
+                }
+                if(this.value == "" && (this.id == "time" || this.id == "operatorid" || this.id == "method")){
+                    $.each(["operatorname","controller","notes"], function(i, id){
+                        $('#'+id).val("").hide();
+                        table.column(':contains('+id+')').search("");
+                    });
+                }
+                if (that.search() !== this.value) {
+                    that.search(this.value).draw();
+                }
+            });
+        });
+
+    });
+    //]]>
+</script>
+</body>
+</html>

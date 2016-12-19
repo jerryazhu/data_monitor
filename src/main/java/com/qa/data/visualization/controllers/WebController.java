@@ -67,6 +67,22 @@ public class WebController {
         return DatatablesResponse.build(actions, criterias);
     }
 
+    @RequestMapping(value = "/get_web_crm_action")
+    @ResponseBody
+    public DatatablesResponse<WebCrmAction> findAllCrmForDataTables(HttpServletRequest request) {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<WebCrmAction> actions = webActionService.findCrmActionsWithDatatablesCriterias(criterias);
+        return DatatablesResponse.build(actions, criterias);
+    }
+
+    @RequestMapping(value = "/get_web_crm_action_group")
+    @ResponseBody
+    public DatatablesResponse<WebCrmActionGroupCount> findCrmGroupCountForDataTables(HttpServletRequest request) {
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<WebCrmActionGroupCount> actions = webActionService.findCrmGroupCountWithDatatablesCriterias(criterias);
+        return DatatablesResponse.build(actions, criterias);
+    }
+
     @RequestMapping(value = "/get_web_error_action")
     @ResponseBody
     public DatatablesResponse<WebErrorAction> findAllErrorForDataTables(HttpServletRequest request) {

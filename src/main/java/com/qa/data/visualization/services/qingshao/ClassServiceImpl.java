@@ -7,6 +7,7 @@ import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.TableQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -37,6 +39,8 @@ public class ClassServiceImpl implements ClassService {
     private String oldStudentPayCnt;
     private String workStudentMessageSql;
     private Long workStudentMessageCnt;
+    @PersistenceContext(unitName = "primaryPersistenceUnit")
+    private EntityManager firstEntityManager;
     @PersistenceContext(unitName = "secondaryPersistenceUnit")
     private EntityManager entityManager;
     @Autowired
@@ -619,6 +623,24 @@ public class ClassServiceImpl implements ClassService {
         TableQuery query = new TableQuery(entityManager, WorkStudentRecommend.class, criterias, sql);
         DataSet<WorkStudentRecommend> actions=query.getResultDataSet();
         return actions;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    @Cacheable(value = "day_student_activity_chart", keyGenerator = "wiselyKeyGenerator")
+    public LinkedHashMap<String,String> getDayStudentActivityChart(String data){
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        String sql=String.format("select UNIX_TIMESTAMP(time),count(id) from ABC360_WEB_STUDENT_ACTION_LAST_MONTH_WITH_TODAY_TBL wsal \n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=wsal.operatorid\n" +
+                "where UNIX_TIMESTAMP(time) BETWEEN %s and (%s+86400)\n" +
+                "and esi.study_aim=1\n" +
+                "group by DATE_FORMAT(wsal.time, '%%Y-%%m-%%d %%H:%%i')",data,data);
+        Query q = firstEntityManager.createNativeQuery(sql);
+        List<Object[]> list = q.getResultList();
+        for (Object[] result : list) {
+            map.put(result[0].toString(), result[1].toString());
+        }
+        return map;
     }
 
     @Override

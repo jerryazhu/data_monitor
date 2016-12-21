@@ -164,6 +164,12 @@ public class CostClassController {
         return classService.getOldStudentPayCnt();
     }
 
+    @RequestMapping("/get_work_renew_cnt")
+    @ResponseBody
+    public ArrayList getWorkRenewCnt(){
+        return classService.getWorkRenewCnt();
+    }
+
     @RequestMapping("/get_book_choose_cost_class_sql")
     @ResponseBody
     public String getChooseBookWholeSql() {
@@ -174,6 +180,33 @@ public class CostClassController {
     @ResponseBody
     public String getWorkStudentMessageSql() {
         return classService.getWorkStudentMessageSql();
+    }
+
+    @RequestMapping("/get_work_class_message_cnt")
+    @ResponseBody
+    public Long getWorkClassMessageCnt() {
+        return classService.getWorkClassMessageCnt();
+    }
+
+    @RequestMapping("/get_work_refunds_cnt")
+    @ResponseBody
+    public ArrayList getWorkRefundsCnt(){
+        return classService.getWorkRefundsCnt();
+    }
+    @RequestMapping("/get_work_refunds_sql")
+    @ResponseBody
+    public String getWorkRefundsSql(){
+        return classService.getWorkRefundsSql();
+    }
+    @RequestMapping("/get_work_class_message_sql")
+    @ResponseBody
+    public String getWorkClassMessageSql() {
+        return classService.getWorkClassMessageSql();
+    }
+    @RequestMapping("/get_work_renew_sql")
+    @ResponseBody
+    public String getWorkRenewSql() {
+        return classService.getWorkRenewSql();
     }
 
     @RequestMapping("/get_book/{data}")
@@ -333,6 +366,51 @@ public class CostClassController {
     public DatatablesResponse getWorkStudentRecommend(@PathVariable String data,HttpServletRequest request){
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
         DataSet<WorkStudentRecommend> actions=classService.getWorkStudentRecommend(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
+    @RequestMapping(value = "/get_work_class_message/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getWorkClassMessage(@PathVariable String data,HttpServletRequest request){
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<WorkClassMessage> actions=classService.getWorkClassMessage(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
+    @RequestMapping(value = "/get_lose_student_class/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getLoseStudentClass(@PathVariable String data,HttpServletRequest request){
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<WorkLoseStudentClass> actions=classService.getWorkLoseStudentClass(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
+    @RequestMapping(value = "/get_lose_student_acoin/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getLoseStudentAcoin(@PathVariable String data,HttpServletRequest request){
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<WorkLoseStudentAcoin> actions=classService.getWorkLoseStudentAcoin(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
+    @RequestMapping(value = "/get_work_renew/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getWorkRenew(@PathVariable String data,HttpServletRequest request){
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<WorkRenew> actions=classService.getWorkRenew(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
+    @RequestMapping(value = "/get_work_refunds/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getWorkRefunds(@PathVariable String data,HttpServletRequest request) {
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<WorkRefunds> actions=classService.getWorkRefunds(data,criterias);
         return DatatablesResponse.build(actions,criterias);
     }
 

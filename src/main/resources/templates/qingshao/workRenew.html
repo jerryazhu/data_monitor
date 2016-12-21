@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/css/qingshao.css}" rel="stylesheet"/>
+    <link th:href="@{/css/datepicker/bootstrap-datetimepicker.css}" rel="stylesheet"/>
+    <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="row">
+    <div class="col-lg-2">
+        <p class="text-right control-label"><strong class="height"> 时间：</strong></p>
+    </div>
+    <div class="col-lg-10">
+        <div class='col-md-3'>
+            <div class="form-group">
+                <label class="sr-only" for="begin-time">BeginTime</label>
+                <div class='input-group date' id='begin-time'>
+                    <input class="form-control" type="text" id="bTimeInput"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class='col-md-3'>
+            <div class="form-group">
+                <label class="sr-only" for="to-time">ToTime</label>
+                <div class='input-group date' id='to-time'>
+                    <input class="form-control" type="text" id="tTimeInput"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2 height">
+        <p class="text-right control-label"><strong class="height">师资：</strong></p>
+    </div>
+    <div class="col-lg-10 height" id="teacherType">
+        <span class="option-text active" id="allTeacherType">不限</span>
+        <span class="option-text">菲律宾</span>
+        <span class="option-text">欧美</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2 height">
+        <p class="text-right control-label"><strong class="height">课程类型：</strong></p>
+    </div>
+    <div class="col-lg-10 height" id="classType">
+        <span class="option-text active" id="allClassType">不限</span>
+        <span class="option-text">套餐课</span>
+        <span class="option-text">自由课</span>
+    </div>
+</div>
+<div class="row"  id="show">
+    <div class="col-lg-2 height">
+        <p class="text-right control-label"><strong class="height">续费类型：</strong></p>
+    </div>
+    <div class="col-lg-10 height" id="renewType">
+        <span class="option-text active">不限</span>
+        <span class="option-text">补升</span>
+        <span class="option-text">续费</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2 height">
+        <p class="text-right control-label"><strong class="height">A币限制：</strong></p>
+    </div>
+    <div class="col-lg-10 height" id="look">
+        <span class="option-text active" id="table1">不限</span>
+        <span class="option-text" id="table2">A币不足1500学生</span>
+    </div>
+</div>
+<div class="row" id="sqlLook">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-10">
+        <div class="col-lg-3 pull-right"><button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#sql">SQL查看</button></div>
+        <div id="sql" class="collapse pull-center"></div>
+    </div>
+</div>
+<div class="row" id="table_one">
+    <div class="col-lg-1"></div>
+    <div class="col-lg-10">
+        <div class="panel panel-default">
+            <div style="float: right" id="cnt_all">
+            <span class="cnt">总人数:
+                <span class="cntNumber" id="cnt0">
+                </span>
+            </span>
+            <span class="cnt">续费人数:
+                <span class="cntNumber" id="cnt1">
+                </span>
+            </span>
+            <span class="cnt">补升人数:
+                <span class="cntNumber" id="cnt2">
+                </span>
+            </span>
+            <span class="cnt">总金额:
+                <span class="cntNumber" id="cnt3">
+                </span>
+            </span>
+            <span class="cnt">总续费金额:
+                <span class="cntNumber" id="cnt4">
+                </span>
+            </span>
+            <span class="cnt">总补升金额:
+                <span class="cntNumber" id="cnt5">
+                </span>
+            </span>
+            <span class="cnt">续费转化率:
+                <span class="cntNumber" id="cnt6">
+                </span>
+            </span>
+            <span class="cnt">补升转化率:
+                <span class="cntNumber" id="cnt7">
+                </span>
+            </span>
+            </div>
+            <div class="panel-body">
+                <div class="dataTable_wrapper">
+                    <table class="table table-striped table-bordered table-hover" id="student">
+                        <thead>
+                        <tr>
+                            <th>学生ID</th>
+                            <th>学生姓名</th>
+                            <th>订单ID</th>
+                            <th>补升/续费</th>
+                            <th>补升金额/续费金额</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-1"></div>
+</div>
+<div class="row" id="table_two">
+    <div class="col-lg-1"></div>
+    <div class="col-lg-10">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="dataTable_wrapper">
+                    <table class="table table-striped table-bordered table-hover" id="look2_table">
+                        <thead>
+                        <tr>
+                            <th>学生ID</th>
+                            <th>学生姓名</th>
+                            <th>导师姓名</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-1"></div>
+</div>
+
+</body>
+<script th:src="@{/js/datepicker/moment.min.js}"></script>
+<script th:src="@{/js/datepicker/bootstrap-datetimepicker.min.js}"></script>
+<script th:src="@{/js/datatables/jquery.dataTables.js}"></script>
+<script th:src="@{/js/datatables/dataTables.bootstrap.min.js}"></script>
+<script th:src="@{/js/jquery-autocomplete/jquery.autocomplete.min.js}"></script>
+<script>
+    // <![CDATA[
+    $(document).ready(function () {
+        var beginTime = $('#begin-time');
+        var toTime = $('#to-time');
+        var teacherType=$('#teacherType');
+        var classType=$('#classType');
+        var renewType=$('#renewType');
+        var look=$('#look');
+        var date = new Date();
+        var yDay;
+        var tDay;
+        if(date.getMonth()==0){
+            yDay=(date.getFullYear()-1) + "-12-1 00:00";
+            tDay=(date.getFullYear()-1) + "-12-31 00:00";
+        }else{
+            yDay= date.getFullYear() + "-" + date.getMonth() + "-1 00:00";
+            tDay= date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth())+" 23:59";
+        }
+        $('#bTimeInput').val(yDay);
+        $('#tTimeInput').val(tDay);
+        beginTime.datetimepicker({
+            format: 'YYYY-MM-DD HH:mm',
+            useCurrent: false
+        });
+        toTime.datetimepicker({
+            format: 'YYYY-MM-DD HH:mm',
+            useCurrent: false
+        });
+        recoverCnt();
+        createTable();
+        beginTime.on("dp.change", function (e) {
+            var bTime=$('#begin-time').find("> input").val();
+            var tTime=$('#to-time').find("> input").val();
+            if(bTime!='' && tTime!='' && tTime>bTime){
+                recoverCnt();
+                createTable();
+            }
+        });
+        toTime.on("dp.change", function (e) {
+            var bTime=$('#begin-time').find("> input").val();
+            var tTime=$('#to-time').find("> input").val();
+            if(bTime!='' && tTime!=''&& tTime>bTime){
+                recoverCnt();
+                createTable();
+            }
+        });
+
+        teacherType.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+                recoverCnt();
+                createTable();
+            });
+        });
+        look.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+                recoverCnt();
+                createTable();
+            });
+        });
+        classType.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+                recoverCnt();
+                createTable();
+            });
+        });
+        renewType.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+                recoverCnt();
+                createTable();
+            });
+        });
+    });
+    function recoverCnt() {
+        $('#cnt_all').find('span[class="cntNumber"]').html('');
+    }
+    function createTable() {
+        var look=$('#look').find('span[class="option-text active"]').attr("id");
+        if(look=="table1"){
+            $('#table_one').show();
+            $('#table_two').hide();
+            $('#show').show();
+            $('#cnt_all').show();
+            var table_one=$('#student').DataTable({
+                destroy: true,
+                lengthMenu: [10, 25, 50, 100],
+                order: [[4, "desc"]],
+                autoWidth: true,
+                paging: true,
+                processing: true,
+                serverSide: true,
+                searching:false,
+                filter: true,
+                language: {
+                    "lengthMenu": " _MENU_ ",
+                    "zeroRecords": "Nothing found - sorry",
+                    "info": "Showing page _PAGE_ of _PAGES_",
+                    "infoEmpty": "No records available",
+                    "infoFiltered": "(filtered from _MAX_ total records)"
+                },
+                columns: [
+                    {"data": "id"},
+                    {"data": "name"},
+                    {"data": "oid"},
+                    {"data": "type"},
+                    {"data": "money"}
+                ],
+                columnDefs:[
+                    {
+                        "targets": 3,
+                        "render": function (data, type, row, meta) {
+                            if(data==0){
+                                return "续费";
+                            }else{
+                                return "补升("+data+")";
+                            }
+                        }
+                    }
+                ],
+                ajax: {
+                    url: '/class/get_work_renew/'+getData(),
+                    type: 'GET'
+                }
+            });
+            $('#student').on( 'init.dt', function () {
+                getCnt();
+                getSql();
+            }).dataTable();
+        }else{
+            $('#table_one').hide();
+            $('#table_two').show();
+            $('#show').hide();
+            $('#cnt_all').hide();
+            var table_two=$('#look2_table').DataTable({
+                destroy: true,
+                lengthMenu: [10, 25, 50, 100],
+                order: [[0, "asc"]],
+                autoWidth: true,
+                paging: true,
+                processing: true,
+                serverSide: true,
+                searching:false,
+                filter: true,
+                language: {
+                    "lengthMenu": " _MENU_ ",
+                    "zeroRecords": "Nothing found - sorry",
+                    "info": "Showing page _PAGE_ of _PAGES_",
+                    "infoEmpty": "No records available",
+                    "infoFiltered": "(filtered from _MAX_ total records)"
+                },
+                columns: [
+                    {"data": "id"},
+                    {"data": "name"},
+                    {"data": "ghs"}
+                ],
+                columnDefs:[
+                ],
+                ajax: {
+                    url: '/class/get_work_renew/'+getData(),
+                    type: 'GET'
+                }
+            });
+            $('#look2_table').on( 'init.dt', function () {
+                getSql();
+            }).dataTable();
+        }
+    }
+    function getCnt() {
+        $.ajax({
+            url: '/class/get_work_renew_cnt',
+            type:'GET',
+            data:'',
+            success:function (data) {
+                $.each(data,function (n,value){
+                    if(n==6||n==7){
+                        value=value+"%";
+                    }
+                    $('#cnt'+n).html('<span  class="cntNumber">'+value+'</span>');
+                });
+            },
+            error:function () {
+            }
+        });
+    }
+    function getSql() {
+        $.ajax({
+            url: '/class/get_work_renew_sql',
+            type:'GET',
+            data:'',
+            success:function (data) {
+                $('#sql').html('<span >'+data.replace(/\n/g,'<br/>')+'</span>');
+            },
+            error:function () {
+            }
+        });
+    }
+    function getData() {
+        var bTime=$('#begin-time').find("> input").val();
+        var tTime=$('#to-time').find("> input").val();
+        if(bTime==''||tTime==''){
+            bTime="all";
+            tTime="all";
+        }else{
+            if(tTime>bTime){
+                bTime=dateToUnix(bTime);
+                tTime=dateToUnix(tTime);
+            }
+        }
+        var look=$('#look').find('span[class="option-text active"]').attr("id");
+        var teacherType=$('#teacherType').find('span[class="option-text active"]').text();
+        var classType=$('#classType').find('span[class="option-text active"]').text();
+        if(look=="table1"){
+            var renewType=$('#renewType').find('span[class="option-text active"]').text();
+            return bTime+"+"+tTime+"+"+teacherType+"+"+classType+"+"+renewType+"+"+look;
+        }else{
+            return bTime+"+"+tTime+"+"+teacherType+"+"+classType+"+不限+"+look;
+        }
+    }
+    // ]]>
+</script>
+</html>

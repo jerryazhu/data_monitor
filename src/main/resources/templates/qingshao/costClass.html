@@ -118,6 +118,28 @@
     </div>
 </div>
 <div class="row">
+    <div class="col-lg-2 height">
+        <p class="text-right control-label"><strong class="height">课程状态：</strong></p>
+    </div>
+    <div class="col-lg-10 height" id="classStatus">
+        <span class="option-text active">不限</span>
+        <span class="option-text">完成</span>
+        <span class="option-text">学生缺席</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2 height">
+        <p class="text-right control-label"><strong class="height">课程类别：</strong></p>
+    </div>
+    <div class="col-lg-10 height" id="classType">
+        <span class="option-text active">不限</span>
+        <span class="option-text">常规课程</span>
+        <span class="option-text">免费体验</span>
+        <span class="option-text">免费测评</span>
+        <span class="option-text">常规测评</span>
+    </div>
+</div>
+<div class="row">
     <div class="col-lg-2"></div>
     <div class="col-lg-10">
         <div class="col-lg-3 pull-right"><button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#sql">SQL查看</button></div>
@@ -173,6 +195,8 @@
         var teacherGroup = document.getElementById("group");
         var studentInput=$('#student-id-mobile');
         var teacherInput=$('#teacher-id-email');
+        var classStatus=$('#classStatus');
+        var classType=$('#classType');
         var date = new Date();
         var yDay;
         var tDay;
@@ -272,6 +296,26 @@
                 $(this).nextAll().removeClass("active");
                 $(this).prevAll().removeClass("active");
                 showCountry(this);
+                $('#costClassCnt').html('<span  class="cntNumber">  </span>');
+                createTable();
+            });
+        });
+        classStatus.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+                $('#costClassCnt').html('<span  class="cntNumber">  </span>');
+                createTable();
+            });
+        });
+        classType.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
                 $('#costClassCnt').html('<span  class="cntNumber">  </span>');
                 createTable();
             });
@@ -502,8 +546,10 @@
             case "自由课":combo='00';break;
         }
         var group = $('#group').find("option:selected").val();
+        var classStatus=$('#classStatus').find('span[class="option-text active"]').text();
+        var classType=$('#classType').find('span[class="option-text active"]').text();
         //alert(bTime+"+"+tTime+"+"+studentMessage+"+"+comboCountry+"+"+combo+"+"+binding+"+"+teacherMessage+"+"+teacherStatus+"+"+group+"+"+teacherType);
-        return bTime+"+"+tTime+"+"+studentMessage+"+"+comboCountry+"+"+combo+"+"+binding+"+"+teacherMessage+"+"+teacherStatus+"+"+group+"+"+teacherType;
+        return bTime+"+"+tTime+"+"+studentMessage+"+"+comboCountry+"+"+combo+"+"+binding+"+"+teacherMessage+"+"+teacherStatus+"+"+group+"+"+teacherType+"+"+classStatus+"+"+classType;
     }
     // ]]>
 </script>

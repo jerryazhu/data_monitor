@@ -15,12 +15,11 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by dykj on 2016/11/17.
@@ -39,6 +38,12 @@ public class ClassServiceImpl implements ClassService {
     private String oldStudentPayCnt;
     private String workStudentMessageSql;
     private Long workStudentMessageCnt;
+    private Long workClassMessageCnt;
+    private String workClassMessageSql;
+    private String workRenewSql;
+    private String workRenewWholeSql;
+    private String workRefundsSql;
+    private ArrayList workRefundsCnt=new ArrayList();
     @PersistenceContext(unitName = "primaryPersistenceUnit")
     private EntityManager firstEntityManager;
     @PersistenceContext(unitName = "secondaryPersistenceUnit")
@@ -146,12 +151,14 @@ public class ClassServiceImpl implements ClassService {
         String teacherStatus = cutData[7];
         String group = cutData[8];
         String teacherType = cutData[9];
+        String classStatus=cutData[10];
+        String classType=cutData[11];
         if (bTime.equals("all") || tTime.equals("all")) {
             bSql = bSql + "\n" + "ecr.begin_time>" + yesterdayUnix;
         } else {
             bSql = bSql + "\n" + "ecr.begin_time>=" + bTime + " and ecr.begin_time<=" + tTime;
         }
-        bSql=bSql+"\n"+"and ecr.status=3\n" +"and esi.study_aim=1 and ecr.free_try=0";
+        bSql=bSql+"\n"+"and ecr.status=3\n" +"and esi.study_aim=1";
         if (!studentMessage.equals("all")) {
             bSql = bSql + "\n" + "and es.id= " + studentMessage;
         }
@@ -246,9 +253,7 @@ public class ClassServiceImpl implements ClassService {
         if (!group.equals("Group")) {
             bSql = bSql + "\n" + "and etg.title='" + group + "'";
         }
-        if (teacherStatus.equals("不限")) {
-            bSql = bSql + "\n" + "and (et.status=3 or et.status=4)";
-        } else {
+        if (!teacherStatus.equals("不限")) {
             switch (teacherStatus) {
                 case "试用":
                     bSql = bSql + "\n" + "and et.status=3";
@@ -266,6 +271,21 @@ public class ClassServiceImpl implements ClassService {
                 case "欧美":
                     bSql = bSql + "\n" + "and et.catalog=2";
                     break;
+            }
+        }
+        if(!classStatus.equals("不限")){
+            if(classStatus.equals("完成")){
+                bSql=bSql+"\n"+"and ecr.status=3";
+            }else{
+                bSql=bSql+"\n"+"and ecr.status=5";
+            }
+        }
+        if(!classType.equals("不限")){
+            switch(classType){
+                case "常规课程":bSql=bSql+"\n"+"and ecr.free_try=0";break;
+                case "免费体验":bSql=bSql+"\n"+"and ecr.free_try=1";break;
+                case "免费测评":bSql=bSql+"\n"+"and ecr.free_try=2";break;
+                case "常规测评":bSql=bSql+"\n"+"and ecr.free_try=3";break;
             }
         }
         bSql=bSql+"\n group by ecr.sid,begin_time";
@@ -542,7 +562,7 @@ public class ClassServiceImpl implements ClassService {
         if(studentStatus.equals("退款学员")){
             sql=sql+"\n"+"group by es.id,er.refund_time";
         }else{
-            sql = sql + "\n" + "group by es.id,allorder.combo_name,cnt";
+            sql = sql + "\n" + "group by es.id,allorder.id,cnt";
         }
         TableQuery query = new TableQuery(entityManager, payStudent.class, criterias, sql);
         DataSet<payStudent> result = query.getResultDataSet();
@@ -607,7 +627,7 @@ public class ClassServiceImpl implements ClassService {
         sql=sql+"\ngroup by es.id";
         TableQuery query = new TableQuery(entityManager, WorkStudentMessage.class, criterias, sql);
         DataSet<WorkStudentMessage> actions=query.getResultDataSet();
-        workStudentMessageCnt=actions.getTotalRecords();
+        workStudentMessageCnt=query.getTotalCount();
         workStudentMessageSql=sql;
         return actions;
     }
@@ -622,6 +642,302 @@ public class ClassServiceImpl implements ClassService {
                 "where es.mobile !='' and esi.study_aim=1",cutData[0],cutData[1]);
         TableQuery query = new TableQuery(entityManager, WorkStudentRecommend.class, criterias, sql);
         DataSet<WorkStudentRecommend> actions=query.getResultDataSet();
+        return actions;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataSet<WorkLoseStudentClass> getWorkLoseStudentClass(String data,DatatablesCriterias criterias){
+        String [] cutData=data.split("\\+");
+        ArrayList days=new ArrayList();
+        String bTime=cutData[0];
+        String tTime=cutData[1];
+        String combo=cutData[2];
+        String sql=String.format("select es.id as id,es.nickname as name,eru.nickname as ghs,FROM_UNIXTIME(ecr.begin_time,'%%Y-%%m-%%d') as day from ebk_students es\n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                "LEFT JOIN ebk_class_records ecr on ecr.sid=es.id\n" +
+                "LEFT JOIN ebk_rbac_user eru on eru.id=es.ghs\n" +
+                "where ecr.begin_time>=%s and ecr.begin_time<=%s\n" +
+                "and esi.study_aim=1 and es.status=1" ,bTime,tTime);
+        if(!combo.equals("不限")){
+            switch (combo) {
+                case "菲律宾套餐":
+                    sql = sql + "\n" + "and es.lsns_per_day!=0 and es.days_per_week!=0";
+                    break;
+                case "欧美套餐":
+                    sql = sql + "\n" + "and es.lsns_per_day_eu!=0 and es.days_per_week_eu!=0";
+                    break;
+                case "自由课":
+                    sql = sql + "and (es.lsns_per_day=0 and es.days_per_week=0 and es.lsns_per_day_eu=0 and es.days_per_week_eu=0 and es.acoin!=0)";
+                    break;
+            }
+        }
+        sql=sql+"\n"+"group by es.id,ecr.id";
+        Query q = entityManager.createNativeQuery(sql);
+        List<Object[]> list = q.getResultList();
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        for (Object[] result : list) {
+            map.put(result[0].toString(), result[3].toString());
+        }
+        Long bbTime=Long.parseLong(bTime)*1000;
+        Long ttTime=Long.parseLong(tTime)*1000;
+        Long oneDay = 1000 * 60 * 60 * 24L;
+        while (bbTime <= ttTime) {
+            Date d = new Date(bbTime);
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            days.add(df.format(d));
+            System.out.println(days);
+            bbTime += oneDay;
+        }
+        TableQuery query = new TableQuery(entityManager, WorkLoseStudentClass.class, criterias, sql);
+        DataSet<WorkLoseStudentClass> actions=query.getResultDataSet();
+        return actions;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataSet<WorkLoseStudentAcoin> getWorkLoseStudentAcoin(String data,DatatablesCriterias criterias){
+        return null;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataSet getWorkRenew(String data,DatatablesCriterias criterias){
+        String[] cutData=data.split("\\+");
+        String bTime=cutData[0];
+        String tTime=cutData[1];
+        String teacherType = cutData[2];
+        String classType = cutData[3];
+        String renewType=cutData[4];
+        String look=cutData[5];
+        String sql;
+        if(look.equals("table1")){
+        sql = String.format("select allorder.id as oid,es.id as id,es.nickname as name,allorder.up as type, ROUND(ifnull(allorder.tmoney,0),2) as money \n" +
+                "from ebk_students es\n" +
+                "LEFT JOIN (select eao.create_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
+                "INNER JOIN ebk_acoin_order_detail eaod on eao.id=eaod.order_id \n" +
+                "group by eaod.order_id,eaod.begin_time\n" +
+                "union\n" +
+                "select eao.create_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
+                "INNER JOIN ebk_acoin_split_order easo on eao.sid=easo.sid\n" +
+                "group by eao.id,easo.begin_time) allorder on allorder.sid=es.id\n"+
+                "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
+                "where allorder.create_time >=%s and allorder.create_time<=%s\n" +
+                "and esi.study_aim=1 and allorder.payed=1 and allorder.order_flag=2",bTime,tTime);
+
+        workRenewWholeSql=sql;
+        }else{
+            sql = String.format("select es.id as id,es.nickname as name, ifNUll(eru.nickname,'UNKNOWN') as ghs\n" +
+                    "from ebk_students es\n" +
+                    "LEFT JOIN (select eao.create_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
+                    "INNER JOIN ebk_acoin_order_detail eaod on eao.id=eaod.order_id \n" +
+                    "group by eaod.order_id,eaod.begin_time\n" +
+                    "union\n" +
+                    "select eao.create_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
+                    "INNER JOIN ebk_acoin_split_order easo on eao.sid=easo.sid\n" +
+                    "group by eao.id,easo.begin_time) allorder on allorder.sid=es.id\n"+
+                    "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
+                    "LEFT JOIN ebk_rbac_user eru on eru.id=es.ghs\n" +
+                    "where allorder.create_time >=%s and allorder.create_time<=%s\n" +
+                    "and esi.study_aim=1",bTime,tTime);
+        }
+        if (!teacherType.equals("不限")) {
+            if (teacherType.equals("菲律宾")) {
+                sql = sql + "\n" + "and allorder.tch_from=1";
+            } else {
+                sql = sql + "\n" + "and allorder.tch_from=2";
+            }
+        }
+        if (!classType.equals("不限")) {
+            if (classType.equals("套餐课")) {
+                sql = sql + "\n" + "and (allorder.combo_name not like '%自由%' or allorder.combo_name not like '%自由%')" ;
+            } else {
+                sql = sql + "\n" + "and  (allorder.combo_name like '%自由%' or allorder.combo_name like '%自由%')";
+            }
+        }
+        if (!renewType.equals("不限")) {
+            if (renewType.equals("补升")) {
+                sql = sql + "\n" + "and allorder.up!=0";
+            } else {
+                    sql = sql + "\n" + "and allorder.up=0";
+            }
+        }
+        if(look.equals("table1")){
+            sql = sql + "\n" + "group by es.id,allorder.id,money";
+        }else{
+            sql=sql+"\n"+"and es.acoin<1500";
+            sql = sql + "\n" + "group by es.id,allorder.id";
+        }
+        workRenewSql=sql;
+        if(look.equals("table1")){
+            TableQuery query = new TableQuery(entityManager, WorkRenew.class, criterias, sql);
+            DataSet<WorkRenew> actions=query.getResultDataSet();
+            return actions;
+        }else {
+            TableQuery query = new TableQuery(entityManager, WorkRenewLessAcoin.class, criterias, sql);
+            DataSet<WorkRenewLessAcoin> actions=query.getResultDataSet();
+            return actions;
+        }
+    }
+    @Override
+    @SuppressWarnings("unchecked")
+    public ArrayList getWorkRenewCnt(){
+        ArrayList wholeCnt=new ArrayList();
+        Double cnt1 = null;
+        Double cnt2 = null;
+        DecimalFormat df = new DecimalFormat("######0.00");
+        String sql=workRenewWholeSql+"\n"+"group by es.id,allorder.combo_name,money";
+        String sql0=String.format("select count(DISTINCT result.id) from (%s) result",sql);
+        Query q0 = entityManager.createNativeQuery(sql0);
+        List list0 = q0.getResultList();
+        wholeCnt.add(list0.get(0).toString());
+
+        String sql1=String.format("select count(DISTINCT result.id) from (%s) result where result.type=0",sql);
+        Query q1 = entityManager.createNativeQuery(sql1);
+        List list1 = q1.getResultList();
+        cnt1= Double.valueOf(list1.get(0).toString());
+        wholeCnt.add(list1.get(0).toString());
+
+        String sql2=String.format("select count(DISTINCT result.id) from (%s) result where result.type!=0",sql);
+        Query q2 = entityManager.createNativeQuery(sql2);
+        List list2 = q2.getResultList();
+        cnt2= Double.valueOf(list2.get(0).toString());
+        wholeCnt.add(list2.get(0).toString());
+
+        String sql3=String.format("select sum(result.money) from (%s) result",sql);
+        Query q3 = entityManager.createNativeQuery(sql3);
+        List list3 = q3.getResultList();
+        wholeCnt.add(list3.get(0).toString());
+
+        String sql4=String.format("select sum(result.money) from (%s) result where result.type=0",sql);
+        Query q4 = entityManager.createNativeQuery(sql4);
+        List list4 = q4.getResultList();
+        wholeCnt.add(list4.get(0).toString());
+
+        String sql5=String.format("select sum(result.money) from (%s) result where result.type!=0",sql);
+        Query q5 = entityManager.createNativeQuery(sql5);
+        List list5 = q5.getResultList();
+        wholeCnt.add(list5.get(0).toString());
+
+        String sql6=workRenewWholeSql.replace("and allorder.payed=1 and allorder.order_flag=2","\n"+"and es.acoin<1500"+"\n"+"group by es.id,allorder.id");
+        sql6=String.format("select count(DISTINCT result.id) from (%s) result where result.type=0",sql6);
+        Query q6 = entityManager.createNativeQuery(sql6);
+        List list6 = q6.getResultList();
+        Double data6;
+        if(cnt1!=null){
+            data6=cnt1/Long.parseLong(list6.get(0).toString())*100;
+        }else{
+            data6= 0d;
+        }
+        wholeCnt.add(df.format(data6));
+
+        String sql7=workRenewWholeSql.replace("allorder.order_flag=2","allorder.order_flag=1");
+        sql7=sql7+"\n"+"group by es.id,allorder.id";
+        sql7=String.format("select count(DISTINCT result.id) from (%s) result where result.type!=0",sql7);
+        Query q7 = entityManager.createNativeQuery(sql7);
+        List list7 = q7.getResultList();
+        Double data7;
+        if(cnt2!=null){
+            data7=cnt2/Long.parseLong(list7.get(0).toString())*100;
+        }else{
+            data7= 0d;
+        }
+        wholeCnt.add(df.format(data7));
+        System.out.println(wholeCnt);
+        return wholeCnt;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataSet<WorkRefunds> getWorkRefunds(String data,DatatablesCriterias criterias){
+        String [] cutData=data.split("\\+");
+        String bTime=cutData[0];
+        String tTime=cutData[1];
+        String teacherType=cutData[2];
+        String classType=cutData[3];
+        String level=cutData[4];
+        String age=cutData[5];
+        String sql=String.format("select es.id as id,er.money as money,IFNULL(concat(es.level,es.sub_level),'UNKNOW') as rank,IFNULL(ecr.cnt,'0') as cost,esi.age_duration as age,allorder.combo_name as combo,er.reason as reason from ebk_students es\n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                "LEFT JOIN (select eao.create_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
+                "INNER JOIN ebk_acoin_order_detail eaod on eao.id=eaod.order_id \n" +
+                "group by eaod.order_id,eaod.begin_time\n" +
+                "union\n" +
+                "select eao.create_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
+                "INNER JOIN ebk_acoin_split_order easo on eao.sid=easo.sid\n" +
+                "group by eao.id,easo.begin_time) allorder on allorder.sid=es.id\n" +
+                "LEFT JOIN ebk_refunds er on er.sid=es.id\n" +
+                "LEFT JOIN (select sid,count(id) as cnt from ebk_class_records group by sid) ecr on ecr.sid=es.id\n" +
+                "where er.refund_time>=%s and er.refund_time<=%s\n" +
+                "and esi.study_aim=1 and er.status=3" ,bTime,tTime);
+        if (!teacherType.equals("不限")) {
+            if (teacherType.equals("菲律宾")) {
+                sql = sql + "\n" + "and allorder.tch_from=1";
+            } else {
+                sql = sql + "\n" + "and allorder.tch_from=2";
+            }
+        }
+        if (!classType.equals("不限")) {
+            if (classType.equals("套餐课")) {
+                sql = sql + "\n" + "and (allorder.combo_name not like '%自由%' or allorder.combo_name not like '%自由%')" ;
+            } else {
+                sql = sql + "\n" + "and  (allorder.combo_name like '%自由%' or allorder.combo_name like '%自由%')";
+            }
+        }
+        if(!level.equals("ALL")){
+            sql=sql+"\n"+"and concat(es.level,es.sub_level)='"+level+"'";
+        }
+        if(!age.equals("allAge")){
+            if(age.equals("0")){
+                sql=sql+"\nand esi.age_duration not in(1,2,3,10,11,12,6,7,8,9)";
+            }else{
+                sql=sql+"\nand esi.age_duration="+age;
+            }
+        }
+        sql=sql+"\ngroup by es.id,er.id";
+        TableQuery query = new TableQuery(entityManager, WorkRefunds.class, criterias, sql);
+        DataSet<WorkRefunds> actions=query.getResultDataSet();
+        workRefundsCnt.add(query.getTotalCount().toString());
+        workRefundsSql=sql;
+        String sumSql=String.format("select ROUND(sum(result.money),2) from (%s) result",sql);
+        Query q = entityManager.createNativeQuery(sumSql);
+        List list = q.getResultList();
+        workRefundsCnt.add(list.get(0));
+        return actions;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataSet<WorkClassMessage> getWorkClassMessage(String data,DatatablesCriterias criterias){
+        String[]cutData=data.split("\\+");
+        String bTime =cutData[0];
+        String tTime=cutData[1];
+        String classType=cutData[2];
+        String show=cutData[3];
+        String sql=String.format("select ecr.begin_time as time,ecr.id as cid,es.id as sid,es.nickname as sname,et.id as tid,et.nickname as tname,ifNULL(eru.nickname,'无导师') as ghs from ebk_students es\n" +
+                "LEFT JOIN ebk_student_info esi on es.id=esi.sid\n" +
+                "LEFT JOIN ebk_class_records ecr on ecr.sid=es.id\n" +
+                "LEFT JOIN ebk_teachers et on ecr.tid=et.id\n" +
+                "LEFT JOIN ebk_rbac_user eru on eru.id=es.ghs\n" +
+                "LEFT JOIN ebk_class_comments ecc on ecc.cid=ecr.id \n"+
+                "where ecr.begin_time>%s and ecr.begin_time<%s",bTime,tTime);
+        if(!classType.equals("不限")){
+            if(classType.equals("菲律宾")){
+                sql=sql+"\n"+"and ecr.catalog=1";
+            }else{
+                sql=sql+"\n"+"and ecr.catalog=2";
+            }
+        }
+        switch (show){
+            case "差评数":sql=sql+"\n"+"and ecc.choice=-1";break;
+            case "缺席的课时数":sql=sql+"\n"+"and ecr.status=5";break;
+            case "测评课完成数":sql=sql+"\n"+"and ecr.status=3 and ecr.free_try=2";break;
+        }
+        sql=sql+"\n"+"group by es.id,ecr.id";
+        TableQuery query = new TableQuery(entityManager, WorkClassMessage.class, criterias, sql);
+        DataSet<WorkClassMessage> actions=query.getResultDataSet();
+        workClassMessageCnt=query.getTotalCount();
+        workClassMessageSql=sql;
         return actions;
     }
 
@@ -710,6 +1026,30 @@ public class ClassServiceImpl implements ClassService {
     @Override
     @SuppressWarnings("unchecked")
     public Long getWorkStudentMessageCnt(){return workStudentMessageCnt;};
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public String getWorkClassMessageSql(){return workClassMessageSql;};
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Long getWorkClassMessageCnt(){return workClassMessageCnt;};
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public String getWorkRenewSql(){return workRenewSql;}
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public String getWorkRefundsSql(){
+        return workRefundsSql;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public ArrayList getWorkRefundsCnt(){
+        return workRefundsCnt;
+    }
 
 
 }

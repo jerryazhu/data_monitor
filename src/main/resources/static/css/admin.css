@@ -1,0 +1,43 @@
+/*!
+ * Start Bootstrap - Scrolling Nav (http://startbootstrap.com/)
+ * Copyright 2013-2016 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
+ */
+
+body {
+    width: 100%;
+}
+
+@media (min-width: 767px) {
+    .navbar {
+        padding-top: 5px;
+        padding-bottom: 10px;
+        -webkit-transition: background .5s ease-in-out, padding .5s ease-in-out;
+        -moz-transition: background .5s ease-in-out, padding .5s ease-in-out;
+        transition: background .5s ease-in-out, padding .5s ease-in-out;
+    }
+    .navbar>.container-fluid .navbar-brand {
+        margin-left: 30px;
+    }
+    .top-nav-collapse {
+        padding: 0;
+    }
+}
+
+#adminView {
+    padding-top: 80px;
+}
+
+#userManagerTable .btn{
+    font-size: 13px;
+}
+
+th {
+    font-size: 14px;
+    text-align: center;
+}
+
+td {
+    font-size: 13px;
+    text-align: center;
+}

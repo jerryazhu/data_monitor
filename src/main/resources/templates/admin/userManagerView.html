@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<div th:fragment="userManagerView">
+    <div class="modal fade" id="updateAuthorityModal" tabindex="-1" role="dialog"
+         aria-labelledby="updateAuthorityModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="updateAuthorityModalLabel">更新权限</h4>
+                </div>
+                <div class="modal-body">
+                    <input id="userid_authority" type="hidden" class="form-control" placeholder="userid_authority"/>
+                    <div class="alert alert-success alert-dismissible" role="alert" style="display:none">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                                class="sr-only">Close</span></button>
+                        <strong>Successfully</strong> to update authority
+                    </div>
+                    <div class="alert alert-danger alert-dismissible" role="alert" style="display:none">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                                class="sr-only">Close</span></button>
+                        <strong>Failed</strong> to update authority
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateAuthority()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog"
+         aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="resetPasswordModalLabel">新建用户</h4>
+                </div>
+                <div class="modal-body">
+                    <input id="userid" type="hidden" class="form-control" placeholder="userid"/>
+                    <input id="reset_password" type="text" class="form-control" placeholder="Password"
+                           autofocus="true"/>
+                    <div class="alert alert-success alert-dismissible" role="alert" style="display:none">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                                class="sr-only">Close</span></button>
+                        <strong>Successfully</strong> to reset password
+                    </div>
+                    <div class="alert alert-danger alert-dismissible" role="alert" style="display:none">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                                class="sr-only">Close</span></button>
+                        <strong>Failed</strong> to reset password
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="resetPassword()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>用户管理</h3>
+            </div>
+        </div>
+        <div class="row text-right">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#newUserModal">新建用户</button>
+            <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span
+                                    aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title" id="newUserModalLabel">新建用户</h4>
+                        </div>
+                        <div class="modal-body">
+                            <input id="username" type="text" class="form-control" placeholder="Username"
+                                   autofocus="true"/>
+                            <input id="password" type="text" class="form-control" placeholder="Password"/>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="newUser()">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-striped table-bordered table-hover" id="userManagerTable">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>用户名</th>
+                    <th>密码</th>
+                    <th>用户权限</th>
+                    <th></th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var roleList = /*[[${roleList}]]*/ [];
+        var updateAuthorityElement = null;
+        var resetPasswordElement = null;
+        var userRoleMap = new HashMap();
+        function queryUserManagerTable() {
+            var $userManagerTableElement = $('#userManagerTable');
+            var userManagerTable = $userManagerTableElement.DataTable({
+                destroy: true,
+                lengthMenu: [10, 50, 100, -1],
+                order: [[0, "desc"]],
+                autoWidth: true,
+                paging: true,
+                processing: true,
+                serverSide: true,
+                language: {
+                    "lengthMenu": "_MENU_",
+                    "zeroRecords": "Nothing found - sorry",
+                    "info": "Showing page _PAGE_ of _PAGES_",
+                    "infoEmpty": "No records available",
+                    "infoFiltered": "(filtered from _MAX_ total records)"
+                },
+                columns: [
+                    {"data": "id", "orderable": true},
+                    {"data": "username", "orderable": false},
+                    {"data": "password", "orderable": false, "searchable": false},
+                    {"data": "roles", "orderable": false, "searchable": false}
+                ],
+                columnDefs: [
+                    {
+                        "targets": 2,
+                        "render": function (data, type, row, meta) {
+                            return '<span>' + data.substring(data.length - 5) + '</span>&nbsp;&nbsp;<button class="btn btn-primary" data-toggle="modal" data-target="#resetPasswordModal" onclick="updateResetUserId(this,' + row.id + ')">重置密码</button>';
+                        }
+                    },
+                    {
+                        "targets": 3,
+                        "render": function (data, type, row, meta) {
+                            var roleNames = "";
+                            var roleArray = [];
+                            $.each(data, function (i, role) {
+                                roleNames = role.name + "," + roleNames;
+                                roleArray.push(role.name);
+                            });
+                            userRoleMap.set(row.id, roleArray);
+                            return roleNames;
+                        }
+                    },
+                    {
+                        "targets": 4,
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            return '<button class="btn btn-primary" data-toggle="modal" data-target="#updateAuthorityModal" onclick="updateAuthorityUserId(this,' + row.id + ')">更新权限</button>' + '&nbsp;&nbsp;<button class="btn btn-danger" onclick="deleteUser(this,' + row.id + ')">删除用户</button>';
+                        }
+                    }
+                ],
+                ajax: {
+                    url: '/admin/get_all_users',
+                    type: 'GET'
+                }
+            });
+        }
+
+        function newUser() {
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            $.ajax({
+                type: "post",
+                url: "/admin/newUser?username=" + $('#username').val() + "&&password=" + $('#password').val(),
+                data: "",
+                datatype: "json",
+                beforeSend: function (request) {
+                    request.setRequestHeader(header, token);
+                },
+                success: function (returnData) {
+                    if (returnData) {
+                        queryUserManagerTable();
+                        $('#newUserModal').modal('hide');
+                    }
+                },
+                error: function (errorMsg) {
+                    console.log(errorMsg);
+                }
+            });
+        }
+
+        function deleteUser(element, id) {
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            var $that = $(element);
+            $.ajax({
+                type: "post",
+                url: "/admin/deleteUser?id=" + id,
+                data: "",
+                datatype: "json",
+                beforeSend: function (request) {
+                    request.setRequestHeader(header, token);
+                },
+                success: function (returnData) {
+                    if (returnData) {
+                        $that.parent().parent().remove();
+                    }
+                },
+                error: function (errorMsg) {
+                    console.log(errorMsg);
+                }
+            });
+        }
+
+        function updateAuthorityUserId(element, id) {
+            $('#userid_authority').val(id);
+            updateAuthorityElement = $(element);
+            var modal_body = $('#updateAuthorityModal').find('.modal-body');
+            modal_body.find('.row').remove();
+            $.each(roleList, function (i, role) {
+                if (i % 4 == 0) {
+                    modal_body.append('<div class="row"></div>');
+                }
+                var roleArray = userRoleMap.get(id);
+                if ($.inArray(role.name, roleArray) != -1) {
+                    modal_body.find('.row').last().append('<div class="col-lg-3"><input type="checkbox" checked><label>' + role.name + '</label></div>');
+                }
+                else {
+                    modal_body.find('.row').last().append('<div class="col-lg-3"><input type="checkbox"><label>' + role.name + '</label></div>');
+                }
+            });
+        }
+
+        function updateResetUserId(element, id) {
+            $('#userid').val(id);
+            resetPasswordElement = $(element);
+        }
+
+        function updateAuthority() {
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            var roleArray = [];
+            var modal_body = $('#updateAuthorityModal').find('.modal-body');
+            modal_body.find('input[type="checkbox"]').each(function (i) {
+                var that = $(this);
+                if (that.is(':checked')) {
+                    roleArray.push(that.next().text());
+                }
+            });
+            var roleNames = "";
+            $.each(roleArray, function (i, name) {
+                roleNames = name + "," + roleNames;
+            });
+            $.ajax({
+                type: "post",
+                url: "/admin/updateAuthority?id=" + $('#userid_authority').val(),
+                data: JSON.stringify(roleArray),
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                beforeSend: function (request) {
+                    request.setRequestHeader(header, token);
+                },
+                success: function (returnData) {
+                    if (returnData) {
+                        updateAuthorityElement.parent().prev().text(roleNames);
+                        $('#updateAuthorityModal').modal('hide');
+                        userRoleMap.set(parseInt($('#userid_authority').val()), roleArray);
+                    }
+                },
+                error: function (errorMsg) {
+                    console.log(errorMsg);
+                    modal_body.find('.alert-danger').show();
+                }
+            });
+        }
+
+        function resetPassword() {
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            var modal_body = $('#resetPasswordModal').find('.modal-body');
+            $.ajax({
+                type: "post",
+                url: "/admin/resetPassword?id=" + $('#userid').val() + "&&password=" + $('#reset_password').val(),
+                data: "",
+                datatype: "json",
+                beforeSend: function (request) {
+                    request.setRequestHeader(header, token);
+                },
+                success: function (returnData) {
+                    if (returnData) {
+                        resetPasswordElement.prev().text(returnData.substring(returnData.length - 5));
+                        $('#resetPasswordModal').modal('hide');
+                    }
+                },
+                error: function (errorMsg) {
+                    console.log(errorMsg);
+                    modal_body.find('.alert-danger').show();
+                }
+            });
+        }
+
+        $(function () {
+            queryUserManagerTable();
+        });
+        /*]]>*/
+    </script>
+</div>
+</body>
+</html>

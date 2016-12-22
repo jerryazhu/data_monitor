@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+</head>
+<body>
+<div th:fragment="navLeft">
+    <div class="text-center" role="navigation" th:if="${ROLE_ADMIN} == true">
+        <ul id="menu" class="nav nav-pills nav-stacked" role="tablist">
+            <li role="presentation" class="active"><a href="#" name="admin---noticeView">公告发布</a></li>
+            <li role="presentation"><a href="#" name="admin---userManagerView">用户管理</a></li>
+        </ul>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $('#menu').find("> li > a").each(function (index) {
+                var that = $(this);
+                that.unbind('click');
+                that.on("click", function () {
+                    that.parent().nextAll().removeClass('active');
+                    that.parent().prevAll().removeClass('active');
+                    that.parent().addClass('active');
+                    var contentView = $("#contentView");
+                    contentView.empty();
+                    var templateName = $(this).attr("name");
+                    if (templateName) {
+                        contentView.load("/admin/view/" + templateName);
+                    }
+                });
+            });
+        });
+        /*]]>*/
+    </script>
+</div>
+</body>
+</html>

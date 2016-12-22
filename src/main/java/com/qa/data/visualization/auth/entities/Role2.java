@@ -1,17 +1,13 @@
 package com.qa.data.visualization.auth.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "role")
-public class Role {
+public class Role2 {
     private Long id;
     private String name;
-    @JsonBackReference
-    private Set<User> users;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,12 +27,4 @@ public class Role {
         this.name = name;
     }
 
-    @ManyToMany(mappedBy = "roles")
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
 }

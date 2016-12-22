@@ -1,6 +1,8 @@
 package com.qa.data.visualization.auth.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -11,6 +13,7 @@ public class User {
     private String username;
     private String password;
     private String passwordConfirm;
+    @JsonManagedReference
     private Set<Role> roles;
 
     @Id

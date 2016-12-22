@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<div th:fragment="noticeView">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>发布公告</h3>
+            </div>
+        </div>
+        <div class="row">
+            <textarea id="noticeTextarea" class="form-control" placeholder="公告内容" rows="5"></textarea>
+            <button class="btn btn-primary" onclick="sendNotice()">发送</button>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var stompClient = null;
+        function connect() {
+            var socket = new SockJS('/socket-client');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                console.log("socket connected");
+            });
+        }
+        function disconnect() {
+            if (stompClient != null) {
+                stompClient.disconnect();
+            }
+            console.log("socket disconnected");
+        }
+        function sendNotice() {
+            var value = $('#noticeTextarea').val();
+            stompClient.send("/socket-server/notice", {}, value);
+            console.log("send " + value);
+        }
+        $(function () {
+            connect();
+        });
+        /*]]>*/
+    </script>
+</div>
+</body>
+</html>

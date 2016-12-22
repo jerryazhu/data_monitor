@@ -279,6 +279,8 @@ public class ClassServiceImpl implements ClassService {
             }else{
                 bSql=bSql+"\n"+"and ecr.status=5";
             }
+        }else{
+            bSql=bSql+"\n"+"and ecr.status!=-1";
         }
         if(!classType.equals("不限")){
             switch(classType){
@@ -649,7 +651,6 @@ public class ClassServiceImpl implements ClassService {
     @SuppressWarnings("unchecked")
     public DataSet<WorkLoseStudentClass> getWorkLoseStudentClass(String data,DatatablesCriterias criterias){
         String [] cutData=data.split("\\+");
-        ArrayList days=new ArrayList();
         String bTime=cutData[0];
         String tTime=cutData[1];
         String combo=cutData[2];
@@ -672,23 +673,85 @@ public class ClassServiceImpl implements ClassService {
                     break;
             }
         }
-        sql=sql+"\n"+"group by es.id,ecr.id";
+        sql=sql+"\n"+"group by es.id,day";
         Query q = entityManager.createNativeQuery(sql);
         List<Object[]> list = q.getResultList();
-        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        for (Object[] result : list) {
-            map.put(result[0].toString(), result[3].toString());
+        HashMap<String, Object[]> map = new HashMap<String, Object[]>();
+        for(int i=0;i<list.size();i++){
+            map.put(i+"",list.get(i));
         }
         Long bbTime=Long.parseLong(bTime)*1000;
         Long ttTime=Long.parseLong(tTime)*1000;
         Long oneDay = 1000 * 60 * 60 * 24L;
+        ArrayList days=new ArrayList();
+        ArrayList ids=new ArrayList();
+        ArrayList ghs=new ArrayList();
+        ArrayList names=new ArrayList();
+        Boolean find=false;
+        Boolean haveLose=false;
+        int resultCnt=0;
+        ArrayList cntList=new ArrayList();
         while (bbTime <= ttTime) {
             Date d = new Date(bbTime);
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             days.add(df.format(d));
-            System.out.println(days);
             bbTime += oneDay;
         }
+        System.out.println(days);
+        for (int j=0;j<map.size();j++) {
+            find = false;
+            Object[] result =map.get(j+"");
+            for (Object id : ids) {
+                if (result[0] .equals(id) ) {
+                    find = true;
+                    break;
+                }
+            }
+            if (!find) {
+                ids.add(result[0]);
+                names.add(result[1]);
+                ghs.add(result[2]);
+            }
+        }
+        System.out.println(ids);
+        System.out.println(names);
+        System.out.println(ghs);
+        for (Object id : ids) {
+            haveLose=false;
+            int dayRun=0;
+            for (int k=0;k<map.size();k++) {
+                Object[] result =map.get(k+"");
+                if (result[0].equals(id)) {
+                    int cnt=0;
+                    if(k!=0){
+                        Object[] lastResult=map.get((k-1)+"");
+                        if(!lastResult[0].equals(result[0])){
+                            dayRun=0;
+                        }
+                    }else {
+                        dayRun=0;
+                    }
+                    for (int i=dayRun;i<days.size();i++) {
+                        if (result[3].equals(days.get(i))) {
+                            dayRun=i+1;
+                            break;
+                        } else {
+                            cnt = cnt + 1;
+                        }
+                    }
+                    if(cnt>resultCnt){
+                        resultCnt=cnt;
+                        haveLose=true;
+                    }
+                }
+            }
+            if(!haveLose){
+                resultCnt=0;
+            }
+            cntList.add(resultCnt);
+            resultCnt=0;
+        }
+        System.out.print(cntList);
         TableQuery query = new TableQuery(entityManager, WorkLoseStudentClass.class, criterias, sql);
         DataSet<WorkLoseStudentClass> actions=query.getResultDataSet();
         return actions;

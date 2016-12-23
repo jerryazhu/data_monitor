@@ -18,7 +18,7 @@
                     </li>
                 </ul>
             </li>
-            <li th:if="${ROLE_FT_ASSISTANT == true and ROLE_SALE==true and ROLE_TUTOR==true and ROLE_TEACHING==true}">
+            <li th:if="${ROLE_FT_ASSISTANT == true or ROLE_SALE==true or ROLE_TUTOR==true or ROLE_TEACHING==true}">
                 <a href="" aria-expanded="false"><i class="fa fa-dashboard fa-fw"></i> 青少</a>
                 <ul aria-expanded="false" class="nav nav-second-level">
                     <li th:if="${ROLE_FT_ASSISTANT} == true">

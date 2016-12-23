@@ -7,7 +7,7 @@
     <div class="navbar-default sidebar" role="navigation">
         <ul class="metismenu nav" id="menu">
             <!--<li th:if="${ROLE_ADMIN} == true">-->
-            <li>
+            <li th:if="${ROLE_MARKET} == true">
                 <a href="#" aria-expanded="false"><i class="fa fa-dashboard fa-fw"></i> 市场</a>
                 <ul aria-expanded="false" class="nav nav-second-level">
                     <li>
@@ -18,46 +18,46 @@
                     </li>
                 </ul>
             </li>
-            <li>
+            <li th:if="${ROLE_FT_ASSISTANT == true and ROLE_SALE==true and ROLE_TUTOR==true and ROLE_TEACHING==true}">
                 <a href="" aria-expanded="false"><i class="fa fa-dashboard fa-fw"></i> 青少</a>
                 <ul aria-expanded="false" class="nav nav-second-level">
-                    <li>
+                    <li th:if="${ROLE_FT_ASSISTANT} == true">
                         <a href="#" name="qingshao---costClass"><i class="fa fa-table fa-fw"></i>外管--学生耗课量</a>
                     </li>
-                    <li>
+                    <li th:if="${ROLE_FT_ASSISTANT} == true">
                         <a href="#" name="qingshao---saClass"><i class="fa fa-table fa-fw"></i>外管--SA上课记录</a>
                     </li>
-                    <li>
+                    <li th:if="${ROLE_SALE} == true">
                         <a href="#" name="qingshao---payNewStudent"><i class="fa fa-table fa-fw"></i>销售--新注册会员</a>
                     </li>
-                    <li>
+                    <li th:if="${ROLE_SALE} == true">
                         <a href="#" name="qingshao---payOldStudent"><i class="fa fa-table fa-fw"></i>销售--已买课学员</a>
                     </li>
-                    <li>
+                    <li th:if="${ROLE_TUTOR} == true">
                         <a href="#" name="qingshao---workStudentMessage"><i class="fa fa-table fa-fw"></i>导师--学生信息</a>
                     </li>
-                    <li>
+                    <li th:if="${ROLE_TUTOR} == true">
                         <a href="#" name="qingshao---workStudentLogin"><i class="fa fa-table fa-fw"></i>导师--登陆行为高峰</a>
                     </li>
-                    <li>
+                    <li th:if="${ROLE_TUTOR} == true">
                         <a href="#" name="qingshao---workClassMessage"><i class="fa fa-table fa-fw"></i>导师--课程信息</a>
                     </li>
-                    <li>
+                    <li th:if="${ROLE_TUTOR} == true">
                         <a href="#" name="qingshao---workLoseStudent"><i class="fa fa-table fa-fw"></i>导师--连续未选课学员</a>
                     </li>
-                    <li>
+                    <li th:if="${ROLE_TUTOR} == true">
                         <a href="#" name="qingshao---workRenew"><i class="fa fa-table fa-fw"></i>导师--学员续费</a>
                     </li>
-                    <li>
+                    <li th:if="${ROLE_TUTOR} == true">
                         <a href="#" name="qingshao---workRefunds"><i class="fa fa-table fa-fw"></i>导师--学员退款</a>
                     </li>
-                    <li>
+                    <li th:if="${ROLE_TEACHING} == true">
                         <a href="#" name="qingshao---bookChooseClass"><i class="fa fa-table fa-fw"></i>教研--教材选课情况</a>
                     </li>
-                    <li>
+                    <li th:if="${ROLE_TEACHING} == true">
                         <a href="#" name="qingshao---bookRank"><i class="fa fa-table fa-fw"></i>教研--教材和学生各级别情况</a>
                     </li>
-                    <li>
+                    <li th:if="${ROLE_TEACHING} == true">
                         <a href="#" name="qingshao---bookChooseStudentType"><i class="fa fa-table fa-fw"></i>教研--学生属性查询</a>
                     </li>
                 </ul>

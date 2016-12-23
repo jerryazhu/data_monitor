@@ -23,7 +23,7 @@
             <ul class="dropdown-menu dropdown-user">
                 <li><a href="#" th:text="'Welcome '+${username}"><i class="fa fa-user fa-fw"></i> Welcome</a>
                 </li>
-                <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                <li><a href="#" onclick="intoSettingsView()"><i class="fa fa-gear fa-fw"></i> Settings</a>
                 </li>
                 <li class="divider"></li>
                 <li>
@@ -40,5 +40,18 @@
     <!-- /.navbar-top-links -->
 
 </nav>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    function intoSettingsView() {
+        var contentView = $("#content");
+        contentView.load("/mainViews/settingsView");
+    }
+
+    $(function () {
+
+    });
+    /*]]>*/
+</script>
 </body>
 </html>

@@ -1,5 +1,7 @@
 package com.qa.data.visualization.controllers;
 
+import com.qa.data.visualization.auth.entities.User;
+import com.qa.data.visualization.auth.repositories.UserRepository;
 import com.qa.data.visualization.entities.jishu.*;
 import com.qa.data.visualization.repositories.jishu.*;
 import com.qa.data.visualization.services.jishu.*;
@@ -8,11 +10,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -49,6 +50,10 @@ public class IndexController {
     private PCService pcService;
     @Autowired
     private StudentActivityAllRepository studentActivityAllRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @RequestMapping("/")
     String index(Model model) {
@@ -83,6 +88,22 @@ public class IndexController {
             templateName = templateName.replaceAll("---", "/");
         }
         return templateName;
+    }
+
+    @RequestMapping("/mainViews/settingsView")
+    public String intoSettingsView(){
+        return "settingsView";
+    }
+
+    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+    @ResponseBody
+    public boolean resetPassword(@RequestParam(value = "password", required = true) String password) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+        User user = userRepository.findByUsername(name);
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        userRepository.save(user);
+        return true;
     }
 
     @RequestMapping("class_tools_daily_activity/{type}")

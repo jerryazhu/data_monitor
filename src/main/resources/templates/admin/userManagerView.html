@@ -153,7 +153,38 @@
                                 roleArray.push(role.name);
                             });
                             userRoleMap.set(row.id, roleArray);
-                            return roleNames;
+
+                            var cutoff = 30;
+                            var wordbreak = true;
+                            var escapeHtml = false;
+                            // Order, search and type get the original data
+                            if ( type !== 'display' ) {
+                                return roleNames;
+                            }
+
+                            if ( typeof roleNames !== 'number' && typeof roleNames !== 'string' ) {
+                                return roleNames;
+                            }
+
+                            roleNames = roleNames.toString(); // cast numbers
+
+                            if ( roleNames.length <= cutoff ) {
+                                return roleNames;
+                            }
+
+                            var shortened = roleNames.substr(0, cutoff-1);
+
+                            // Find the last white space character in the string
+                            if ( wordbreak ) {
+                                shortened = shortened.replace(/\s([^\s]*)$/, '');
+                            }
+
+                            // Protect against uncontrolled HTML input
+                            if ( escapeHtml ) {
+                                shortened = esc( shortened );
+                            }
+
+                            return '<span class="ellipsis" title="'+esc(roleNames)+'">'+shortened+'&#8230;</span>';
                         }
                     },
                     {

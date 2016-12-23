@@ -17,6 +17,14 @@ function round(number, roundDigit) {
     }
 }
 
+function esc(str) {
+    return str
+        .replace( /&/g, '&amp;' )
+        .replace( /</g, '&lt;' )
+        .replace( />/g, '&gt;' )
+        .replace( /"/g, '&quot;' );
+}
+
 function getLastDay(year, month) {
     var new_year = year;
     var new_month = month++;

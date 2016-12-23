@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div id="settingsView" class="container">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs tabs-left" role="tablist" id="settingsViewNav">
+        <li role="presentation" class="active"><a href="#resetPassword" data-toggle="tab">重置密码</a></li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="resetPassword">
+            <div class="row">
+                <div class="col-lg-3">
+                    <input type="text" id="password" class="form-control" placeholder="密码" autofocus="true"/>
+                </div>
+                <div class="col-lg-1">
+                    <button class="btn btn-primary" onclick="resetPassword()">重置</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="alert alert-success alert-dismissible" role="alert" style="display:none">
+                    <button type="button" class="close" data-dismiss="alert"><span
+                            aria-hidden="true">&times;</span><span
+                            class="sr-only">Close</span></button>
+                    <strong>Successfully</strong> to reset password
+                </div>
+                <div class="alert alert-danger alert-dismissible" role="alert" style="display:none">
+                    <button type="button" class="close" data-dismiss="alert"><span
+                            aria-hidden="true">&times;</span><span
+                            class="sr-only">Close</span></button>
+                    <strong>Failed</strong> to reset password
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    function resetPassword() {
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        $.ajax({
+            type: "post",
+            url: "/resetPassword?password=" + $('#password').val(),
+            data: "",
+            datatype: "json",
+            beforeSend: function (request) {
+                request.setRequestHeader(header, token);
+            },
+            success: function (returnData) {
+                if (returnData) {
+                    $('#password').val("");
+                    $('#resetPassword').find('.alert-success').show();
+                }
+            },
+            error: function (errorMsg) {
+                console.log(errorMsg);
+                modal_body.find('.alert-danger').show();
+            }
+        });
+    }
+
+    $(function () {
+        $('#settingsViewNav').find('a').each(function (index) {
+            var $that = $(this);
+            $that.unbind('click');
+            $that.on("click", function (event) {
+                event.preventDefault();
+                $(this).tab('show');
+            })
+        })
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>

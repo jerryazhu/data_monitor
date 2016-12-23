@@ -92,7 +92,7 @@ public class IndexController {
 
     @RequestMapping("/mainViews/settingsView")
     public String intoSettingsView(){
-        return "settingsView";
+        return "fragments/settingsView";
     }
 
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)

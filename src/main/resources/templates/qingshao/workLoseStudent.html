@@ -199,7 +199,7 @@
             var table_one=$('#student').DataTable({
                 destroy: true,
                 lengthMenu: [10, 25, 50, 100],
-                order: [[0, "desc"]],
+                order: [[3, "desc"]],
                 autoWidth: true,
                 paging: true,
                 processing: true,
@@ -220,6 +220,12 @@
                     {"data": "day"}
                 ],
                 columnDefs:[
+                    {
+                        "targets": 3,
+                        "render": function (data, type, row, meta) {
+                            return data+"天";
+                        }
+                    }
                 ],
                 ajax: {
                     url: '/class/get_lose_student_class/'+getData(),
@@ -269,7 +275,7 @@
     }
     function getCnt() {
         $.ajax({
-            url: '/class/get_work_student_message_cnt',
+            url: '/class/get_work_lose_class_cnt',
             type:'GET',
             data:'',
             success:function (data) {
@@ -281,7 +287,7 @@
     }
     function getSql() {
         $.ajax({
-            url: '/class/get_work_student_message_sql',
+            url: '/class/get_work_lose_class_sql',
             type:'GET',
             data:'',
             success:function (data) {

@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.server.HandshakeHandler;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -45,6 +46,8 @@ public class ClassServiceImpl implements ClassService {
     private String workRenewSql;
     private String workRenewWholeSql;
     private String workRefundsSql;
+    private String workLoseClassSql;
+    private Long workLoseClassCnt;
     private ArrayList workRefundsCnt=new ArrayList();
     @PersistenceContext(unitName = "primaryPersistenceUnit")
     private EntityManager firstEntityManager;
@@ -656,7 +659,7 @@ public class ClassServiceImpl implements ClassService {
         String bTime=cutData[0];
         String tTime=cutData[1];
         String combo=cutData[2];
-        String sql=String.format("select es.id as id,es.nickname as name,eru.nickname as ghs,group_concat(ecr.begin_time order by ecr.begin_time asc) as day from ebk_students es\n" +
+        String sql=String.format("select es.id as id,es.nickname as name,ifNUll(eru.nickname,'UNKNOWN') as ghs,group_concat(ecr.begin_time order by ecr.begin_time asc) as day from ebk_students es\n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                 "LEFT JOIN ebk_class_records ecr on ecr.sid=es.id\n" +
                 "LEFT JOIN ebk_rbac_user eru on eru.id=es.ghs\n" +
@@ -676,6 +679,7 @@ public class ClassServiceImpl implements ClassService {
             }
         }
         sql=sql+"\n"+"group by es.id";
+        workLoseClassSql=sql;
         Query q = entityManager.createNativeQuery(sql);
         List<Object[]> list = q.getResultList();
         ArrayList days=new ArrayList();
@@ -697,13 +701,30 @@ public class ClassServiceImpl implements ClassService {
             }
             days.add(day);
         }
-        System.out.println(ids);
-        System.out.println(names);
-        System.out.println(ghs);
-        System.out.println(days);
-        TableQuery query = new TableQuery(entityManager, WorkLoseStudentClass.class, criterias, sql);
-
-        DataSet<WorkLoseStudentClass> actions=query.getResultDataSet();
+        List<WorkLoseStudentClass> resultRow = new ArrayList<>();
+        Map<String,HashMap<String,String>> map=new HashMap<String,HashMap<String,String>>();
+        for(int i=0;i<ids.size();i++){
+            HashMap<String,String> mapSmall=new HashMap<String,String>();
+            mapSmall.put("ids",ids.get(i).toString());
+            mapSmall.put("names",names.get(i).toString());
+            mapSmall.put("ghs",ghs.get(i).toString());
+            mapSmall.put("days",days.get(i).toString());
+            map.put(ids.get(i).toString(),mapSmall);
+        }
+        for (Object id : ids) {
+            WorkLoseStudentClass object=new WorkLoseStudentClass();
+            object.setId(map.get(id.toString()).get("ids"));
+            object.setName(map.get(id.toString()).get("names"));
+            object.setGhs(map.get(id.toString()).get("ghs"));
+            object.setDay(map.get(id.toString()).get("days"));
+            resultRow.add(object);
+        }
+        workLoseClassCnt=(long)ids.size();
+        List<WorkLoseStudentClass> topTen = new ArrayList<>();
+        for(int i=0;i<10;i++) {
+            topTen.add(resultRow.get(i));
+        }
+        DataSet<WorkLoseStudentClass> actions= new DataSet<WorkLoseStudentClass>(topTen,(long)ids.size(),10L);
         return actions;
     }
 
@@ -1064,5 +1085,11 @@ public class ClassServiceImpl implements ClassService {
         return workRefundsCnt;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public String getWorkLoseClassSql(){return workLoseClassSql;}
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public Long getWorkLoseClassCnt(){return workLoseClassCnt;}
 }

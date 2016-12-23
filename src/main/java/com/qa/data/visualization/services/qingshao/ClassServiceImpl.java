@@ -6,6 +6,7 @@ import com.qa.data.visualization.repositories.qingshao.EbkTeachersRepository;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.TableQuery;
+import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.swing.text.TableView;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -654,7 +656,7 @@ public class ClassServiceImpl implements ClassService {
         String bTime=cutData[0];
         String tTime=cutData[1];
         String combo=cutData[2];
-        String sql=String.format("select es.id as id,es.nickname as name,eru.nickname as ghs,FROM_UNIXTIME(ecr.begin_time,'%%Y-%%m-%%d') as day from ebk_students es\n" +
+        String sql=String.format("select es.id as id,es.nickname as name,eru.nickname as ghs,group_concat(ecr.begin_time order by ecr.begin_time asc) as day from ebk_students es\n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
                 "LEFT JOIN ebk_class_records ecr on ecr.sid=es.id\n" +
                 "LEFT JOIN ebk_rbac_user eru on eru.id=es.ghs\n" +
@@ -673,86 +675,34 @@ public class ClassServiceImpl implements ClassService {
                     break;
             }
         }
-        sql=sql+"\n"+"group by es.id,day";
+        sql=sql+"\n"+"group by es.id";
         Query q = entityManager.createNativeQuery(sql);
         List<Object[]> list = q.getResultList();
-        HashMap<String, Object[]> map = new HashMap<String, Object[]>();
-        for(int i=0;i<list.size();i++){
-            map.put(i+"",list.get(i));
-        }
-        Long bbTime=Long.parseLong(bTime)*1000;
-        Long ttTime=Long.parseLong(tTime)*1000;
-        Long oneDay = 1000 * 60 * 60 * 24L;
         ArrayList days=new ArrayList();
         ArrayList ids=new ArrayList();
         ArrayList ghs=new ArrayList();
         ArrayList names=new ArrayList();
-        Boolean find=false;
-        Boolean haveLose=false;
-        int resultCnt=0;
-        ArrayList cntList=new ArrayList();
-        while (bbTime <= ttTime) {
-            Date d = new Date(bbTime);
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            days.add(df.format(d));
-            bbTime += oneDay;
-        }
-        System.out.println(days);
-        for (int j=0;j<map.size();j++) {
-            find = false;
-            Object[] result =map.get(j+"");
-            for (Object id : ids) {
-                if (result[0] .equals(id) ) {
-                    find = true;
-                    break;
+        for(Object[] result:list){
+            ids.add(result[0]);
+            names.add(result[1]);
+            ghs.add(result[2]);
+            String allDays=bTime+","+result[3]+","+tTime;
+            int day=0;
+            String[] cutDays=allDays.split(",");
+            for(int i=0;i<(cutDays.length-1);i++){
+                int differ=(Integer.parseInt(cutDays[i+1])-Integer.parseInt(cutDays[i]))/(3600*24);
+                if(differ>day){
+                    day=differ;
                 }
             }
-            if (!find) {
-                ids.add(result[0]);
-                names.add(result[1]);
-                ghs.add(result[2]);
-            }
+            days.add(day);
         }
         System.out.println(ids);
         System.out.println(names);
         System.out.println(ghs);
-        for (Object id : ids) {
-            haveLose=false;
-            int dayRun=0;
-            for (int k=0;k<map.size();k++) {
-                Object[] result =map.get(k+"");
-                if (result[0].equals(id)) {
-                    int cnt=0;
-                    if(k!=0){
-                        Object[] lastResult=map.get((k-1)+"");
-                        if(!lastResult[0].equals(result[0])){
-                            dayRun=0;
-                        }
-                    }else {
-                        dayRun=0;
-                    }
-                    for (int i=dayRun;i<days.size();i++) {
-                        if (result[3].equals(days.get(i))) {
-                            dayRun=i+1;
-                            break;
-                        } else {
-                            cnt = cnt + 1;
-                        }
-                    }
-                    if(cnt>resultCnt){
-                        resultCnt=cnt;
-                        haveLose=true;
-                    }
-                }
-            }
-            if(!haveLose){
-                resultCnt=0;
-            }
-            cntList.add(resultCnt);
-            resultCnt=0;
-        }
-        System.out.print(cntList);
+        System.out.println(days);
         TableQuery query = new TableQuery(entityManager, WorkLoseStudentClass.class, criterias, sql);
+
         DataSet<WorkLoseStudentClass> actions=query.getResultDataSet();
         return actions;
     }

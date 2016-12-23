@@ -17,7 +17,9 @@
             <th:block th:include="fragments/navLeft :: navLeft"></th:block>
         </div>
         <div id="content" class="col-lg-10 col-md-10">
-            <th:block th:include="@{'fragments/' + ${templateName}} :: ${templateName}"></th:block>
+            <div th:if="${ROLE_JISHU} == true">
+                <th:block th:include="@{'fragments/' + ${templateName}} :: ${templateName}"></th:block>
+            </div>
         </div>
     </div>
 </div>

@@ -62,7 +62,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="active">
+            <li class="active" th:if="${ROLE_JISHU} == true">
                 <a href="#" name="overview---webContent" aria-expanded="true"><i class="fa fa-table fa-fw"></i> Web端</a>
                 <ul aria-expanded="true" class="nav nav-second-level">
                     <li>
@@ -96,7 +96,7 @@
                     </li>
                 </ul>
             </li>
-            <li>
+            <li th:if="${ROLE_JISHU} == true">
                 <a href="#" name="overview---mobileContent" aria-expanded="false"><i class="fa fa-table fa-fw"></i> 移动端</a>
                 <ul aria-expanded="false" class="nav nav-second-level">
                     <li>
@@ -114,7 +114,7 @@
                     </li>
                 </ul>
             </li>
-            <li>
+            <li th:if="${ROLE_JISHU} == true">
                 <a href="#" name="overview---pcContent" aria-expanded="false"><i class="fa fa-table fa-fw"></i> PC端</a>
                 <ul aria-expanded="false" class="nav nav-second-level">
                     <li>
@@ -133,7 +133,7 @@
 <div th:fragment="navLeftScript">
     <script>
         $(function () {
-            $('#menu').metisMenu()
+            $('#menu').metisMenu();
 
             $("#menu > li > a").each(function (index) {
                 $(this).on("click", function () {

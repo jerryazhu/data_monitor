@@ -665,7 +665,7 @@ public class ClassServiceImpl implements ClassService {
                 "LEFT JOIN ebk_class_records ecr on ecr.sid=es.id\n" +
                 "LEFT JOIN ebk_rbac_user eru on eru.id=es.ghs\n" +
                 "where ecr.begin_time>=%s and ecr.begin_time<=%s\n" +
-                "and esi.study_aim=1 and es.status=1" ,bTime,tTime);
+                "and esi.study_aim=1 and es.status=1",bTime,tTime);
         if(!combo.equals("不限")){
             switch (combo) {
                 case "菲律宾套餐":
@@ -674,7 +674,7 @@ public class ClassServiceImpl implements ClassService {
                 case "欧美套餐":
                     sql = sql + "\n" + "and es.lsns_per_day_eu!=0 and es.days_per_week_eu!=0";
                     break;
-                case "自由课":
+                case "自由课套餐":
                     sql = sql + "and (es.lsns_per_day=0 and es.days_per_week=0 and es.lsns_per_day_eu=0 and es.days_per_week_eu=0 and es.acoin!=0)";
                     break;
             }
@@ -696,38 +696,158 @@ public class ClassServiceImpl implements ClassService {
             String[] cutDays=allDays.split(",");
             for(int i=0;i<(cutDays.length-1);i++){
                 int differ=(Integer.parseInt(cutDays[i+1])-Integer.parseInt(cutDays[i]))/(3600*24);
-                if(differ>day){
+                if(differ>day&&differ<32){
                     day=differ;
                 }
             }
             days.add(day);
         }
         List<WorkLoseStudentClass> resultRow = new ArrayList<>();
-        Map<String,HashMap<String,String>> map=new HashMap<String,HashMap<String,String>>();
+        Map<String,HashMap> map=new HashMap<String,HashMap>();
         for(int i=0;i<ids.size();i++){
-            HashMap<String,String> mapSmall=new HashMap<String,String>();
+            HashMap mapSmall=new HashMap();
             mapSmall.put("ids",ids.get(i).toString());
             mapSmall.put("names",names.get(i).toString());
             mapSmall.put("ghs",ghs.get(i).toString());
-            mapSmall.put("days",days.get(i).toString());
+            mapSmall.put("days", days.get(i));
             map.put(ids.get(i).toString(),mapSmall);
         }
         for (Object id : ids) {
             WorkLoseStudentClass object=new WorkLoseStudentClass();
-            object.setId(map.get(id.toString()).get("ids"));
-            object.setName(map.get(id.toString()).get("names"));
-            object.setGhs(map.get(id.toString()).get("ghs"));
-            object.setDay(map.get(id.toString()).get("days"));
+            object.setId(map.get(id.toString()).get("ids").toString());
+            object.setName(map.get(id.toString()).get("names").toString());
+            object.setGhs(map.get(id.toString()).get("ghs").toString());
+            object.setDay((Integer) map.get(id.toString()).get("days"));
             resultRow.add(object);
         }
         TableConvert tableConvert = new TableConvert(resultRow,criterias);
-        return tableConvert.getResultDataSet();
+        DataSet<WorkLoseStudentClass> actions=tableConvert.getResultDataSet();
+        workLoseClassCnt=tableConvert.getTotalCount();
+        return actions;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public DataSet<WorkLoseStudentAcoin> getWorkLoseStudentAcoin(String data,DatatablesCriterias criterias){
-        return null;
+        String [] cutData=data.split("\\+");
+        String bTime=cutData[0];
+        String tTime=cutData[1];
+        String combo=cutData[2];
+        String sql=String.format("select es.id as id,es.nickname as name,ifNUll(eru.nickname,'UNKNOWN') as ghs,eail.create_time as day,eail.acoin as acoin from ebk_students es\n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                "LEFT JOIN ebk_acoin_io_log eail on eail.sid=es.id\n" +
+                "LEFT JOIN ebk_rbac_user eru on eru.id=es.ghs\n" +
+                "where eail.create_time>=%s and eail.create_time<=%s\n" +
+                "and eail.acoin_io_type=22 and esi.study_aim=1 and es.status=1",bTime,tTime);
+        if(!combo.equals("不限")){
+            switch (combo) {
+                case "菲律宾套餐":
+                    sql = sql + "\n" + "and es.lsns_per_day!=0 and es.days_per_week!=0";
+                    break;
+                case "欧美套餐":
+                    sql = sql + "\n" + "and es.lsns_per_day_eu!=0 and es.days_per_week_eu!=0";
+                    break;
+                case "自由课套餐":
+                    sql = sql;
+                    break;
+            }
+        }
+        sql=sql+"\n"+"group by es.id,day"+"\n"+"order by day";
+        workLoseClassSql=sql;
+        TableQuery query = new TableQuery(entityManager, WorkLoseStudentAcoin.class, criterias, sql);
+        DataSet<WorkLoseStudentAcoin> actions=query.getResultDataSet();
+        return actions;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public ArrayList getStudentLoseDay(String data){
+        String [] cutData=data.split("\\+");
+        String bTime=cutData[0];
+        String tTime=cutData[1];
+        String combo=cutData[2];
+        String sid=cutData[3];
+        String sql=String.format("select ecr.begin_time as day from ebk_students es\n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                "LEFT JOIN ebk_class_records ecr on ecr.sid=es.id\n" +
+                "where ecr.begin_time>=%s and ecr.begin_time<=%s\n" +
+                "and es.status=1 and esi.study_aim=1\n" +
+                "and es.id=%s",bTime,tTime,sid);
+        if(!combo.equals("不限")){
+            switch (combo) {
+                case "菲律宾套餐":
+                    sql = sql + "\n" + "and es.lsns_per_day!=0 and es.days_per_week!=0";
+                    break;
+                case "欧美套餐":
+                    sql = sql + "\n" + "and es.lsns_per_day_eu!=0 and es.days_per_week_eu!=0";
+                    break;
+                case "自由课套餐":
+                    sql = sql + "and (es.lsns_per_day=0 and es.days_per_week=0 and es.lsns_per_day_eu=0 and es.days_per_week_eu=0 and es.acoin!=0)";
+                    break;
+            }
+        }
+        sql=sql+"\n"+"group by es.id,day"+"\n"+"order by day";
+        Query q=entityManager.createNativeQuery(sql);
+        List list = q.getResultList();
+        Long bbTime=Long.parseLong(bTime)*1000;
+        Long ttTime=Long.parseLong(tTime)*1000;
+        Long oneDay=1000*60*60*24L;
+        ArrayList days=new ArrayList();
+        ArrayList loseDays=new ArrayList();
+        while (bbTime<=ttTime){
+            Date d=new Date(bbTime);
+            DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+            days.add(df.format(d));
+            bbTime+=oneDay;
+        }
+        for (Object day : days) {
+            boolean find = false;
+            for (Object aList : list) {
+                Date d = new Date(Long.parseLong(aList.toString())*1000);
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                if (day.equals(df.format(d))) {
+                    find = true;
+                    break;
+                }
+            }
+            if (!find) {
+                loseDays.add(day);
+            }
+        }
+        return loseDays;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataSet<WorkLoseStudentAcoin> getWorkLoseStudentAcoinCnt(String data,DatatablesCriterias criterias){
+        String [] cutData=data.split("\\+");
+        String bTime=cutData[0];
+        String tTime=cutData[1];
+        String combo=cutData[2];
+        String sql=String.format("select es.id as id,es.nickname as name,ifNUll(eru.nickname,'UNKNOWN') as ghs,count(eail.create_time) as day,sum(eail.acoin) as acoin from ebk_students es\n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
+                "LEFT JOIN ebk_acoin_io_log eail on eail.sid=es.id\n" +
+                "LEFT JOIN ebk_rbac_user eru on eru.id=es.ghs\n" +
+                "where eail.create_time>=%s and eail.create_time<=%s\n" +
+                "and eail.acoin_io_type=22 and esi.study_aim=1 and es.status=1",bTime,tTime);
+        if(!combo.equals("不限")){
+            switch (combo) {
+                case "菲律宾套餐":
+                    sql = sql + "\n" + "and es.lsns_per_day!=0 and es.days_per_week!=0";
+                    break;
+                case "欧美套餐":
+                    sql = sql + "\n" + "and es.lsns_per_day_eu!=0 and es.days_per_week_eu!=0";
+                    break;
+                case "自由课套餐":
+                    sql = sql;
+                    break;
+            }
+        }
+        sql=sql+"\n"+"group by es.id";
+        TableQuery query = new TableQuery(entityManager, WorkLoseStudentAcoin.class, criterias, sql);
+        DataSet<WorkLoseStudentAcoin> actions=query.getResultDataSet();
+        workLoseClassCnt=query.getTotalCount();
+        return actions;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.qa.data.visualization.services.qingshao.ClassService;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;
+import org.apache.tomcat.util.bcel.classfile.ArrayElementValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.crypto.AEADBadTagException;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.*;
@@ -394,6 +396,24 @@ public class CostClassController {
         DataSet<WorkLoseStudentClass> actions=classService.getWorkLoseStudentClass(data,criterias);
         return DatatablesResponse.build(actions,criterias);
     }
+
+    @RequestMapping(value = "/get_student_lose_day/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public ArrayList getStudentLoseDay(@PathVariable String data,HttpServletRequest request){
+        ArrayList result=classService.getStudentLoseDay(data);
+        return result;
+    }
+
+    @RequestMapping(value = "/get_lose_student_acoin_cnt/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse<WorkLoseStudentAcoin> getLoseStudentAcoinCnt(@PathVariable String data, HttpServletRequest request){
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<WorkLoseStudentAcoin> actions=classService.getWorkLoseStudentAcoinCnt(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
 
     @RequestMapping(value = "/get_lose_student_acoin/{data}")
     @ResponseBody

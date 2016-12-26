@@ -5,6 +5,7 @@ import com.qa.data.visualization.repositories.qingshao.EbkStudentsRepository;
 import com.qa.data.visualization.repositories.qingshao.EbkTeachersRepository;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
+import com.web.spring.datatable.TableConvert;
 import com.web.spring.datatable.TableQuery;
 import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -719,13 +720,8 @@ public class ClassServiceImpl implements ClassService {
             object.setDay(map.get(id.toString()).get("days"));
             resultRow.add(object);
         }
-        workLoseClassCnt=(long)ids.size();
-        List<WorkLoseStudentClass> topTen = new ArrayList<>();
-        for(int i=0;i<10;i++) {
-            topTen.add(resultRow.get(i));
-        }
-        DataSet<WorkLoseStudentClass> actions= new DataSet<WorkLoseStudentClass>(topTen,(long)ids.size(),10L);
-        return actions;
+        TableConvert tableConvert = new TableConvert(resultRow,criterias);
+        return tableConvert.getResultDataSet();
     }
 
     @Override

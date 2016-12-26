@@ -77,6 +77,10 @@ public interface ClassService {
 
     String getWorkRefundsSql();
 
+    String getWorkLoseClassSql();
+
+    Long getWorkLoseClassCnt();
+
     ArrayList getWorkRenewCnt();
 
     LinkedHashMap<String ,String> getDayStudentActivityChart(String data);

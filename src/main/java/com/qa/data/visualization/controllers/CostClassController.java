@@ -209,6 +209,14 @@ public class CostClassController {
         return classService.getWorkRenewSql();
     }
 
+    @RequestMapping("/get_work_lose_class_sql")
+    @ResponseBody
+    public String getWorkLoseClassSql(){return classService.getWorkLoseClassSql();}
+
+    @RequestMapping("/get_work_lose_class_cnt")
+    @ResponseBody
+    public Long getWorkLoseClassCnt(){return classService.getWorkLoseClassCnt();}
+
     @RequestMapping("/get_book/{data}")
     @ResponseBody
     public ArrayList getBook(@PathVariable String data) throws Exception {

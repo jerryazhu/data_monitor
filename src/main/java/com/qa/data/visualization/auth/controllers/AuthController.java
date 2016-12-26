@@ -41,12 +41,15 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(Model model, String error, String logout) {
+    public String login(Model model, String error, String logout, String expired) {
         if (error != null)
             model.addAttribute("error", "Your username and password is invalid.");
 
         if (logout != null)
             model.addAttribute("message", "You have been logged out successfully.");
+
+        if (expired != null)
+            model.addAttribute("error", "Yous session is expired.");
 
         return "auth/login";
     }

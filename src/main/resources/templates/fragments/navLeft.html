@@ -140,7 +140,11 @@
                     $("#content").empty();
                     var templateName = $(this).attr("name");
                     if(templateName){
-                        $("#content").load("/overview/" + templateName);
+                        $("#content").load("/overview/" + templateName,function(response, status, xhr) {
+                            if(response.indexOf("Log in with your account") > -1){
+                                window.location.href="/login";
+                            }
+                        });
                     }
                 });
             });
@@ -151,7 +155,11 @@
                     $("#content").empty();
                     var templateName = $(this).attr("name");
                     if(templateName) {
-                        $("#content").load("/table/" + templateName);
+                        $("#content").load("/table/" + templateName,function(response, status, xhr) {
+                            if(response.indexOf("Log in with your account") > -1){
+                                window.location.href="/login";
+                            }
+                        });
                     }
                 });
             });

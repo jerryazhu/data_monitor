@@ -7,7 +7,7 @@ public class WorkLoseStudentClass {
     private String id;
     private String name;
     private String ghs;
-    private String day;
+    private int day;
 
     public String getId() {
         return id;
@@ -33,11 +33,11 @@ public class WorkLoseStudentClass {
         this.ghs = ghs;
     }
 
-    public String getDay() {
+    public int getDay() {
         return day;
     }
 
-    public void setDay(String day) {
+    public void setDay(int day) {
         this.day = day;
     }
 }

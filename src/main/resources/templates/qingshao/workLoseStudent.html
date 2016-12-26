@@ -4,6 +4,7 @@
     <link th:href="@{/css/qingshao.css}" rel="stylesheet"/>
     <link th:href="@{/css/datepicker/bootstrap-datetimepicker.css}" rel="stylesheet"/>
     <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/css/jishu.css}" rel="stylesheet"/>
 </head>
 <body>
 <div class="row">
@@ -43,7 +44,7 @@
         <span class="option-text active" id="allCombo">不限</span>
         <span class="option-text">菲律宾套餐</span>
         <span class="option-text">欧美套餐</span>
-        <span class="option-text">自由课套餐</span>
+        <span class="option-text" id="free_combo">自由课套餐</span>
     </div>
 </div>
 <div class="row">
@@ -52,7 +53,7 @@
     </div>
     <div class="col-lg-10 height" id="look">
         <span class="option-text active" id="table1">连续未约课天数</span>
-        <span class="option-text" id="table2">连续未选课扣币天数及扣币量</span>
+        <span class="option-text" id="table2">未选课扣币天数及扣币量</span>
     </div>
 </div>
 <div class="row" id="sqlLook">
@@ -80,7 +81,8 @@
                             <th>学生ID</th>
                             <th>学生昵称</th>
                             <th>学习导师</th>
-                            <th>连续未约课天数</th>
+                            <th>连续未约课最大天数</th>
+                            <th></th>
                         </tr>
                         </thead>
                     </table>
@@ -102,7 +104,36 @@
                             <th>学生ID</th>
                             <th>学生昵称</th>
                             <th>学习导师</th>
-                            <th>未选课扣币天数</th>
+                            <th>未选课扣币日期</th>
+                            <th>扣币量</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-1"></div>
+</div>
+<div class="row" id="table_three">
+    <div class="col-lg-1"></div>
+    <div class="col-lg-10">
+        <div class="panel panel-default">
+            <div style="float: right">
+            <span class="cnt">Total:
+                <span class="cntNumber" id="costClassCnt2">
+                </span>
+            </span>
+            </div>
+            <div class="panel-body">
+                <div class="dataTable_wrapper">
+                    <table class="table table-striped table-bordered table-hover" id="look3_table">
+                        <thead>
+                        <tr>
+                            <th>学生ID</th>
+                            <th>学生昵称</th>
+                            <th>学习导师</th>
+                            <th>总未选课日期</th>
                             <th>扣币量</th>
                         </tr>
                         </thead>
@@ -121,6 +152,15 @@
 <script th:src="@{/js/datatables/dataTables.bootstrap.min.js}"></script>
 <script th:src="@{/js/jquery-autocomplete/jquery.autocomplete.min.js}"></script>
 <script>
+    function format(res) {
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding_left:50px;">'+
+                '<tr>'+
+                '<td> ' +
+                '<i class="fa fa-align-justify" aria-hidden="true"></i>      未选课日期 : <br/>'+res+' ' +
+                '</td>'+
+                '</tr>'+
+                '</table>';
+    }
     // <![CDATA[
     $(document).ready(function () {
         var beginTime = $('#begin-time');
@@ -189,13 +229,22 @@
     });
     function recoverCnt() {
         $('#costClassCnt').html('<span  class="cntNumber">  </span>');
+        $('#costClassCnt2').html('<span class="cutNumber> </span>');
     }
     function createTable() {
         var look=$('#look').find('span[class="option-text active"]').attr("id");
+        var combo=$('#classType').find('span[class="opotion-text active"]').attr("id");
+        if(combo=="free_combo"){
+            $('#table_two').hide();
+        }else{
+            $('#table_two').show();
+        }
         if(look=="table1"){
             $('#table_one').show();
             $('#table_two').hide();
+            $('#table_three').hide();
             $('#sqlLook').show();
+            $('#free_combo').show();
             var table_one=$('#student').DataTable({
                 destroy: true,
                 lengthMenu: [10, 25, 50, 100],
@@ -217,13 +266,24 @@
                     {"data": "id"},
                     {"data": "name"},
                     {"data": "ghs"},
-                    {"data": "day"}
+                    {"data": "day"},
+                    {
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    }
                 ],
                 columnDefs:[
                     {
                         "targets": 3,
                         "render": function (data, type, row, meta) {
                             return data+"天";
+                        }
+                    },{
+                        "targets":[4],
+                        "data":null,
+                        "render":function (data,type,full) {
+                            return "<i class='fa fa-angle-down fa-2x' aria-hidden='true'></i>";
                         }
                     }
                 ],
@@ -232,18 +292,55 @@
                     type: 'GET'
                 }
             });
+            var selected=[];
             $('#student').on( 'init.dt', function () {
                 getCnt();
                 getSql();
             }).dataTable();
+            $('#student tbody').on( 'click', 'tr', function () {
+                var res;
+                var id=this.id;
+                var tr = $(this).closest('tr');
+                var row = table_one.row( tr );
+                var idx = $.inArray( id, selected );
+                if ( row.child.isShown() ) {
+                    row.child.hide();
+                    tr.find("i").attr("class","fa fa-angle-down fa-2x");
+                    selected.splice(idx, 1 );
+                    // Remove from the 'open' array
+                }
+                else {
+                    var rIdx=tr.find("i").parent().prev().prev().prev().prev().text();
+                    $.ajax({
+                        url:"/class/get_student_lose_day/"+getData()+"+"+rIdx,
+                        type:"GET",
+                        success:function (data) {
+                            row.child( format( data) ).show();
+                        },
+                        error:function () {
+                            res='获取超时，请重试';
+                            row.child( format( res) ).show();
+                        }
+                    });
+//                    row.child( format( res) ).show();
+                    tr.find("i").attr("class","fa fa-angle-up fa-2x");
+                    if ( idx === -1 ) {
+                        selected.push( id );
+                    }
+                    // Add to the 'open' array
+                }
+                $(this).toggleClass('selected');
+            } );
         }else{
             $('#table_one').hide();
             $('#table_two').show();
-            $('#sqlLook').hide();
+            $('#table_three').show();
+            $('#sqlLook').show();
+            $('#free_combo').hide();
             var table_two=$('#look2_table').DataTable({
                 destroy: true,
                 lengthMenu: [10, 25, 50, 100],
-                order: [[2, "desc"]],
+                order: [[0, "asc"],[3,"asc"]],
                 autoWidth: true,
                 paging: true,
                 processing: true,
@@ -265,12 +362,59 @@
                     {"data": "acoin"}
                 ],
                 columnDefs:[
+                    {
+                        "targets": 3,
+                        "render": function (data, type, row, meta) {
+                            return unixToDate(parseInt(data));
+                        }
+                    }
                 ],
                 ajax: {
                     url: '/class/get_lose_student_acoin/'+getData(),
                     type: 'GET'
                 }
             });
+            var table_three=$('#look3_table').DataTable({
+                destroy: true,
+                lengthMenu: [10, 25, 50, 100],
+                order: [[4,"asc"]],
+                autoWidth: true,
+                paging: true,
+                processing: true,
+                serverSide: true,
+                searching:false,
+                filter: true,
+                language: {
+                    "lengthMenu": " _MENU_ ",
+                    "zeroRecords": "Nothing found - sorry",
+                    "info": "Showing page _PAGE_ of _PAGES_",
+                    "infoEmpty": "No records available",
+                    "infoFiltered": "(filtered from _MAX_ total records)"
+                },
+                columns: [
+                    {"data": "id"},
+                    {"data": "name"},
+                    {"data": "ghs"},
+                    {"data": "day"},
+                    {"data": "acoin"}
+                ],
+                columnDefs:[
+                    {
+                        "targets": 3,
+                        "render": function (data, type, row, meta) {
+                            return data+"天";
+                        }
+                    }
+                ],
+                ajax: {
+                    url: '/class/get_lose_student_acoin_cnt/'+getData(),
+                    type: 'GET'
+                }
+            });
+            $('#look3_table').on( 'init.dt', function () {
+                getCnt();
+                getSql();
+            }).dataTable();
         }
     }
     function getCnt() {
@@ -280,6 +424,7 @@
             data:'',
             success:function (data) {
                 $('#costClassCnt').html('<span  class="cntNumber">'+data+'</span>');
+                $('#costClassCnt2').html(('<span  class="cntNumber">'+data+'</span>'));
             },
             error:function () {
             }

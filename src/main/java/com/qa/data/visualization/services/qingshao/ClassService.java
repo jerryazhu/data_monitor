@@ -39,6 +39,8 @@ public interface ClassService {
 
     DataSet<WorkLoseStudentAcoin> getWorkLoseStudentAcoin(String data,DatatablesCriterias criterias);
 
+    DataSet<WorkLoseStudentAcoin> getWorkLoseStudentAcoinCnt(String data,DatatablesCriterias criterias);
+
     DataSet getWorkRenew(String data,DatatablesCriterias criterias);
 
     DataSet <WorkRefunds> getWorkRefunds(String data,DatatablesCriterias criterias);
@@ -82,6 +84,8 @@ public interface ClassService {
     Long getWorkLoseClassCnt();
 
     ArrayList getWorkRenewCnt();
+
+    ArrayList getStudentLoseDay(String data);
 
     LinkedHashMap<String ,String> getDayStudentActivityChart(String data);
 }

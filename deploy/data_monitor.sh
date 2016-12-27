@@ -19,13 +19,10 @@ GIT_URL=https://github.com/lwfwind/data_monitor.git
 do_pre() {
 	echo "do pre start at $(date)" | tee -a $APP_BUILD_LOGFILE
 	rm -rf $CURRENTDIR/log/
-    rm -rf $APP_BUILD_DIR
     test -d $CURRENTDIR/log || mkdir -p $CURRENTDIR/log
     test -f $APP_BUILD_LOGFILE || touch $APP_BUILD_LOGFILE
-    test -d $APP_BUILD_DIR || mkdir -p $APP_BUILD_DIR
 	test -d $APP_SOURCE_ROOTDIR || mkdir -p $APP_SOURCE_ROOTDIR
 	cd $APP_SOURCE_ROOTDIR/
-	rm -rf $APP_BUILD_DIR/* | tee -a $APP_BUILD_LOGFILE
 	rm -rf $CURRENTDIR/log/*.*
 	echo "do pre end at $(date)" | tee -a $APP_BUILD_LOGFILE
 }
@@ -56,6 +53,8 @@ do_build() {
 
 do_sync() {
 	echo "do sync start at $(date)" | tee -a $APP_BUILD_LOGFILE
+	rm -rf $APP_BUILD_DIR
+	test -d $APP_BUILD_DIR || mkdir -p $APP_BUILD_DIR
 	cp $APP_SOURCE_ROOTDIR/target/$APP_NAME.jar $APP_BUILD_DIR/$APP_NAME.jar
 	cp $APP_SOURCE_ROOTDIR/src/main/resources/application.properties $APP_BUILD_DIR/
 	test -f $APP_BUILD_DIR/$APP_NAME.jar && echo "build success"
@@ -163,9 +162,9 @@ main() {
 			'all')
 				do_pre
 				do_git $BRANCH
-				do_build 
-				do_sync
+				do_build
 				do_stop
+				do_sync
 				do_start
 			;;
 			

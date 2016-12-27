@@ -542,18 +542,23 @@ public class WorkClassServiceImpl implements WorkClassService{
 
     @Override
     @SuppressWarnings("unchecked")
-    @Cacheable(value = "day_student_activity_chart", keyGenerator = "wiselyKeyGenerator")
-    public LinkedHashMap<String,String> getDayStudentActivityChart(String data){
+//    @Cacheable(value = "day_student_activity_chart", keyGenerator = "wiselyKeyGenerator")
+    public LinkedHashMap<String,String> getDayStudentActivityChart(String data) throws ParseException {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-        String sql=String.format("select UNIX_TIMESTAMP(time),count(id) from ABC360_WEB_STUDENT_ACTION_LAST_MONTH_WITH_TODAY_TBL wsal \n" +
+        String tData=data+" 23:59";
+        data=data+" 00:00";
+        String sql=String.format("select SUBSTR(wsal.time,1,16),COUNT(wsal.id) from ABC360_WEB_STUDENT_ACTION_LAST_MONTH_WITH_TODAY_TBL wsal \n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=wsal.operatorid\n" +
-                "where UNIX_TIMESTAMP(time) BETWEEN %s and (%s+86400)\n" +
+                "where wsal.time between '%s' and '%s'\n" +
                 "and esi.study_aim=1\n" +
-                "group by DATE_FORMAT(wsal.time, '%%Y-%%m-%%d %%H:%%i')",data,data);
+                "group by SUBSTR(wsal.time,1,16);",data,tData);
         Query q = firstEntityManager.createNativeQuery(sql);
         List<Object[]> list = q.getResultList();
         for (Object[] result : list) {
-            map.put(result[0].toString(), result[1].toString());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date date = simpleDateFormat.parse(result[0].toString());
+            String res = String.valueOf(date.getTime());
+            map.put(res, result[1].toString());
         }
         return map;
     }

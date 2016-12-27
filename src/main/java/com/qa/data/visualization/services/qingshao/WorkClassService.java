@@ -50,5 +50,5 @@ public interface WorkClassService {
 
     ArrayList getStudentLoseDay(String data);
 
-    LinkedHashMap<String ,String> getDayStudentActivityChart(String data);
+    LinkedHashMap<String ,String> getDayStudentActivityChart(String data) throws ParseException;
 }

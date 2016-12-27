@@ -49,13 +49,13 @@
         var element=$('#student_daily_activity_chart');
         var url="/class/get_day_student_activity_chart/";
         var day=time.datepicker('getFormattedDate');
-        $.getJSON(url+dateToUnix(day), function (data) {
+        $.getJSON(url+day, function (data) {
             createScatterHighChart(element, data);
         });
         time.on("changeDate", function () {
             element.html("");
             var day=time.datepicker('getFormattedDate');
-            $.getJSON(url+dateToUnix(day), function (data) {
+            $.getJSON(url+day, function (data) {
                 createScatterHighChart(element, data);
             });
         });

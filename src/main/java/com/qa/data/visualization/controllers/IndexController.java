@@ -343,10 +343,11 @@ public class IndexController {
         LinkedHashMap<String, String> pcSystem = pcService.getPCSystem();
         for (Map.Entry<String, String> entry : pcSystem.entrySet()) {
             HashMap<String, Object> map = new HashMap<>();
-            String[] a = entry.getKey().split(" ");
-            String b = a[1];
-            for (int i = 2; i < a.length; i++) {
-                b = b + a[i];
+            String b;
+            if(entry.getKey().contains("Microsoft")){
+                b = entry.getKey().replace("Microsoft ","");
+            }else {
+                b=entry.getKey();
             }
             map.put("name", b);
             map.put("count", Integer.parseInt(entry.getValue()));
@@ -376,10 +377,11 @@ public class IndexController {
         LinkedHashMap<String, String> tchPCSystem = pcService.getTchPCSystem();
         for (Map.Entry<String, String> entry : tchPCSystem.entrySet()) {
             HashMap<String, Object> map = new HashMap<>();
-            String[] a = entry.getKey().split(" ");
-            String b = a[1];
-            for (int i = 2; i < a.length; i++) {
-                b = b + a[i];
+            String b;
+            if(entry.getKey().contains("Microsoft")){
+                b = entry.getKey().replace("Microsoft ","");
+            }else {
+                b=entry.getKey();
             }
             map.put("name", b);
             map.put("count", Integer.parseInt(entry.getValue()));

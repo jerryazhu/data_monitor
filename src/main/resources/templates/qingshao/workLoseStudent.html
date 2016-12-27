@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link th:href="@{/css/qingshao.css}" rel="stylesheet"/>
     <link th:href="@{/css/datepicker/bootstrap-datetimepicker.css}" rel="stylesheet"/>
     <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/qingshao.css}" rel="stylesheet"/>
     <link th:href="@{/css/jishu.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -92,7 +93,7 @@
     </div>
     <div class="col-lg-1"></div>
 </div>
-<div class="row" id="table_two">
+<div class="row" id="table_two" style="displsy:none">
     <div class="col-lg-1"></div>
     <div class="col-lg-10">
         <div class="panel panel-default">
@@ -115,7 +116,7 @@
     </div>
     <div class="col-lg-1"></div>
 </div>
-<div class="row" id="table_three">
+<div class="row" id="table_three" style="displsy:none">
     <div class="col-lg-1"></div>
     <div class="col-lg-10">
         <div class="panel panel-default">
@@ -156,13 +157,16 @@
         return '<table cellpadding="5" cellspacing="0" border="0" style="padding_left:50px;">'+
                 '<tr>'+
                 '<td> ' +
-                '<i class="fa fa-align-justify" aria-hidden="true"></i>      未选课日期 : <br/>'+res+' ' +
+                '<i class="fa fa-align-justify" aria-hidden="true"></i>      未选课日期 : <br/><span class="line">'+res+'</span>' +
                 '</td>'+
                 '</tr>'+
                 '</table>';
     }
     // <![CDATA[
     $(document).ready(function () {
+        $('#table_two').hide();
+        $('#table_three').hide();
+        $('#table_one').show();
         var beginTime = $('#begin-time');
         var toTime = $('#to-time');
         var look=$('#look');
@@ -253,7 +257,7 @@
                 paging: true,
                 processing: true,
                 serverSide: true,
-                searching:false,
+                searching:true,
                 filter: true,
                 language: {
                     "lengthMenu": " _MENU_ ",
@@ -261,6 +265,11 @@
                     "info": "Showing page _PAGE_ of _PAGES_",
                     "infoEmpty": "No records available",
                     "infoFiltered": "(filtered from _MAX_ total records)"
+                },
+                "rowCallback":function (row,data) {
+                    if($.inArray(data.DT_RowId,selected)!==-1){
+                        $(row).addClass('selected');
+                    }
                 },
                 columns: [
                     {"data": "id"},
@@ -296,41 +305,46 @@
             $('#student').on( 'init.dt', function () {
                 getCnt();
                 getSql();
-            }).dataTable();
-            $('#student tbody').on( 'click', 'tr', function () {
-                var res;
-                var id=this.id;
-                var tr = $(this).closest('tr');
-                var row = table_one.row( tr );
-                var idx = $.inArray( id, selected );
-                if ( row.child.isShown() ) {
-                    row.child.hide();
-                    tr.find("i").attr("class","fa fa-angle-down fa-2x");
-                    selected.splice(idx, 1 );
-                    // Remove from the 'open' array
-                }
-                else {
-                    var rIdx=tr.find("i").parent().prev().prev().prev().prev().text();
-                    $.ajax({
-                        url:"/class/get_student_lose_day/"+getData()+"+"+rIdx,
-                        type:"GET",
-                        success:function (data) {
-                            row.child( format( data) ).show();
-                        },
-                        error:function () {
-                            res='获取超时，请重试';
-                            row.child( format( res) ).show();
-                        }
-                    });
-//                    row.child( format( res) ).show();
-                    tr.find("i").attr("class","fa fa-angle-up fa-2x");
-                    if ( idx === -1 ) {
-                        selected.push( id );
+                $('#student tbody tr[role="row"]').each(function () {
+                    var that = this;
+                    $(this).unbind('click');
+                    $(this).on('click', function () {
+                    var res;
+                    var id=that.id;
+                    var tr = $(that).closest('tr');
+                    var row = table_one.row( tr );
+                    var idx = $.inArray( id, selected );
+                    if ( row.child.isShown() ) {
+                        row.child.hide();
+                        tr.find("i").attr("class","fa fa-angle-down fa-2x");
+                        selected.splice(idx, 1 );
+                        // Remove from the 'open' array
                     }
-                    // Add to the 'open' array
-                }
-                $(this).toggleClass('selected');
-            } );
+                    else {
+                        var rIdx=tr.find("i").parent().prev().prev().prev().prev().text();
+                        $.ajax({
+                            url:"/class/get_student_lose_day/"+getData()+"+"+rIdx,
+                            type:"GET",
+                            success:function (data) {
+                                row.child( format(data) ).show();
+                            },
+                            error:function () {
+                                res='获取超时，请重试';
+                                row.child( format(res) ).show();
+                            }
+                        });
+                        row.child( format(res) ).show();
+                        tr.find("i").attr("class","fa fa-angle-up fa-2x");
+                        if ( idx === -1 ) {
+                            selected.push( id );
+                        }
+                        // Add to the 'open' array
+                    }
+                    $(that).toggleClass('selected');
+                } );
+                });
+            }).dataTable();
+
         }else{
             $('#table_one').hide();
             $('#table_two').show();

@@ -2,11 +2,12 @@ package com.qa.data.visualization.controllers;
 
 import com.qa.data.visualization.entities.qingshao.*;
 import com.qa.data.visualization.services.qingshao.BookClassService;
-import com.qa.data.visualization.services.qingshao.ClassService;
+import com.qa.data.visualization.services.qingshao.ManageClassService;
+import com.qa.data.visualization.services.qingshao.PayClassService;
+import com.qa.data.visualization.services.qingshao.WorkClassService;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;
-import org.apache.tomcat.util.bcel.classfile.ArrayElementValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.crypto.AEADBadTagException;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.*;
@@ -26,39 +26,43 @@ import java.util.*;
 @RequestMapping(value = "/class")
 public class CostClassController {
     @Autowired
-    private ClassService classService;
+    private ManageClassService manageClassService;
     @Autowired
     private BookClassService bookClassService;
+    @Autowired
+    private PayClassService payClassService;
+    @Autowired
+    private WorkClassService workClassService;
 
     @RequestMapping(value = "/student_auto_complete")
     @ResponseBody
     public List<AutoComplete> autocompleteStudent(@RequestParam(value = "query", required = true) String query, HttpServletRequest request) {
-        return classService.getStudentAutoComplete(query);
+        return manageClassService.getStudentAutoComplete(query);
     }
 
     @RequestMapping(value = "/teacher_auto_complete")
     @ResponseBody
     public List<AutoComplete> autocompleteTeacher(@RequestParam(value = "query", required = true) String query, HttpServletRequest request) {
-        return classService.getTeacherAutoComplete(query);
+        return manageClassService.getTeacherAutoComplete(query);
     }
 
     @RequestMapping("/get_teacher_group")
     @ResponseBody
     public ArrayList getTeacherGroup() {
-        return classService.getTeacherGroup();
+        return manageClassService.getTeacherGroup();
     }
 
     @RequestMapping("/get_sa_teacher_group")
     @ResponseBody
     public ArrayList getSaTeacherGroup() {
-        return classService.getSaTeacherGroup();
+        return manageClassService.getSaTeacherGroup();
     }
 
     @RequestMapping("/get_cost_class/{data}")
     @ResponseBody
     public DatatablesResponse<CostClass> getCostClass(@PathVariable String data, HttpServletRequest request) throws ParseException {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<CostClass> dataSet = classService.getCostClass(data, criterias);
+        DataSet<CostClass> dataSet = manageClassService.getCostClass(data, criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
 
@@ -66,7 +70,7 @@ public class CostClassController {
     @ResponseBody
     public DatatablesResponse<CostSaClass> getCostSaClass(@PathVariable String data, HttpServletRequest request) throws ParseException {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<CostSaClass> dataSet = classService.getCostSaClass(data, criterias);
+        DataSet<CostSaClass> dataSet = manageClassService.getCostSaClass(data, criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
 
@@ -74,7 +78,7 @@ public class CostClassController {
     @ResponseBody
     public DatatablesResponse<payStudent> getNewStudent(@PathVariable String data, HttpServletRequest request) throws ParseException {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<payStudent> dataSet = classService.getNewStudent(data, criterias);
+        DataSet<payStudent> dataSet = payClassService.getNewStudent(data, criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
 
@@ -82,7 +86,7 @@ public class CostClassController {
     @ResponseBody
     public DatatablesResponse<payStudent> getOldStudent(@PathVariable String data, HttpServletRequest request) throws ParseException {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<payStudent> dataSet = classService.getOldStudent(data, criterias);
+        DataSet<payStudent> dataSet = payClassService.getOldStudent(data, criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
 
@@ -97,25 +101,25 @@ public class CostClassController {
     @RequestMapping("/get_cost_class_cnt")
     @ResponseBody
     public Long getCostClassCnt() {
-        return classService.getCostClassCnt();
+        return manageClassService.getCostClassCnt();
     }
 
     @RequestMapping("/get_cost_sa_class_cnt")
     @ResponseBody
     public Long getCostSaClassCnt() {
-        return classService.getCostSaClassCnt();
+        return manageClassService.getCostSaClassCnt();
     }
 
     @RequestMapping("/get_new_student_cnt")
     @ResponseBody
     public Long getNewStudentCnt() {
-        return classService.getNewStudentCnt();
+        return payClassService.getNewStudentCnt();
     }
 
     @RequestMapping("/get_old_student_cnt")
     @ResponseBody
     public Long getOldStudentCnt() {
-        return classService.getOldStudentCnt();
+        return payClassService.getOldStudentCnt();
     }
 
     @RequestMapping("/get_book_choose_cost_class_cnt")
@@ -127,49 +131,49 @@ public class CostClassController {
     @RequestMapping("/get_work_student_message_cnt")
     @ResponseBody
     public Long getWorkStudentMessageCnt() {
-        return classService.getWorkStudentMessageCnt();
+        return workClassService.getWorkStudentMessageCnt();
     }
 
     @RequestMapping("/get_whole_sql")
     @ResponseBody
     public String getWholeSql() {
-        return classService.getWholeSql();
+        return manageClassService.getWholeSql();
     }
 
     @RequestMapping("/get_whole_sa_sql")
     @ResponseBody
     public String getWholeSaSql() {
-        return classService.getWholeSaSql();
+        return manageClassService.getWholeSaSql();
     }
 
     @RequestMapping("/get_new_student_sql")
     @ResponseBody
     public String getNewStudentSql() {
-        return classService.getNewStudentSql();
+        return payClassService.getNewStudentSql();
     }
 
     @RequestMapping("/get_old_student_sql")
     @ResponseBody
     public String getOldStudentSql() {
-        return classService.getOldStudentSql();
+        return payClassService.getOldStudentSql();
     }
 
     @RequestMapping("/get_new_student_pay_cnt")
     @ResponseBody
     public String getNewStudentPayCnt() {
-        return classService.getNewStudentPayCnt();
+        return payClassService.getNewStudentPayCnt();
     }
 
     @RequestMapping("/get_old_student_pay_cnt")
     @ResponseBody
     public String getOldStudentPayCnt() {
-        return classService.getOldStudentPayCnt();
+        return payClassService.getOldStudentPayCnt();
     }
 
     @RequestMapping("/get_work_renew_cnt")
     @ResponseBody
     public ArrayList getWorkRenewCnt(){
-        return classService.getWorkRenewCnt();
+        return workClassService.getWorkRenewCnt();
     }
 
     @RequestMapping("/get_book_choose_cost_class_sql")
@@ -181,43 +185,43 @@ public class CostClassController {
     @RequestMapping("/get_work_student_message_sql")
     @ResponseBody
     public String getWorkStudentMessageSql() {
-        return classService.getWorkStudentMessageSql();
+        return workClassService.getWorkStudentMessageSql();
     }
 
     @RequestMapping("/get_work_class_message_cnt")
     @ResponseBody
     public Long getWorkClassMessageCnt() {
-        return classService.getWorkClassMessageCnt();
+        return workClassService.getWorkClassMessageCnt();
     }
 
     @RequestMapping("/get_work_refunds_cnt")
     @ResponseBody
     public ArrayList getWorkRefundsCnt(){
-        return classService.getWorkRefundsCnt();
+        return workClassService.getWorkRefundsCnt();
     }
     @RequestMapping("/get_work_refunds_sql")
     @ResponseBody
     public String getWorkRefundsSql(){
-        return classService.getWorkRefundsSql();
+        return workClassService.getWorkRefundsSql();
     }
     @RequestMapping("/get_work_class_message_sql")
     @ResponseBody
     public String getWorkClassMessageSql() {
-        return classService.getWorkClassMessageSql();
+        return workClassService.getWorkClassMessageSql();
     }
     @RequestMapping("/get_work_renew_sql")
     @ResponseBody
     public String getWorkRenewSql() {
-        return classService.getWorkRenewSql();
+        return workClassService.getWorkRenewSql();
     }
 
     @RequestMapping("/get_work_lose_class_sql")
     @ResponseBody
-    public String getWorkLoseClassSql(){return classService.getWorkLoseClassSql();}
+    public String getWorkLoseClassSql(){return workClassService.getWorkLoseClassSql();}
 
     @RequestMapping("/get_work_lose_class_cnt")
     @ResponseBody
-    public Long getWorkLoseClassCnt(){return classService.getWorkLoseClassCnt();}
+    public Long getWorkLoseClassCnt(){return workClassService.getWorkLoseClassCnt();}
 
     @RequestMapping("/get_book/{data}")
     @ResponseBody
@@ -366,7 +370,7 @@ public class CostClassController {
     @SuppressWarnings("unchecked")
     public DatatablesResponse getWorkStudentMessage(@PathVariable String data,HttpServletRequest request) throws ParseException{
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
-        DataSet<WorkStudentMessage> actions=classService.getWorkStudentMessage(data,criterias);
+        DataSet<WorkStudentMessage> actions= workClassService.getWorkStudentMessage(data,criterias);
         return DatatablesResponse.build(actions,criterias);
     }
 
@@ -375,7 +379,7 @@ public class CostClassController {
     @SuppressWarnings("unchecked")
     public DatatablesResponse getWorkStudentRecommend(@PathVariable String data,HttpServletRequest request){
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
-        DataSet<WorkStudentRecommend> actions=classService.getWorkStudentRecommend(data,criterias);
+        DataSet<WorkStudentRecommend> actions= workClassService.getWorkStudentRecommend(data,criterias);
         return DatatablesResponse.build(actions,criterias);
     }
 
@@ -384,7 +388,7 @@ public class CostClassController {
     @SuppressWarnings("unchecked")
     public DatatablesResponse getWorkClassMessage(@PathVariable String data,HttpServletRequest request){
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
-        DataSet<WorkClassMessage> actions=classService.getWorkClassMessage(data,criterias);
+        DataSet<WorkClassMessage> actions= workClassService.getWorkClassMessage(data,criterias);
         return DatatablesResponse.build(actions,criterias);
     }
 
@@ -393,7 +397,7 @@ public class CostClassController {
     @SuppressWarnings("unchecked")
     public DatatablesResponse getLoseStudentClass(@PathVariable String data,HttpServletRequest request){
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
-        DataSet<WorkLoseStudentClass> actions=classService.getWorkLoseStudentClass(data,criterias);
+        DataSet<WorkLoseStudentClass> actions= workClassService.getWorkLoseStudentClass(data,criterias);
         return DatatablesResponse.build(actions,criterias);
     }
 
@@ -401,7 +405,7 @@ public class CostClassController {
     @ResponseBody
     @SuppressWarnings("unchecked")
     public ArrayList getStudentLoseDay(@PathVariable String data,HttpServletRequest request){
-        ArrayList result=classService.getStudentLoseDay(data);
+        ArrayList result= workClassService.getStudentLoseDay(data);
         return result;
     }
 
@@ -410,7 +414,7 @@ public class CostClassController {
     @SuppressWarnings("unchecked")
     public DatatablesResponse<WorkLoseStudentAcoin> getLoseStudentAcoinCnt(@PathVariable String data, HttpServletRequest request){
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
-        DataSet<WorkLoseStudentAcoin> actions=classService.getWorkLoseStudentAcoinCnt(data,criterias);
+        DataSet<WorkLoseStudentAcoin> actions= workClassService.getWorkLoseStudentAcoinCnt(data,criterias);
         return DatatablesResponse.build(actions,criterias);
     }
 
@@ -420,7 +424,7 @@ public class CostClassController {
     @SuppressWarnings("unchecked")
     public DatatablesResponse getLoseStudentAcoin(@PathVariable String data,HttpServletRequest request){
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
-        DataSet<WorkLoseStudentAcoin> actions=classService.getWorkLoseStudentAcoin(data,criterias);
+        DataSet<WorkLoseStudentAcoin> actions= workClassService.getWorkLoseStudentAcoin(data,criterias);
         return DatatablesResponse.build(actions,criterias);
     }
 
@@ -429,7 +433,7 @@ public class CostClassController {
     @SuppressWarnings("unchecked")
     public DatatablesResponse getWorkRenew(@PathVariable String data,HttpServletRequest request){
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
-        DataSet<WorkRenew> actions=classService.getWorkRenew(data,criterias);
+        DataSet<WorkRenew> actions= workClassService.getWorkRenew(data,criterias);
         return DatatablesResponse.build(actions,criterias);
     }
 
@@ -438,7 +442,7 @@ public class CostClassController {
     @SuppressWarnings("unchecked")
     public DatatablesResponse getWorkRefunds(@PathVariable String data,HttpServletRequest request) {
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
-        DataSet<WorkRefunds> actions=classService.getWorkRefunds(data,criterias);
+        DataSet<WorkRefunds> actions= workClassService.getWorkRefunds(data,criterias);
         return DatatablesResponse.build(actions,criterias);
     }
 
@@ -447,7 +451,7 @@ public class CostClassController {
     @SuppressWarnings("uncheckede")
     public ArrayList getDayStudentActivityChart(@PathVariable String data){
         ArrayList<Object> list = new ArrayList<Object>();
-        LinkedHashMap<String, String> actions = classService.getDayStudentActivityChart(data);
+        LinkedHashMap<String, String> actions = workClassService.getDayStudentActivityChart(data);
         for (Map.Entry<String, String> entry : actions.entrySet()) {
             Object[] array = new Object[2];
             String []cutTime=entry.getKey().split("\\.");

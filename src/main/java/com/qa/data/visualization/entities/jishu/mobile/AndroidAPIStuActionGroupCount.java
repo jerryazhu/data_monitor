@@ -2,13 +2,7 @@ package com.qa.data.visualization.entities.jishu.mobile;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "ABC360_APP_API_ANDROID_STUDENT_ACTION_COUNT_YESTEADAY_TBL")
 public class AndroidAPIStuActionGroupCount {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
     private String api_name;
     private Integer cnt;
 

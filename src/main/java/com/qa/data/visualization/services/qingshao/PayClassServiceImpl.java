@@ -1,6 +1,7 @@
 package com.qa.data.visualization.services.qingshao;
 
-import com.qa.data.visualization.entities.qingshao.payStudent;
+import com.qa.data.visualization.entities.qingshao.PayCCMessage;
+import com.qa.data.visualization.entities.qingshao.PayStudent;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.TableQuery;
@@ -31,7 +32,7 @@ public class PayClassServiceImpl implements PayClassService {
     private EntityManager entityManager;
     @Override
     @SuppressWarnings("unchecked")
-    public DataSet<payStudent> getNewStudent(String data, DatatablesCriterias criterias) throws ParseException {
+    public DataSet<PayStudent> getNewStudent(String data, DatatablesCriterias criterias) throws ParseException {
         Date now = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");//可以方便地修改日期格式
         String today = dateFormat.format(now);
@@ -94,8 +95,8 @@ public class PayClassServiceImpl implements PayClassService {
                 break;
         }
         sql = sql + "\n" + "group by es.id,es.create_time";
-        TableQuery query = new TableQuery(entityManager, payStudent.class, criterias, sql);
-        DataSet<payStudent> result = query.getResultDataSet();
+        TableQuery query = new TableQuery(entityManager, PayStudent.class, criterias, sql);
+        DataSet<PayStudent> result = query.getResultDataSet();
         newStudentCnt = query.getTotalCount();
         newStudentSql = sql;
         if (tableShow.equals("销售量及购买人数")) {
@@ -113,7 +114,7 @@ public class PayClassServiceImpl implements PayClassService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public DataSet<payStudent> getOldStudent(String data, DatatablesCriterias criterias) throws ParseException {
+    public DataSet<PayStudent> getOldStudent(String data, DatatablesCriterias criterias) throws ParseException {
         Date now = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");//可以方便地修改日期格式
         String today = dateFormat.format(now);
@@ -134,11 +135,11 @@ public class PayClassServiceImpl implements PayClassService {
                     "LEFT JOIN ebk_students es on er.sid=es.id\n" +
                     "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
                     "LEFT JOIN ebk_rbac_user eru on eru.id=es.adviser\n" +
-                    "LEFT JOIN (select eao.create_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from from ebk_acoin_orders eao\n" +
+                    "LEFT JOIN (select eao.pay_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from from ebk_acoin_orders eao\n" +
                     "INNER JOIN ebk_acoin_order_detail eaod on eao.id=eaod.order_id \n" +
                     "group by eaod.order_id,eaod.begin_time\n" +
                     "union\n" +
-                    "select eao.create_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from from ebk_acoin_orders eao\n" +
+                    "select eao.pay_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from from ebk_acoin_orders eao\n" +
                     "INNER JOIN ebk_acoin_split_order easo on eao.sid=easo.sid\n" +
                     "group by eao.id,easo.begin_time) allorder on allorder.sid=es.id\n"+
                     "where ");
@@ -151,11 +152,11 @@ public class PayClassServiceImpl implements PayClassService {
         }else{
             sql = String.format("select allorder.create_time as create_time,es.id as sid,es.nickname as sname,es.status as status,ifNUll(eru.nickname,'UNKNOWN') as cc, ROUND(ifnull(allorder.tmoney,0),2) as cnt \n" +
                     "from ebk_students es\n" +
-                    "LEFT JOIN (select eao.create_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from from ebk_acoin_orders eao\n" +
+                    "LEFT JOIN (select eao.pay_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from from ebk_acoin_orders eao\n" +
                     "INNER JOIN ebk_acoin_order_detail eaod on eao.id=eaod.order_id \n" +
                     "group by eaod.order_id,eaod.begin_time\n" +
                     "union\n" +
-                    "select eao.create_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from from ebk_acoin_orders eao\n" +
+                    "select eao.pay_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from from ebk_acoin_orders eao\n" +
                     "INNER JOIN ebk_acoin_split_order easo on eao.sid=easo.sid\n" +
                     "group by eao.id,easo.begin_time) allorder on allorder.sid=es.id\n"+
                     "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
@@ -201,8 +202,8 @@ public class PayClassServiceImpl implements PayClassService {
         }else{
             sql = sql + "\n" + "group by es.id,allorder.id,cnt";
         }
-        TableQuery query = new TableQuery(entityManager, payStudent.class, criterias, sql);
-        DataSet<payStudent> result = query.getResultDataSet();
+        TableQuery query = new TableQuery(entityManager, PayStudent.class, criterias, sql);
+        DataSet<PayStudent> result = query.getResultDataSet();
         oldStudentCnt = query.getTotalCount();
         oldStudentSql = sql;
         String s = String.format("select sum(result.cnt) from (%s) result order by result.sid ", sql);
@@ -213,6 +214,22 @@ public class PayClassServiceImpl implements PayClassService {
         } else {
             oldStudentPayCnt = list.get(0).toString();
         }
+        return result;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataSet<PayCCMessage> getPayCCMessage(DatatablesCriterias criterias){
+        String sql="select result.id as id,result.name as name,result.title as title,result.time as time,result.time as workage,max(result.money) as max,min(result.money) as min,avg(result.money) as avg,sum(result.money) as sum from \n" +
+                "(select eru.id as id,eru.nickname as name,ecg.title as title,eru.create_time as time,from_unixtime(eao.pay_time, '%Y-%m') as month,sum(eao.tmoney) as money from ebk_rbac_user eru \n" +
+                "LEFT JOIN ebk_crm_group_user ecgu on ecgu.user_id=eru.id\n" +
+                "LEFT JOIN ebk_crm_group ecg on ecg.id=ecgu.group_id\n" +
+                "LEFT JOIN ebk_acoin_orders eao on eao.sale_adviser=eru.id\n" +
+                "where ecg.direction=1 and eao.payed=1 and eru.status=1\n" +
+                "group by eru.id,from_unixtime(eao.pay_time, '%Y-%m'))result\n" +
+                "group by result.id";
+        TableQuery query=new TableQuery(entityManager,PayCCMessage.class,criterias,sql);
+        DataSet<PayCCMessage> result=query.getResultDataSet();
         return result;
     }
 

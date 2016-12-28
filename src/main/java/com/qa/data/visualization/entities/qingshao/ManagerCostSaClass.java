@@ -1,16 +1,15 @@
 package com.qa.data.visualization.entities.qingshao;
 
 /**
- * Created by dykj on 2016/11/21.
+ * Created by dykj on 2016/11/24.
  */
-public class CostClass {
+public class ManagerCostSaClass {
     private String begin_time;
     private String tid;
     private String tname;
     private String sid;
     private String sname;
-    private String book;
-
+    private String status;
 
     public String getBegin_time() {
         return begin_time;
@@ -52,11 +51,11 @@ public class CostClass {
         this.sname = sname;
     }
 
-    public String getBook() {
-        return book;
+    public String getStatus() {
+        return status;
     }
 
-    public void setBook(String book) {
-        this.book = book;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -85,9 +85,7 @@ function dateToUnix(dateString) {
     if (dateString.length == 0) {
         return "";
     }
-    if(dateString.indexOf(":")<0){
-        dateString= dateString.replace(/-/g,'/');
-    }
+    dateString= dateString.replace(/-/g,'/');
     var date = new Date(dateString);
     return Date.parse(date)/ 1000;
 }

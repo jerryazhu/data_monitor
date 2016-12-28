@@ -17,6 +17,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: com.github.lwfwind.web:spring-jquery-datatable:2.3" level="project" />
+    <orderEntry type="library" name="Maven: com.github.lwfwind.web:spring-jquery-datatable:2.6" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:1.4.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:1.4.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context:4.3.2.RELEASE" level="project" />
@@ -112,7 +113,7 @@
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:9.3.11.v20160721" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-common:9.3.11.v20160721" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-api:9.3.11.v20160721" level="project" />
-    <orderEntry type="library" name="Maven: com.github.lwfwind.web:spring-jquery-datatable:2.6" level="project" />
+    <orderEntry type="library" name="Maven: com.github.lwfwind.web:spring-jquery-datatable:2.8" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.16" level="project" />
     <orderEntry type="library" name="Maven: com.github.lwfwind.common:java-common-helper:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-collections4:4.1" level="project" />

@@ -46,6 +46,12 @@ public class CostClassController {
         return manageClassService.getTeacherAutoComplete(query);
     }
 
+    @RequestMapping(value = "/cc_auto_complete")
+    @ResponseBody
+    public List<AutoComplete> autocompleteCC(@RequestParam(value = "query" ,required = true) String query,HttpServletRequest request){
+        return payClassService.getCcAutoComplete(query);
+    }
+
     @RequestMapping("/get_teacher_group")
     @ResponseBody
     public ArrayList getTeacherGroup() {
@@ -222,6 +228,24 @@ public class CostClassController {
     @RequestMapping("/get_work_lose_class_cnt")
     @ResponseBody
     public Long getWorkLoseClassCnt(){return workClassService.getWorkLoseClassCnt();}
+
+    @RequestMapping("/get_pay_cc_sale_message_sql")
+    @ResponseBody
+    public String getPayCcSaleMessageSql(){
+        return payClassService.getCcSaleMessageSql();
+    }
+
+    @RequestMapping("/get_pay_cc_sale_message_cnt")
+    @ResponseBody
+    public Long getPayCcSaleMessageCnt(){
+        return payClassService.getCcSaleMessageCnt();
+    }
+
+    @RequestMapping("/get_pay_cc_sale_message_money_cnt")
+    @ResponseBody
+    public String getPayCcSaleMessageMoneyCnt(){
+        return payClassService.getCcSaleMessageMoneyCnt();
+    }
 
     @RequestMapping("/get_book/{data}")
     @ResponseBody
@@ -470,5 +494,21 @@ public class CostClassController {
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
         DataSet<PayCCMessage> actions= payClassService.getPayCCMessage(criterias);
         return DatatablesResponse.build(actions,criterias);
+    }
+
+    @RequestMapping(value = "/get_pay_cc_sale_message/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getPayCcSaleMessage(@PathVariable String data, HttpServletRequest request){
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<PayCCSaleMessage> actions= payClassService.getPayCcSaleMessage(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
+    @RequestMapping(value = "/get_cc_group")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public ArrayList getCcGroup(){
+        return payClassService.getCcGroup();
     }
 }

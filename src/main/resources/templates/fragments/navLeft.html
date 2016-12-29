@@ -34,7 +34,10 @@
                         <a href="#" name="qingshao---payOldStudent"><i class="fa fa-table fa-fw"></i>销售--已买课学员</a>
                     </li>
                     <li th:if="${ROLE_SALE} == true">
-                        <a href="#" name="qingshao---payCCMessage"><i class="fa fa-table fa-fw"></i>销售--CC销售统计</a>
+                        <a href="#" name="qingshao---payCCMessage"><i class="fa fa-table fa-fw"></i>销售--CC销售基本信息</a>
+                    </li>
+                    <li th:if="${ROLE_SALE} == true">
+                        <a href="#" name="qingshao---paySaleMessage"><i class="fa fa-table fa-fw"></i>销售--销售额统计</a>
                     </li>
                     <li th:if="${ROLE_TUTOR} == true">
                         <a href="#" name="qingshao---workStudentMessage"><i class="fa fa-table fa-fw"></i>导师--学生信息</a>

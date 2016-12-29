@@ -321,7 +321,7 @@ public class WorkClassServiceImpl implements WorkClassService{
                     "INNER JOIN ebk_acoin_split_order easo on eao.sid=easo.sid\n" +
                     "group by eao.id,easo.begin_time) allorder on allorder.sid=es.id\n"+
                     "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
-                    "where allorder.create_time >=%s and allorder.create_time<=%s\n" +
+                    "where allorder.pay_time >=%s and allorder.pay_time<=%s\n" +
                     "and esi.study_aim=1 and allorder.payed=1 and allorder.order_flag=2",bTime,tTime);
 
             workRenewWholeSql=sql;
@@ -337,7 +337,7 @@ public class WorkClassServiceImpl implements WorkClassService{
                     "group by eao.id,easo.begin_time) allorder on allorder.sid=es.id\n"+
                     "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
                     "LEFT JOIN ebk_rbac_user eru on eru.id=es.ghs\n" +
-                    "where allorder.create_time >=%s and allorder.create_time<=%s\n" +
+                    "where allorder.pay_time >=%s and allorder.pay_time<=%s\n" +
                     "and esi.study_aim=1",bTime,tTime);
         }
         if (!teacherType.equals("不限")) {
@@ -542,7 +542,7 @@ public class WorkClassServiceImpl implements WorkClassService{
 
     @Override
     @SuppressWarnings("unchecked")
-//    @Cacheable(value = "day_student_activity_chart", keyGenerator = "wiselyKeyGenerator")
+    @Cacheable(value = "day_student_activity_chart", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String,String> getDayStudentActivityChart(String data) throws ParseException {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         String tData=data+" 23:59";

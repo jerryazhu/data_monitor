@@ -61,10 +61,9 @@ public class ManageClassServiceImpl implements ManageClassService {
         List<AutoComplete> autoCompleteList = new ArrayList<>();
         Pageable top10 = new PageRequest(0, 10);
         List<EbkTeacher> ebkTeachersList;
-        if (query.startsWith("13")) {
+        ebkTeachersList = ebkTeachersRepository.getEbkTeachersById(query, top10);
+        if(ebkTeachersList.size()==0){
             ebkTeachersList = ebkTeachersRepository.getEbkTeachersByEmail(query, top10);
-        } else {
-            ebkTeachersList = ebkTeachersRepository.getEbkTeachersById(query, top10);
         }
         for (EbkTeacher ebkTeacher : ebkTeachersList) {
             AutoComplete autoComplete = new AutoComplete();
@@ -358,14 +357,14 @@ public class ManageClassServiceImpl implements ManageClassService {
             }
         }
         if (classStatus.equals("不限")) {
-            sql = sql + "\n" + "and (ecr.status=3 or ecr.status=4 or ecr.status=6 or ecr.status=8 or ecr.status=9)";
+            sql = sql + "\n" + "and (ecr.status!=-1)";
         } else {
             switch (classStatus) {
                 case "res":
-                    sql = sql + "\n" + "and (ecr.status=4 or ecr.status=6 or ecr.status=8)";
+                    sql = sql + "\n" + "and (ecr.status=9)";
                     break;
                 case "顺利结束":
-                    sql = sql + "\n" + "and (ecr.status=3 or ecr.status=9)";
+                    sql = sql + "\n" + "and (ecr.status=3)";
                     break;
             }
         }

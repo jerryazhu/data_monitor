@@ -36,7 +36,7 @@ public interface BookClassService {
 
     DataSet<BookChooseClassStock> getBookRankChooseCompareSql(DatatablesCriterias criterias, String data) throws ParseException;
 
-    DataSet<CostClass> getBookChooseCostClass(String data, DatatablesCriterias criterias) throws ParseException;
+    DataSet<ManagerCostClass> getBookChooseCostClass(String data, DatatablesCriterias criterias) throws ParseException;
 
     public Long getChooseBookCostClassCnt();
 

@@ -6,7 +6,6 @@ import com.web.spring.datatable.DatatablesCriterias;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -21,9 +20,9 @@ public interface ManageClassService {
 
     ArrayList getSaTeacherGroup();
 
-    DataSet<CostClass> getCostClass(String data, DatatablesCriterias criterias) throws ParseException;
+    DataSet<ManagerCostClass> getCostClass(String data, DatatablesCriterias criterias) throws ParseException;
 
-    DataSet<CostSaClass> getCostSaClass(String data, DatatablesCriterias criterias) throws ParseException;
+    DataSet<ManagerCostSaClass> getCostSaClass(String data, DatatablesCriterias criterias) throws ParseException;
 
     Long getCostClassCnt();
 

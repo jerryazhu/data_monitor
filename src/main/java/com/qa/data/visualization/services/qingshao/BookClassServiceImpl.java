@@ -595,7 +595,7 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
-    public DataSet<CostClass> getBookChooseCostClass(String data, DatatablesCriterias criterias) throws ParseException {
+    public DataSet<ManagerCostClass> getBookChooseCostClass(String data, DatatablesCriterias criterias) throws ParseException {
         Date now = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");//可以方便地修改日期格式
         String today = dateFormat.format(now);
@@ -649,8 +649,8 @@ public class BookClassServiceImpl implements BookClassService {
                 sql = sql + "\n" + "and (es.lsns_per_day=0 and es.days_per_week=0 and es.lsns_per_day_eu=0 and es.days_per_week_eu=0 and es.acoin!=0)";
                 break;
         }
-        TableQuery query = new TableQuery(entityManager, CostClass.class, criterias, sql);
-        DataSet<CostClass> result = query.getResultDataSet();
+        TableQuery query = new TableQuery(entityManager, ManagerCostClass.class, criterias, sql);
+        DataSet<ManagerCostClass> result = query.getResultDataSet();
         chooseBookCostClassCnt = query.getTotalCount();
         chooseBookWholeSql = sql;
         return result;

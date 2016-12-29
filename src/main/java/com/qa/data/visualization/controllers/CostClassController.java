@@ -9,7 +9,11 @@ import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.DatatablesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,6 +38,7 @@ public class CostClassController {
     @Autowired
     private WorkClassService workClassService;
 
+
     @RequestMapping(value = "/student_auto_complete")
     @ResponseBody
     public List<AutoComplete> autocompleteStudent(@RequestParam(value = "query", required = true) String query, HttpServletRequest request) {
@@ -44,6 +49,12 @@ public class CostClassController {
     @ResponseBody
     public List<AutoComplete> autocompleteTeacher(@RequestParam(value = "query", required = true) String query, HttpServletRequest request) {
         return manageClassService.getTeacherAutoComplete(query);
+    }
+
+    @RequestMapping(value = "/cc_auto_complete")
+    @ResponseBody
+    public List<AutoComplete> autocompleteCC(@RequestParam(value = "query" ,required = true) String query,HttpServletRequest request){
+        return payClassService.getCcAutoComplete(query);
     }
 
     @RequestMapping("/get_teacher_group")
@@ -60,41 +71,41 @@ public class CostClassController {
 
     @RequestMapping("/get_cost_class/{data}")
     @ResponseBody
-    public DatatablesResponse<CostClass> getCostClass(@PathVariable String data, HttpServletRequest request) throws ParseException {
+    public DatatablesResponse<ManagerCostClass> getCostClass(@PathVariable String data, HttpServletRequest request) throws ParseException {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<CostClass> dataSet = manageClassService.getCostClass(data, criterias);
+        DataSet<ManagerCostClass> dataSet = manageClassService.getCostClass(data, criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
 
     @RequestMapping("/get_cost_sa_class/{data}")
     @ResponseBody
-    public DatatablesResponse<CostSaClass> getCostSaClass(@PathVariable String data, HttpServletRequest request) throws ParseException {
+    public DatatablesResponse<ManagerCostSaClass> getCostSaClass(@PathVariable String data, HttpServletRequest request) throws ParseException {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<CostSaClass> dataSet = manageClassService.getCostSaClass(data, criterias);
+        DataSet<ManagerCostSaClass> dataSet = manageClassService.getCostSaClass(data, criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
 
     @RequestMapping("/get_new_student/{data}")
     @ResponseBody
-    public DatatablesResponse<payStudent> getNewStudent(@PathVariable String data, HttpServletRequest request) throws ParseException {
+    public DatatablesResponse<PayStudent> getNewStudent(@PathVariable String data, HttpServletRequest request) throws ParseException {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<payStudent> dataSet = payClassService.getNewStudent(data, criterias);
+        DataSet<PayStudent> dataSet = payClassService.getNewStudent(data, criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
 
     @RequestMapping("/get_old_student/{data}")
     @ResponseBody
-    public DatatablesResponse<payStudent> getOldStudent(@PathVariable String data, HttpServletRequest request) throws ParseException {
+    public DatatablesResponse<PayStudent> getOldStudent(@PathVariable String data, HttpServletRequest request) throws ParseException {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<payStudent> dataSet = payClassService.getOldStudent(data, criterias);
+        DataSet<PayStudent> dataSet = payClassService.getOldStudent(data, criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
 
     @RequestMapping("/get_book_choose_cost_class/{data}")
     @ResponseBody
-    public DatatablesResponse<CostClass> getBookChooseCostClass(@PathVariable String data, HttpServletRequest request) throws ParseException {
+    public DatatablesResponse<ManagerCostClass> getBookChooseCostClass(@PathVariable String data, HttpServletRequest request) throws ParseException {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
-        DataSet<CostClass> dataSet = bookClassService.getBookChooseCostClass(data, criterias);
+        DataSet<ManagerCostClass> dataSet = bookClassService.getBookChooseCostClass(data, criterias);
         return DatatablesResponse.build(dataSet, criterias);
     }
 
@@ -222,6 +233,24 @@ public class CostClassController {
     @RequestMapping("/get_work_lose_class_cnt")
     @ResponseBody
     public Long getWorkLoseClassCnt(){return workClassService.getWorkLoseClassCnt();}
+
+    @RequestMapping("/get_pay_cc_sale_message_sql")
+    @ResponseBody
+    public String getPayCcSaleMessageSql(){
+        return payClassService.getCcSaleMessageSql();
+    }
+
+    @RequestMapping("/get_pay_cc_sale_message_cnt")
+    @ResponseBody
+    public Long getPayCcSaleMessageCnt(){
+        return payClassService.getCcSaleMessageCnt();
+    }
+
+    @RequestMapping("/get_pay_cc_sale_message_money_cnt")
+    @ResponseBody
+    public String getPayCcSaleMessageMoneyCnt(){
+        return payClassService.getCcSaleMessageMoneyCnt();
+    }
 
     @RequestMapping("/get_book/{data}")
     @ResponseBody
@@ -448,7 +477,7 @@ public class CostClassController {
 
     @RequestMapping(value = "/get_day_student_activity_chart/{data}")
     @ResponseBody
-    @SuppressWarnings("uncheckede")
+    @SuppressWarnings("unchecked")
     public ArrayList getDayStudentActivityChart(@PathVariable String data) throws ParseException {
         ArrayList<Object> list = new ArrayList<Object>();
         LinkedHashMap<String, String> actions = workClassService.getDayStudentActivityChart(data);
@@ -462,4 +491,23 @@ public class CostClassController {
         }
         return list;
     }
+
+    @RequestMapping(value = "/get_pay_cc_message")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getPayCCMessage(HttpServletRequest request) {
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<PayCCMessage> actions= payClassService.getPayCCMessage(criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
+    @RequestMapping(value = "/get_pay_cc_sale_message/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getPayCcSaleMessage(@PathVariable String data, HttpServletRequest request){
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<PayCCSaleMessage> actions= payClassService.getPayCcSaleMessage(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
 }

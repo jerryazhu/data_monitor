@@ -69,11 +69,11 @@ public class WorkClassServiceImpl implements WorkClassService{
 
         String sql=String.format("select es.id as id,es.nickname as name,esi.age_duration as age,IFNULL(concat(es.level,es.sub_level),'无等级') as level,esi.study_aim as aim,round((("+todayUnix+"-Min(allorder.begin_time))/86400),0) as time from ebk_students es \n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
-                "LEFT JOIN(select eao.create_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eaod.begin_time,eao.pay_time from ebk_acoin_orders eao\n" +
+                "LEFT JOIN(select eao.pay_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eaod.begin_time,eao.pay_time from ebk_acoin_orders eao\n" +
                 "INNER JOIN ebk_acoin_order_detail eaod on eao.id=eaod.order_id \n" +
                 "group by eaod.order_id,eaod.begin_time\n" +
                 "union\n" +
-                "select eao.create_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,easo.begin_time,eao.pay_time from ebk_acoin_orders eao\n" +
+                "select eao.pay_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,easo.begin_time,eao.pay_time from ebk_acoin_orders eao\n" +
                 "INNER JOIN ebk_acoin_split_order easo on eao.sid=easo.sid\n" +
                 "group by eao.id,easo.begin_time) allorder on allorder.sid=es.id\n" +
                 "where ");
@@ -313,31 +313,31 @@ public class WorkClassServiceImpl implements WorkClassService{
         if(look.equals("table1")){
             sql = String.format("select allorder.id as oid,es.id as id,es.nickname as name,allorder.up as type, ROUND(ifnull(allorder.tmoney,0),2) as money \n" +
                     "from ebk_students es\n" +
-                    "LEFT JOIN (select eao.create_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
+                    "LEFT JOIN (select eao.pay_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
                     "INNER JOIN ebk_acoin_order_detail eaod on eao.id=eaod.order_id \n" +
                     "group by eaod.order_id,eaod.begin_time\n" +
                     "union\n" +
-                    "select eao.create_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
+                    "select eao.pay_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
                     "INNER JOIN ebk_acoin_split_order easo on eao.sid=easo.sid\n" +
                     "group by eao.id,easo.begin_time) allorder on allorder.sid=es.id\n"+
                     "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
-                    "where allorder.create_time >=%s and allorder.create_time<=%s\n" +
+                    "where allorder.pay_time >=%s and allorder.pay_time<=%s\n" +
                     "and esi.study_aim=1 and allorder.payed=1 and allorder.order_flag=2",bTime,tTime);
 
             workRenewWholeSql=sql;
         }else{
             sql = String.format("select es.id as id,es.nickname as name, ifNUll(eru.nickname,'UNKNOWN') as ghs\n" +
                     "from ebk_students es\n" +
-                    "LEFT JOIN (select eao.create_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
+                    "LEFT JOIN (select eao.pay_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
                     "INNER JOIN ebk_acoin_order_detail eaod on eao.id=eaod.order_id \n" +
                     "group by eaod.order_id,eaod.begin_time\n" +
                     "union\n" +
-                    "select eao.create_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
+                    "select eao.pay_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
                     "INNER JOIN ebk_acoin_split_order easo on eao.sid=easo.sid\n" +
                     "group by eao.id,easo.begin_time) allorder on allorder.sid=es.id\n"+
                     "LEFT JOIN ebk_student_info esi on es.id = esi.sid\n" +
                     "LEFT JOIN ebk_rbac_user eru on eru.id=es.ghs\n" +
-                    "where allorder.create_time >=%s and allorder.create_time<=%s\n" +
+                    "where allorder.pay_time >=%s and allorder.pay_time<=%s\n" +
                     "and esi.study_aim=1",bTime,tTime);
         }
         if (!teacherType.equals("不限")) {
@@ -458,11 +458,11 @@ public class WorkClassServiceImpl implements WorkClassService{
         String age=cutData[5];
         String sql=String.format("select es.id as id,er.money as money,IFNULL(concat(es.level,es.sub_level),'UNKNOW') as rank,IFNULL(ecr.cnt,'0') as cost,esi.age_duration as age,allorder.combo_name as combo,er.reason as reason from ebk_students es\n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
-                "LEFT JOIN (select eao.create_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
+                "LEFT JOIN (select eao.pay_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
                 "INNER JOIN ebk_acoin_order_detail eaod on eao.id=eaod.order_id \n" +
                 "group by eaod.order_id,eaod.begin_time\n" +
                 "union\n" +
-                "select eao.create_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
+                "select eao.pay_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,eao.order_flag,eao.upgrade_from as up from ebk_acoin_orders eao\n" +
                 "INNER JOIN ebk_acoin_split_order easo on eao.sid=easo.sid\n" +
                 "group by eao.id,easo.begin_time) allorder on allorder.sid=es.id\n" +
                 "LEFT JOIN ebk_refunds er on er.sid=es.id\n" +
@@ -542,7 +542,7 @@ public class WorkClassServiceImpl implements WorkClassService{
 
     @Override
     @SuppressWarnings("unchecked")
-//    @Cacheable(value = "day_student_activity_chart", keyGenerator = "wiselyKeyGenerator")
+    @Cacheable(value = "day_student_activity_chart", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String,String> getDayStudentActivityChart(String data) throws ParseException {
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         String tData=data+" 23:59";

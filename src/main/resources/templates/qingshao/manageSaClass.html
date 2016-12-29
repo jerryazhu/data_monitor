@@ -4,6 +4,7 @@
     <link th:href="@{/css/qingshao.css}" rel="stylesheet"/>
     <link th:href="@{/css/datepicker/bootstrap-datetimepicker.css}" rel="stylesheet"/>
     <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/css/bootstrap-select/bootstrap-select.min.css}" rel="stylesheet"/>
 </head>
 <body>
 <div class="row">
@@ -69,8 +70,7 @@
     </div>
     <div class="col-lg-10 height" id="teacherGroup">
         <span class="option-text active" id="teacherGroupAll">不限</span>
-        <select class="form-control" id="group">
-            <option>Group</option>
+        <select class="selectpicker" multiple="true" id="group">
         </select>
     </div>
 </div>
@@ -189,6 +189,7 @@
                     var objOption = new Option(value);
                     teacherGroup.add(objOption);
                 });
+                $('.selectpicker').selectpicker();
             },
             error:function () {
             }
@@ -261,7 +262,7 @@
             createTable();
         });
         $('#teacherGroupAll').click(function () {
-            $('#group').val("Group");
+            $('.selectpicker').selectpicker('val', 'Group');
             $('#costClassCnt').html('<span  class="cntNumber">  </span>');
             createTable();
         });
@@ -441,7 +442,7 @@
         }
         var teacherStatus=$('#teacherStatus').find('span[class="option-text active"]').text();
         var teacherType=$('#teacherType').find('span[class="option-text active"]').text();
-        var group = $('#group').find("option:selected").val();
+        var group = $('#group').val();
         var classType=$('#class_type').find('span[class="option-text active"]').text();
         var classStatus=$('#class_status').find('span[class="option-text active"]').text();
         //alert(bTime+"+"+tTime+"+"+studentMessage+"+"+comboCountry+"+"+combo+"+"+binding+"+"+teacherMessage+"+"+teacherStatus+"+"+group+"+"+teacherType);

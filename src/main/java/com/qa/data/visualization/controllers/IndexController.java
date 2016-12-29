@@ -5,6 +5,7 @@ import com.qa.data.visualization.auth.repositories.UserRepository;
 import com.qa.data.visualization.entities.jishu.*;
 import com.qa.data.visualization.repositories.jishu.*;
 import com.qa.data.visualization.services.jishu.*;
+import com.qa.data.visualization.services.qingshao.PayClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
@@ -54,6 +55,8 @@ public class IndexController {
     private UserRepository userRepository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private PayClassService payClassService;
 
     @RequestMapping("/")
     String index(Model model) {
@@ -86,6 +89,10 @@ public class IndexController {
         //return "fragments/"+templateName+" :: "+templateName; see https://github.com/dandelion/dandelion/issues/28
         if (templateName.contains("---")) {
             templateName = templateName.replaceAll("---", "/");
+        }
+        if(templateName.equals("qingshao/paySaleMessage")){
+            ArrayList group=payClassService.getCcGroup();
+            model.addAttribute("groupList", group);
         }
         return templateName;
     }

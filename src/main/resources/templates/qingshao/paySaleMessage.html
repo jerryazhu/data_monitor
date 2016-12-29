@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/css/qingshao.css}" rel="stylesheet"/>
+    <link th:href="@{/css/datepicker/bootstrap-datetimepicker.css}" rel="stylesheet"/>
+    <link th:href="@{/css/datatables/dataTables.bootstrap.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="row">
+    <div class="col-lg-2">
+        <p class="text-right control-label"><strong class="height"> 时间：</strong></p>
+    </div>
+    <div class="col-lg-10">
+        <div class='col-md-3'>
+            <div class="form-group">
+                <label class="sr-only" for="begin-time">BeginTime</label>
+                <div class='input-group date' id='begin-time'>
+                    <input class="form-control" type="text" id="bTimeInput"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class='col-md-3'>
+            <div class="form-group">
+                <label class="sr-only" for="to-time">ToTime</label>
+                <div class='input-group date' id='to-time'>
+                    <input class="form-control" type="text" id="tTimeInput"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2 height">
+        <p class="text-right control-label"><strong class="height">CCID：</strong></p>
+    </div>
+    <div class="col-lg-10 height">
+        <span class="option-text active" id="allCC">不限</span>
+        <input class="form-control" type="text" id="cc_id_name"  placeholder="Id/Name"/>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2 height">
+        <p class="text-right control-label"><strong class="height">CC组别：</strong></p>
+    </div>
+    <div class="col-lg-10 height" id="cc_group">
+        <span class="option-text active" id="groupAll">不限</span>
+        <select class="selectpicker"  multiple="true" data-live-search="true" id="group">
+            <div th:each="group : ${groupList}">
+                <option th:text="${group}"></option>
+            </div>
+        </select>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2 height">
+        <p class="text-right control-label"><strong class="height">表格查看：</strong></p>
+    </div>
+    <div class="col-lg-10 height" id="table_show">
+        <span class="option-text active">销售额</span>
+        <span class="option-text">退款</span>
+    </div>
+</div>
+<div class="row" id="one_show">
+    <div class="col-lg-2 height">
+        <p class="text-right control-label"><strong class="height">销售额类别：</strong></p>
+    </div>
+    <div class="col-lg-10 height" id="sale_type">
+        <span class="option-text active">不限</span>
+        <span class="option-text">新分会员</span>
+        <span class="option-text">转介绍会员</span>
+        <span class="option-text">公库会员</span>
+        <span class="option-text">续费</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-10">
+        <div class="col-lg-3 pull-right"><button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#sql">SQL查看</button></div>
+        <div id="sql" class="collapse pull-center"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-1"></div>
+    <div class="col-lg-10">
+        <div class="panel panel-default">
+            <div style="float: right">
+            <span class="cnt">Total:
+                <span class="cntNumber" id="costClassCnt">
+                </span>
+            </span>
+                <span class="cnt">Total:
+                <span class="cntNumber" id="moneyCnt">
+                </span>
+            </span>
+            </div>
+            <div class="panel-body">
+                <div class="dataTable_wrapper">
+                    <table class="table table-striped table-bordered table-hover" id="sale_message">
+                        <thead>
+                        <tr>
+                            <th>学员ID</th>
+                            <th>学员昵称</th>
+                            <th>CCID</th>
+                            <th>CC昵称</th>
+                            <th>CC组别</th>
+                            <th id="money"></th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-1"></div>
+</div>
+</body>
+<script th:src="@{/js/datepicker/moment.min.js}"></script>
+<script th:src="@{/js/datepicker/bootstrap-datetimepicker.min.js}"></script>
+<script th:src="@{/js/datatables/jquery.dataTables.js}"></script>
+<script th:src="@{/js/datatables/dataTables.bootstrap.min.js}"></script>
+<script th:src="@{/js/jquery-autocomplete/jquery.autocomplete.min.js}"></script>
+<script>
+    // <![CDATA[
+    $(document).ready(function () {
+        $('.selectpicker').selectpicker();
+        var beginTime = $('#begin-time');
+        var toTime = $('#to-time');
+        var ccGroup = document.getElementById("group");
+        var showTable=$('#table_show');
+        var saleType=$('#sale_type');
+        var ccInput=$('#cc_id_name');
+        var date = new Date();
+        var yDay;
+        var tDay;
+        if(date.getMonth()==0){
+            yDay=(date.getFullYear()-1) + "-12-1 00:00";
+            tDay=(date.getFullYear()-1) + "-12-31 00:00";
+        }else{
+            yDay= date.getFullYear() + "-" + date.getMonth() + "-1 00:00";
+            tDay= date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth())+" 23:59";
+        }
+        $('#bTimeInput').val(yDay);
+        $('#tTimeInput').val(tDay);
+        beginTime.datetimepicker({
+            format: 'YYYY-MM-DD HH:mm',
+            useCurrent: false
+        });
+        toTime.datetimepicker({
+            format: 'YYYY-MM-DD HH:mm',
+            useCurrent: false
+        });
+        show();
+        createTable();
+        beginTime.on("dp.change", function (e) {
+            var bTime=$('#begin-time').find("> input").val();
+            var tTime=$('#to-time').find("> input").val();
+            if(bTime!='' && tTime!='' && tTime>bTime){
+                recover();
+                createTable();
+            }
+        });
+        toTime.on("dp.change", function (e) {
+            var bTime=$('#begin-time').find("> input").val();
+            var tTime=$('#to-time').find("> input").val();
+            if(bTime!='' && tTime!=''&& tTime>bTime){
+                recover();
+                createTable();
+            }
+        });
+        showTable.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+                show();
+                recover();
+                createTable();
+            });
+        });
+        saleType.find("> span").each(function (index) {
+            $(this).unbind('click');
+            $(this).on("click", function () {
+                $(this).addClass("active");
+                $(this).nextAll().removeClass("active");
+                $(this).prevAll().removeClass("active");
+                recover();
+                createTable();
+            });
+        });
+        $('#allCC').click(function () {
+            ccInput.val("");
+            recover();
+            createTable();
+        });
+        $('#groupAll').click(function () {
+            $('.selectpicker').selectpicker('val', 'Group');
+            recover();
+            createTable();
+        });
+        $('#group').on("change",function () {
+            recover();
+            createTable();
+        });
+        ccInput.autocomplete({
+            serviceUrl: '/class/cc_auto_complete',
+            transformResult: function(response) {
+                return {
+                    suggestions: $.each($.parseJSON(response), function(dataItem) {
+                        return { value: dataItem.value, data: dataItem.data };
+                    })
+                };
+            },
+            formatResult: function (suggestion, currentValue) {
+                // Do not replace anything if there current value is empty
+                if (!currentValue) {
+                    return suggestion.value + "&nbsp;&nbsp;&nbsp;"+suggestion.data;
+                }
+                var pattern = '(' + currentValue.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&") + ')';
+                return suggestion.value
+                                .replace(new RegExp(pattern, 'gi'), '<strong>$1<\/strong>')
+                                .replace(/&/g, '&amp;')
+                                .replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;')
+                                .replace(/"/g, '&quot;')
+                                .replace(/&lt;(\/?strong)&gt;/g, '<$1>') + "&nbsp;&nbsp;&nbsp;"+suggestion.data;
+            },
+            onSelect: function (suggestion) {
+                $('#cc_id_name').val(suggestion.value + "   "+suggestion.data);
+                recover();
+                createTable();
+                console.log('You selected: ' + suggestion.value + "&nbsp;&nbsp;&nbsp;"+suggestion.data);
+            }
+        });
+    });
+    function recover() {
+        $('#costClassCnt').html('<span  class="cntNumber">  </span>');
+    }
+    function show() {
+        var table=$('#table_show').find('span[class="option-text active"]').text();
+        if(table=="销售额"){
+            $('#one_show').show();
+            $('#money').text("购买金额");
+        }else{
+            $('#one_show').hide();
+            $('#money').text("退款金额");
+        }
+    }
+    function createTable() {
+        var table=$('#sale_message').DataTable({
+            destroy: true,
+            lengthMenu: [10, 25, 50, 100],
+            order: [[5, "desc"]],
+            autoWidth: true,
+            paging: true,
+            processing: true,
+            serverSide: true,
+            searching:false,
+            filter: true,
+            language: {
+                "lengthMenu": " _MENU_ ",
+                "zeroRecords": "Nothing found - sorry",
+                "info": "Showing page _PAGE_ of _PAGES_",
+                "infoEmpty": "No records available",
+                "infoFiltered": "(filtered from _MAX_ total records)"
+            },
+            columns: [
+                {"data": "sid"},
+                {"data": "sname"},
+                {"data": "ccid"},
+                {"data": "ccname"},
+                {"data": "ccgroup"},
+                {"data": "money"}
+            ],
+            columnDefs:[
+                {
+                    "targets": 5,
+                    "render": function (data, type, row, meta) {
+                        return Math.round(parseFloat(data)*100)/100;
+                    }
+                }
+            ],
+            ajax: {
+                url: '/class/get_pay_cc_sale_message/'+getData(),
+                type: 'GET'
+            }
+        });
+        $('#sale_message').on( 'init.dt', function () {
+            getCnt();
+            getSql();
+        }).dataTable();
+    }
+    function getCnt() {
+        $.ajax({
+            url: '/class/get_pay_cc_sale_message_cnt',
+            type:'GET',
+            data:'',
+            success:function (data) {
+                $('#costClassCnt').html('<span  class="cntNumber">'+data+'</span>');
+            },
+            error:function () {
+            }
+        });
+        $.ajax({
+            url: '/class/get_pay_cc_sale_message_money_cnt',
+            type:'GET',
+            data:'',
+            success:function (data) {
+                $('#moneyCnt').html('<span  class="cntNumber">'+data+'</span>');
+            },
+            error:function () {
+            }
+        });
+    }
+    function getSql() {
+        $.ajax({
+            url: '/class/get_pay_cc_sale_message_sql',
+            type:'GET',
+            data:'',
+            success:function (data) {
+                $('#sql').html('<span >'+data.replace(/\n/g,'<br/>')+'</span>');
+            },
+            error:function () {
+            }
+        });
+    }
+    function getData() {
+        var bTime=$('#begin-time').find("> input").val();
+        var tTime=$('#to-time').find("> input").val();
+        if(bTime==''||tTime==''){
+            bTime="all";
+            tTime="all";
+        }else{
+            if(tTime>bTime){
+                bTime=dateToUnix(bTime);
+                tTime=dateToUnix(tTime);
+            }
+        }
+        var CCMessage=$('#cc_id_name').val();
+        if(CCMessage==""||CCMessage=="Id/Name"){
+            CCMessage="all";
+        }else{
+            var CC=CCMessage.split("   ");
+            CCMessage=CC[0];
+        }
+        var group = $('#group').val();
+        var table=$('#table_show').find('span[class="option-text active"]').text();
+        var saleType;
+        if(table=="销售额"){
+            saleType=$('#sale_type').find('span[class="option-text active"]').text();
+        }else{
+            saleType="不限";
+        }
+        return bTime+"+"+tTime+"+"+CCMessage+"+"+group+"+"+table+"+"+saleType;
+    }
+    // ]]>
+</script>
+</html>

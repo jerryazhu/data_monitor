@@ -5,6 +5,7 @@ import com.qa.data.visualization.entities.jishu.mobile.*;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 import com.web.spring.datatable.TableQuery;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -55,8 +56,10 @@ public class MobileActionServiceImpl implements MobileActionService {
     }
 
     @Override
+    @Cacheable(value = "find_android_api_student_action_group_count", keyGenerator = "wiselyKeyGenerator")
     public DataSet<AndroidAPIStuActionGroupCount> findAndroidAPIStuActionGroupCount(DatatablesCriterias criterias) {
-        TableQuery query = new TableQuery(entityManager, AndroidAPIStuActionGroupCount.class, criterias);
+        String sql="select api_name,COUNT(api_name) as cnt from ABC360_APP_API_ANDROID_LAST_MONTH_WITH_TODAY_TBL group by api_name";
+        TableQuery query = new TableQuery(entityManager, AndroidAPIStuActionGroupCount.class, criterias,sql);
         return query.getResultDataSet();
     }
 

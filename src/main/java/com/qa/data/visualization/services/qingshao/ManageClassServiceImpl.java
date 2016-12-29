@@ -132,6 +132,7 @@ public class ManageClassServiceImpl implements ManageClassService {
         String teacherMessage = cutData[6];
         String teacherStatus = cutData[7];
         String group = cutData[8];
+        String[] cutGroup=group.split(",");
         String teacherType = cutData[9];
         String classStatus=cutData[10];
         String classType=cutData[11];
@@ -232,8 +233,13 @@ public class ManageClassServiceImpl implements ManageClassService {
         if (!teacherMessage.equals("all")) {
             bSql = bSql + "\n" + "and et.id=" + teacherMessage;
         }
-        if (!group.equals("Group")) {
-            bSql = bSql + "\n" + "and etg.title='" + group + "'";
+        if (!group.equals("null")) {
+            String groupSql="and (etg.title='"+cutGroup[0]+"'";
+            for(int i=1;i<cutGroup.length;i++){
+                groupSql=groupSql+" or etg.title='"+cutGroup[i]+"'";
+            }
+            groupSql=groupSql+")";
+            bSql = bSql + "\n" +groupSql;
         }
         if (!teacherStatus.equals("不限")) {
             switch (teacherStatus) {
@@ -304,6 +310,7 @@ public class ManageClassServiceImpl implements ManageClassService {
         String teacherMessage = cutData[3];
         String teacherStatus = cutData[4];
         String group = cutData[5];
+        String[]cutGroup=group.split(",");
         String teacherType = cutData[6];
         String classType = cutData[7];
         String classStatus = cutData[8];
@@ -319,8 +326,13 @@ public class ManageClassServiceImpl implements ManageClassService {
         if (!teacherMessage.equals("all")) {
             sql = sql + "\n" + "and et.id=" + teacherMessage;
         }
-        if (!group.equals("Group")) {
-            sql = sql + "\n" + "and etg.title='" + group + "'";
+        if (!group.equals("null")) {
+            String groupSql="and (etg.title='"+cutGroup[0]+"'";
+            for(int i=1;i<cutGroup.length;i++){
+                groupSql=groupSql+" or etg.title='"+cutGroup[i]+"'";
+            }
+            groupSql=groupSql+")";
+            sql = sql + "\n" +groupSql;
         }
         if (teacherStatus.equals("不限")) {
             sql = sql + "\n" + "and (et.status=3 or et.status=4)";

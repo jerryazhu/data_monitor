@@ -251,6 +251,7 @@ public class PayClassServiceImpl implements PayClassService {
         String tTime=cutData[1];
         String ccMessage=cutData[2];
         String ccGroup=cutData[3];
+        String[] cutGroup=ccGroup.split(",");
         String table=cutData[4];
         String saleType=cutData[5];
         String sql=String.format("select es.id as sid,es.nickname as sname,eru.id as ccid,eru.nickname as ccname,ecg.title as ccgroup,SUM(eao.tmoney) as money from ebk_acoin_orders eao\n" +
@@ -264,8 +265,13 @@ public class PayClassServiceImpl implements PayClassService {
         if(!ccMessage.equals("all")){
             sql=sql+"\n"+"and eao.sale_adviser="+ccMessage;
         }
-        if(!ccGroup.equals("Group")){
-            sql=sql+"\n"+"and ecg.title='"+ccGroup+"'";
+        if (!ccGroup.equals("null")) {
+            String groupSql="and (ecg.title='"+cutGroup[0]+"'";
+            for(int i=1;i<cutGroup.length;i++){
+                groupSql=groupSql+" or ecg.title='"+cutGroup[i]+"'";
+            }
+            groupSql=groupSql+")";
+            sql = sql + "\n" +groupSql;
         }
         if(table.equals("退款")){
             sql=sql+"\n"+"and eao.refunded=1";

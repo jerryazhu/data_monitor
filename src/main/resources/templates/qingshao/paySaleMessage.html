@@ -50,8 +50,10 @@
     </div>
     <div class="col-lg-10 height" id="cc_group">
         <span class="option-text active" id="groupAll">不限</span>
-        <select class="selectpicker" data-live-search="true" id="group">
-            <option>Group</option>
+        <select class="selectpicker"  multiple="true" data-live-search="true" id="group">
+            <div th:each="group : ${groupList}">
+                <option th:text="${group}"></option>
+            </div>
         </select>
     </div>
 </div>
@@ -117,7 +119,6 @@
     </div>
     <div class="col-lg-1"></div>
 </div>
-
 </body>
 <script th:src="@{/js/datepicker/moment.min.js}"></script>
 <script th:src="@{/js/datepicker/bootstrap-datetimepicker.min.js}"></script>
@@ -127,6 +128,7 @@
 <script>
     // <![CDATA[
     $(document).ready(function () {
+        $('.selectpicker').selectpicker();
         var beginTime = $('#begin-time');
         var toTime = $('#to-time');
         var ccGroup = document.getElementById("group");
@@ -152,20 +154,6 @@
         toTime.datetimepicker({
             format: 'YYYY-MM-DD HH:mm',
             useCurrent: false
-        });
-        $.ajax({
-            url: '/class/get_cc_group',
-            type:'GET',
-            data:'',
-            success:function (data) {
-                $.each(data,function (n,value){
-                    var objOption = new Option(value);
-                    ccGroup.add(objOption);
-                });
-                $('.selectpicker').selectpicker();
-            },
-            error:function () {
-            }
         });
         show();
         createTable();
@@ -212,7 +200,7 @@
             createTable();
         });
         $('#groupAll').click(function () {
-            $('#group').val("Group");
+            $('.selectpicker').selectpicker('val', 'Group');
             recover();
             createTable();
         });
@@ -361,7 +349,7 @@
             var CC=CCMessage.split("   ");
             CCMessage=CC[0];
         }
-        var group = $('#group').find("option:selected").val();
+        var group = $('#group').val();
         var table=$('#table_show').find('span[class="option-text active"]').text();
         var saleType;
         if(table=="销售额"){

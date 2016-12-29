@@ -102,8 +102,7 @@
     </div>
     <div class="col-lg-10 height" id="teacherGroup">
         <span class="option-text active" id="teacherGroupAll">不限</span>
-        <select class="selectpicker" data-live-search="true" id="group">
-            <option>Group</option>
+        <select class="selectpicker"   multiple="true" data-live-search="true" id="group">
         </select>
     </div>
 </div>
@@ -331,7 +330,7 @@
             createTable();
         });
         $('#teacherGroupAll').click(function () {
-            $('#group').val("Group");
+            $('.selectpicker').selectpicker('val', 'Nothing selected');
             $('#costClassCnt').html('<span  class="cntNumber">  </span>');
             createTable();
         });
@@ -545,10 +544,9 @@
             case "三天/周 二节/天":combo='32';break;
             case "自由课":combo='00';break;
         }
-        var group = $('#group').find("option:selected").val();
+        var group = $('#group').val();
         var classStatus=$('#classStatus').find('span[class="option-text active"]').text();
         var classType=$('#classType').find('span[class="option-text active"]').text();
-        //alert(bTime+"+"+tTime+"+"+studentMessage+"+"+comboCountry+"+"+combo+"+"+binding+"+"+teacherMessage+"+"+teacherStatus+"+"+group+"+"+teacherType);
         return bTime+"+"+tTime+"+"+studentMessage+"+"+comboCountry+"+"+combo+"+"+binding+"+"+teacherMessage+"+"+teacherStatus+"+"+group+"+"+teacherType+"+"+classStatus+"+"+classType;
     }
     // ]]>

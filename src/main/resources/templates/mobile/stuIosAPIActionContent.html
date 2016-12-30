@@ -205,6 +205,10 @@
                             type:'GET',
                             data:'',
                             success:function (data) {
+                                if(data.indexOf("Log in with your account") > -1){
+                                    window.location.href="/login";
+                                    return;
+                                }
                                 res=data.replace(/\n/g,'<br/>');
                                 row.child( format( row.data(),res) ).show();
                             },

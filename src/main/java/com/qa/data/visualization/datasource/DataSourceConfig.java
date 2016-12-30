@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 @Configuration
 public class DataSourceConfig {
 
+    @Primary
     @Bean(name = "primaryDataSource")
     @Qualifier("primaryDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.primary")
@@ -21,9 +22,15 @@ public class DataSourceConfig {
 
     @Bean(name = "secondaryDataSource")
     @Qualifier("secondaryDataSource")
-    @Primary
     @ConfigurationProperties(prefix = "spring.datasource.secondary")
     public DataSource secondaryDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
+    @Bean(name = "thirdDataSource")
+    @Qualifier("thirdDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.third")
+    public DataSource thirdDataSource() {
         return DataSourceBuilder.create().build();
     }
 

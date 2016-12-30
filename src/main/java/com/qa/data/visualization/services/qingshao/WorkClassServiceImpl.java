@@ -69,11 +69,11 @@ public class WorkClassServiceImpl implements WorkClassService{
 
         String sql=String.format("select es.id as id,es.nickname as name,esi.age_duration as age,IFNULL(concat(es.level,es.sub_level),'无等级') as level,esi.study_aim as aim,round((("+todayUnix+"-Min(allorder.begin_time))/86400),0) as time from ebk_students es \n" +
                 "LEFT JOIN ebk_student_info esi on esi.sid=es.id\n" +
-                "LEFT JOIN(select eao.pay_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eaod.begin_time,eao.pay_time from ebk_acoin_orders eao\n" +
+                "LEFT JOIN(select eao.pay_time,eao.payed,eao.sid,eao.id,eaod.combo_name,eao.tmoney,eaod.tch_from,eaod.begin_time from ebk_acoin_orders eao\n" +
                 "INNER JOIN ebk_acoin_order_detail eaod on eao.id=eaod.order_id \n" +
                 "group by eaod.order_id,eaod.begin_time\n" +
                 "union\n" +
-                "select eao.pay_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,easo.begin_time,eao.pay_time from ebk_acoin_orders eao\n" +
+                "select eao.pay_time,eao.payed,eao.sid,eao.id,easo.combo_name,eao.tmoney,easo.tch_from,easo.begin_time from ebk_acoin_orders eao\n" +
                 "INNER JOIN ebk_acoin_split_order easo on eao.sid=easo.sid\n" +
                 "group by eao.id,easo.begin_time) allorder on allorder.sid=es.id\n" +
                 "where ");

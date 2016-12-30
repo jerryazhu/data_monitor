@@ -180,7 +180,8 @@
             }
         });
         var selected=[];
-        $('#iosPCApiActionTable').on( 'init.dt', function () {
+        $('#iosPCApiActionTable').unbind('draw.dt');
+        $('#iosPCApiActionTable').on( 'draw.dt', function () {
             $('#iosPCApiActionTable tbody tr[role="row"]').each(function () {
                 var that = this;
                 $(this).unbind('click');

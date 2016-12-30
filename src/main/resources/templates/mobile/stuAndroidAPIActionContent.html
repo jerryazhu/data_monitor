@@ -181,7 +181,8 @@
             }
         });
         var selected=[];
-        $('#androidPCApiActionTable').on( 'init.dt', function () {
+        $('#androidPCApiActionTable').unbind('draw.dt');
+        $('#androidPCApiActionTable').on( 'draw.dt', function () {
             $('#androidPCApiActionTable tbody tr[role="row"]').each(function () {
                 var that = this;
                 $(this).unbind('click');

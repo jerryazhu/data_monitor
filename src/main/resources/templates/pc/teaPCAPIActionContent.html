@@ -115,7 +115,8 @@
             }
         });
         var selected=[];
-        $('#teaPCApiActionTable').on( 'init.dt', function () {
+        $('#teaPCApiActionTable').unbind('draw.dt');
+        $('#teaPCApiActionTable').on( 'draw.dt', function () {
             $("#teaPCApiActionTable tbody tr[role='row']").each( function () {
                 var that = this;
                 $(this).unbind("click");

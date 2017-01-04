@@ -1,10 +1,7 @@
 package com.qa.data.visualization.services.qingshao;
 
 import com.mysql.fabric.xmlrpc.base.Data;
-import com.qa.data.visualization.entities.qingshao.AutoComplete;
-import com.qa.data.visualization.entities.qingshao.PayCCMessage;
-import com.qa.data.visualization.entities.qingshao.PayCCSaleMessage;
-import com.qa.data.visualization.entities.qingshao.PayStudent;
+import com.qa.data.visualization.entities.qingshao.*;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
 
@@ -23,6 +20,10 @@ public interface PayClassService {
     DataSet<PayCCMessage> getPayCCMessage(DatatablesCriterias criterias);
 
     DataSet<PayCCSaleMessage> getPayCcSaleMessage(String data,DatatablesCriterias criterias);
+
+    DataSet<PayCallPhone> getPayCallPhone(String data,DatatablesCriterias criterias) throws ParseException;
+
+    DataSet<PayPercentConversion> getPayPercentConversion(String data,DatatablesCriterias criterias);
 
     ArrayList getCcGroup();
 

@@ -510,4 +510,22 @@ public class CostClassController {
         return DatatablesResponse.build(actions,criterias);
     }
 
+    @RequestMapping(value = "/get_pay_call_phone/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getPayCallPhone(@PathVariable String data,HttpServletRequest request) throws ParseException {
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<PayCallPhone> actions=payClassService.getPayCallPhone(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
+    @RequestMapping(value = "/get_pay_percent_conversion/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getPayPercentConversion(@PathVariable String data,HttpServletRequest request){
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<PayPercentConversion> actions=payClassService.getPayPercentConversion(data,criterias);
+        return DatatablesResponse.build(actions,criterias);
+    }
+
 }

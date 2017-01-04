@@ -5,8 +5,10 @@ import com.qa.data.visualization.entities.qingshao.*;
 import com.qa.data.visualization.repositories.qingshao.EbkCcRepository;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
+import com.web.spring.datatable.TableConvert;
 import com.web.spring.datatable.TableQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,12 +16,10 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by dykj on 2016/12/26.
@@ -39,6 +39,8 @@ public class PayClassServiceImpl implements PayClassService {
     private EntityManager firstEntityManager;
     @PersistenceContext(unitName = "secondaryPersistenceUnit")
     private EntityManager entityManager;
+    @PersistenceContext(unitName = "thirdPersistenceUnit")
+    private EntityManager callCenterEntityManager;
     @Autowired
     private EbkCcRepository ebkCcRepository;
     @Override
@@ -234,9 +236,9 @@ public class PayClassServiceImpl implements PayClassService {
         String sql="select result.id as id,result.name as name,result.title as title,result.time as time,result.time as workage,max(result.money) as max,min(result.money) as min,avg(result.money) as avg,sum(result.money) as sum from \n" +
                 "(select eru.id as id,eru.nickname as name,ecg.title as title,eru.create_time as time,from_unixtime(eao.pay_time, '%Y-%m') as month,sum(eao.tmoney) as money from ebk_rbac_user eru \n" +
                 "LEFT JOIN ebk_crm_group_user ecgu on ecgu.user_id=eru.id\n" +
-                "LEFT JOIN ebk_crm_group ecg on ecg.id=ecgu.group_id\n" +
+                "LEFT JOIN ebk_crm_groups ecg on ecg.id=ecgu.group_id\n" +
                 "LEFT JOIN ebk_acoin_orders eao on eao.sale_adviser=eru.id\n" +
-                "where ecg.direction=1 and ecg.role=1 and eao.payed=1 and eru.status=1\n" +
+                "where ecg.direction=1 and ecg.role=50 and eao.payed=1 and eru.status=1\n" +
                 "group by eru.id,from_unixtime(eao.pay_time, '%Y-%m'))result\n" +
                 "group by result.id";
         TableQuery query=new TableQuery(entityManager,PayCCMessage.class,criterias,sql);
@@ -258,10 +260,10 @@ public class PayClassServiceImpl implements PayClassService {
                 "LEFT JOIN ebk_students es on eao.sid=es.id\n" +
                 "LEFT JOIN ebk_rbac_user eru on eao.sale_adviser=eru.id\n" +
                 "LEFT JOIN ebk_crm_group_user ecgu on ecgu.user_id=eru.id\n" +
-                "LEFT JOIN ebk_crm_group ecg on ecg.id=ecgu.group_id\n" +
-                "LEFT JOIN ebk_crm_adviser_public_store ecaps on ecaps.sid=eao.sid \n "+
+                "LEFT JOIN ebk_crm_groups ecg on ecg.id=ecgu.group_id\n" +
+                "LEFT JOIN ebk_operate_record eor on eor.sid=eao.sid \n "+
                 "where eao.pay_time>=%s and eao.pay_time<=%s\n" +
-                "and ecg.direction=1 and ecg.role=1 and eao.payed=1 and eru.status=1",bTime,tTime);
+                "and ecg.direction=1 and ecg.role=50 and eao.payed=1 and eru.status=1",bTime,tTime);
         if(!ccMessage.equals("all")){
             sql=sql+"\n"+"and eao.sale_adviser="+ccMessage;
         }
@@ -277,9 +279,9 @@ public class PayClassServiceImpl implements PayClassService {
             sql=sql+"\n"+"and eao.refunded=1";
         }else{
             switch (saleType){
-                case "新分会员":sql=sql+"\n"+"and (ecaps.adv_group is null or ecaps.adv_group!=1)";break;
+                case "新分会员":sql=sql+"\n"+"and (eor.adv_group is null or eor.adv_group!=1 or eor.type!=1)";break;
                 case "转介绍会员":sql=sql+"\n"+"and eao.order_type=2";break;
-                case "公库会员":sql=sql+"\n"+"and ecaps.adv_group=1";break;
+                case "公库会员":sql=sql+"\n"+"and eor.type=1 and eor.adv_group=1";break;
                 case "续费":sql=sql+"\n"+"and eao.order_flag=2";break;
             }
         }
@@ -297,9 +299,181 @@ public class PayClassServiceImpl implements PayClassService {
 
     @Override
     @SuppressWarnings("unchecked")
+    public DataSet<PayCallPhone> getPayCallPhone(String data,DatatablesCriterias criterias) throws ParseException {
+        String sql=String.format("select callagent,SUM(duration),SUM(billsec),count(id),sum(if(billsec>30,1,0))from agentcdr where calldate like '%s%%' group by callagent",data);
+        Query q=callCenterEntityManager.createNativeQuery(sql);
+        List<Object[]> number=q.getResultList();
+        String sqlPerson="select eru.ccid,eru.nickname,ecg.title,eru.id from ebk_rbac_user eru\n" +
+                "LEFT JOIN ebk_crm_group_user egu on egu.user_id=eru.id\n" +
+                "LEFT JOIN ebk_crm_groups ecg on ecg.id=egu.group_id\n" +
+                "where ecg.role=50 and ecg.direction=1";
+        Query qP=entityManager.createNativeQuery(sqlPerson);
+        List<Object[]> person=qP.getResultList();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = simpleDateFormat.parse(data);
+        long ts = date.getTime();
+        String res = String.valueOf(ts/1000);
+        String numberGo=String.format("select callagent,count(callagent),sum(if(billsec>30,1,0)) from (\n" +
+               "select DISTINCT ag.callagent,ag.duration,ag.billsec from agentcdr ag \n" +
+               "LEFT JOIN ebk_students es on es.mobile=ag.callnumber\n" +
+               "LEFT JOIN ebk_operate_record eor on eor.sid=es.id\n" +
+               "where ag.calldate like '%s%%'\n" +
+               "and eor.type=1 and eor.adv_group=1 and eor.create_time<%s) re\n" +
+               "group by callagent",data,res);
+        Query qG=firstEntityManager.createNativeQuery(numberGo);
+        List<Object[]> goNumber=qG.getResultList();
+        ArrayList<PayCallPhone> resultRow=new ArrayList<PayCallPhone>();
+        for (Object[] aNumber : number) {
+            for (Object[] aPerson : person) {
+                if (aNumber[0].toString().equals(aPerson[0].toString())){
+                    PayCallPhone payCallPhone = new PayCallPhone();
+                    payCallPhone.setCallid(aNumber[0].toString());
+                    payCallPhone.setCcname(aPerson[1].toString());
+                    payCallPhone.setCcgroup(aPerson[2].toString());
+                    payCallPhone.setCcid(aPerson[3].toString());
+                    payCallPhone.setCalltime(aNumber[1].toString());
+                    payCallPhone.setCallreltime(aNumber[2].toString());
+                    payCallPhone.setCallnumber(Integer.parseInt(aNumber[3].toString()));
+                    payCallPhone.setCallrelnumber(Integer.parseInt(aNumber[4].toString()));
+                    boolean find=false;
+                    for (Object[] aGoNumber : goNumber) {
+                        if (aNumber[0].toString().equals(aGoNumber[0].toString())){
+                            payCallPhone.setCallnumber1(Integer.parseInt(aGoNumber[1].toString()));
+                            payCallPhone.setCallnumber2(Integer.parseInt(aNumber[3].toString())-Integer.parseInt(aGoNumber[1].toString()));
+                            payCallPhone.setCallrelnumber1(Integer.parseInt(aGoNumber[2].toString()));
+                            payCallPhone.setCallrelnumber2(Integer.parseInt(aNumber[4].toString())-Integer.parseInt(aGoNumber[2].toString()));
+                            find=true;
+                            break;
+                        }
+                    }
+                    if(!find){
+                        payCallPhone.setCallnumber1(0);
+                        payCallPhone.setCallnumber2(Integer.parseInt(aNumber[3].toString()));
+                        payCallPhone.setCallrelnumber1(0);
+                        payCallPhone.setCallrelnumber2(Integer.parseInt(aNumber[4].toString()));
+                    }
+                    resultRow.add(payCallPhone);
+                    break;
+                }
+            }
+        }
+        TableConvert tableConvert = new TableConvert(resultRow,criterias);
+        DataSet<PayCallPhone> actions=tableConvert.getResultDataSet();
+        return actions;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataSet<PayPercentConversion> getPayPercentConversion(String data,DatatablesCriterias criterias){
+        String []cutData=data.split("\\+");
+        String bTime=cutData[0];
+        String tTime=cutData[1];
+        String ccMessage=cutData[2];
+        String group=cutData[3];
+        String[] cutGroup=group.split(",");
+        String allSmallSql=String.format( "select DISTINCT eor.user_id,eru.nickname,ecg.title,eor.sid from ebk_operate_record eor \n" +
+                "LEFT JOIN ebk_crm_groups ecg on eor.user_group=ecg.id\n" +
+                "LEFT JOIN ebk_rbac_user eru on eru.id=eor.user_id\n" +
+                "where eor.create_time >=%s  and eor.create_time <=%s\n" +
+                "and eor.type=0 and eor.adv_group=1 \n" +
+                "and ecg.role=50 and ecg.direction=1 and eor.operator_name='system'",bTime,tTime);
+        if(!ccMessage.equals("all")){
+            allSmallSql=allSmallSql+"\n"+"and eor.user_id="+ccMessage;
+        }
+        if (!group.equals("null")) {
+            String groupSql="and (ecg.title='"+cutGroup[0]+"'";
+            for(int i=1;i<cutGroup.length;i++){
+                groupSql=groupSql+" or ecg.title='"+cutGroup[i]+"'";
+            }
+            groupSql=groupSql+")";
+            allSmallSql = allSmallSql + "\n" +groupSql;
+        }
+        String allSql=String.format("select user_id,nickname,title,COUNT(sid)from(%s) re\n" +
+                "group by user_id",allSmallSql);
+        Query qAll=entityManager.createNativeQuery(allSql);
+        List<Object[]> listAll=qAll.getResultList();
+        String buySql=String.format("select user_id,COUNT(DISTINCT sid),SUM(tmoney),count(id) from(\n" +
+                "select DISTINCT eor.user_id,eor.sid,eao.tmoney,eao.id from ebk_operate_record eor \n" +
+                "LEFT JOIN ebk_acoin_orders eao on eor.user_id=eao.sale_adviser\n" +
+                "LEFT JOIN ebk_crm_groups ecg on eor.user_group=ecg.id\n" +
+                "where eor.create_time >=%s  and eor.create_time <=%s\n" +
+                "and eao.create_time >=%s  and eao.create_time <=%s\n" +
+                "and eor.sid=eao.sid and eao.sale_adviser=eor.user_id and eor.type=0 and eor.adv_group=1 and eao.payed=1\n" +
+                "and eao.order_flag=1 and ecg.role=50 and ecg.direction=1 and eor.operator_name='system'\n" +
+                ") re\n" +
+                "group by user_id",bTime,tTime,bTime,tTime);
+        Query qBuy=entityManager.createNativeQuery(buySql);
+        List<Object[]> listBuy=qBuy.getResultList();
+        String testSql=String.format("select user_id,COUNT(DISTINCT sid),sum(if(status=3,1,0)) from(\n" +
+                "select DISTINCT eor.user_id,eor.sid,ecr.status from ebk_operate_record eor \n" +
+                "LEFT JOIN ebk_crm_groups ecg on eor.user_group=ecg.id\n" +
+                "LEFT JOIN ebk_class_records ecr on ecr.sid=eor.sid\n" +
+                "where eor.create_time >=%s  and eor.create_time <=%s\n" +
+                "and ecr.begin_time>=%s and ecr.begin_time<=%s\n" +
+                "and ecr.sid=eor.sid and ecr.free_try=2 and eor.type=0 and eor.adv_group=1\n" +
+                "and ecg.role=50 and ecg.direction=1 and eor.operator_name='system') re \n" +
+                "group by user_id",bTime,tTime,bTime,tTime);
+        Query qTest=entityManager.createNativeQuery(testSql);
+        List<Object[]> listTest=qTest.getResultList();
+        ArrayList<PayPercentConversion> resultRows=new ArrayList<PayPercentConversion>();
+        for(Object[] aListAll:listAll){
+            PayPercentConversion payPercentConversion=new PayPercentConversion();
+            payPercentConversion.setCcid(aListAll[0].toString());
+            payPercentConversion.setCcname(aListAll[1].toString());
+            payPercentConversion.setCcgroup(aListAll[2].toString());
+            boolean buy=false;
+            for(Object[] aListBuy:listBuy){
+                if(aListAll[0].equals(aListBuy[0])){
+                    payPercentConversion.setAllpercent(Double.parseDouble(aListBuy[1].toString())/Double.parseDouble(aListAll[3].toString())*100);
+                    payPercentConversion.setPersonpercent(Double.parseDouble(aListBuy[2].toString())/Double.parseDouble(aListAll[3].toString()));
+                    if(!aListBuy[3].toString().equals("0")){
+                        payPercentConversion.setOnepercent(Double.parseDouble(aListBuy[2].toString())/Double.parseDouble(aListBuy[3].toString()));
+                    }else{
+                        payPercentConversion.setOnepercent(0);
+                    }
+                    buy=true;
+                    break;
+                }
+            }
+            if(!buy){
+                payPercentConversion.setAllpercent(0);
+                payPercentConversion.setPersonpercent(0);
+                payPercentConversion.setOnepercent(0);
+            }
+            boolean test=false;
+            for(Object[] aListTest:listTest){
+                if(aListAll[0].equals(aListTest[0])){
+                    payPercentConversion.setTestpercent(Double.parseDouble(aListTest[1].toString())/Double.parseDouble(aListAll[3].toString())*100);
+                    boolean buyClass=false;
+                    for(Object[] aListBuy:listBuy){
+                        if(aListBuy[0].equals(aListTest[0])){
+                            payPercentConversion.setBuypercent(Double.parseDouble(aListBuy[1].toString())/Double.parseDouble(aListTest[2].toString())*100);
+                            buyClass=true;
+                        }
+                    }
+                    if(!buyClass){
+                        payPercentConversion.setBuypercent(0);
+                    }
+                    test=true;
+                    break;
+                }
+            }
+            if(!test){
+                payPercentConversion.setTestpercent(0);
+            }
+            resultRows.add(payPercentConversion);
+        }
+        TableConvert tableConvert = new TableConvert(resultRows,criterias);
+        DataSet<PayPercentConversion> actions=tableConvert.getResultDataSet();
+        return actions;
+    }
+
+
+    @Override
+    @SuppressWarnings("unchecked")
     public ArrayList getCcGroup(){
         ArrayList result=new ArrayList();
-        String sql="select title from ebk_crm_group where direction=1 and role=1";
+        String sql="select title from ebk_crm_groups where direction=1 and role=50";
         Query q=entityManager.createNativeQuery(sql);
         List list=q.getResultList();
         for(Object aList:list){
@@ -377,4 +551,5 @@ public class PayClassServiceImpl implements PayClassService {
     public Long getOldStudentCnt() {
         return oldStudentCnt;
     }
+
 }

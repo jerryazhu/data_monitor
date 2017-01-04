@@ -310,6 +310,7 @@
             type:'GET',
             data:'',
             success:function (data) {
+                data=Math.round(parseFloat(data)*100)/100;
                 $('#payCnt').html('<span  class="cntNumber">'+data+'</span>');
             },
             error:function () {

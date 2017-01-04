@@ -58,13 +58,6 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-2"></div>
-    <div class="col-lg-10">
-        <div class="col-lg-3 pull-right"><button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#sql">SQL查看</button></div>
-        <div id="sql" class="collapse pull-center"></div>
-    </div>
-</div>
-<div class="row">
     <div class="col-lg-1"></div>
     <div class="col-lg-10">
         <div class="panel panel-default">
@@ -141,14 +134,17 @@
             }
         });
         $('#allCC').click(function () {
+            $('#allCC').addClass("active");
             ccInput.val("");
             createTable();
         });
         $('#groupAll').click(function () {
+            $('#groupAll').addClass("active");
             $('.selectpicker').selectpicker('val', 'Nothing selected');
             createTable();
         });
         $('#group').on("change",function () {
+            $('#groupAll').removeClass("active");
             createTable();
         });
         ccInput.autocomplete({
@@ -176,8 +172,8 @@
             },
             onSelect: function (suggestion) {
                 $('#cc_id_name').val(suggestion.value + "   "+suggestion.data);
-                recover();
                 createTable();
+                $('#allCC').removeClass('active');
                 console.log('You selected: ' + suggestion.value + "&nbsp;&nbsp;&nbsp;"+suggestion.data);
             }
         });
@@ -185,8 +181,8 @@
     function createTable() {
         var table=$('#pay_percent_conversion').DataTable({
             destroy: true,
-            lengthMenu: [10, 25, 50, 100],
-            order: [[5, "desc"]],
+            lengthMenu: [100,200],
+            order: [[3, "desc"]],
             autoWidth: true,
             paging: true,
             processing: true,
@@ -212,9 +208,29 @@
             ],
             columnDefs:[
                 {
+                    "targets": 3,
+                    "render": function (data, type, row, meta) {
+                        return Math.round(parseFloat(data)*100)/100 +"%";
+                    }
+                },{
+                    "targets": 4,
+                    "render": function (data, type, row, meta) {
+                        return Math.round(parseFloat(data)*100)/100 +"%";
+                    }
+                },{
                     "targets": 5,
                     "render": function (data, type, row, meta) {
                         return Math.round(parseFloat(data)*100)/100;
+                    }
+                },{
+                    "targets": 6,
+                    "render": function (data, type, row, meta) {
+                        return Math.round(parseFloat(data)*100)/100;
+                    }
+                },{
+                    "targets": 7,
+                    "render": function (data, type, row, meta) {
+                        return Math.round(parseFloat(data)*100)/100+"%";
                     }
                 }
             ],

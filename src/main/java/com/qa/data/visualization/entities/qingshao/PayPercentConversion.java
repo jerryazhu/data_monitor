@@ -7,11 +7,11 @@ public class PayPercentConversion {
     private String ccid;
     private String ccname;
     private String ccgroup;
-    private String allpercent;
-    private String testpercent;
-    private String personpercent;
-    private String onepercent;
-    private String buypercent;
+    private double allpercent;
+    private double testpercent;
+    private double personpercent;
+    private double onepercent;
+    private double buypercent;
 
     public String getCcid() {
         return ccid;
@@ -37,43 +37,43 @@ public class PayPercentConversion {
         this.ccgroup = ccgroup;
     }
 
-    public String getAllpercent() {
+    public double getAllpercent() {
         return allpercent;
     }
 
-    public void setAllpercent(String allpercent) {
+    public void setAllpercent(double allpercent) {
         this.allpercent = allpercent;
     }
 
-    public String getTestpercent() {
+    public double getTestpercent() {
         return testpercent;
     }
 
-    public void setTestpercent(String testpercent) {
+    public void setTestpercent(double testpercent) {
         this.testpercent = testpercent;
     }
 
-    public String getPersonpercent() {
+    public double getPersonpercent() {
         return personpercent;
     }
 
-    public void setPersonpercent(String personpercent) {
+    public void setPersonpercent(double personpercent) {
         this.personpercent = personpercent;
     }
 
-    public String getOnepercent() {
+    public double getOnepercent() {
         return onepercent;
     }
 
-    public void setOnepercent(String onepercent) {
+    public void setOnepercent(double onepercent) {
         this.onepercent = onepercent;
     }
 
-    public String getBuypercent() {
+    public double getBuypercent() {
         return buypercent;
     }
 
-    public void setBuypercent(String buypercent) {
+    public void setBuypercent(double buypercent) {
         this.buypercent = buypercent;
     }
 }

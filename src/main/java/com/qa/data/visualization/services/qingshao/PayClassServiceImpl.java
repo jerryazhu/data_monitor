@@ -19,10 +19,7 @@ import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by dykj on 2016/12/26.
@@ -309,7 +306,7 @@ public class PayClassServiceImpl implements PayClassService {
         String sqlPerson="select eru.ccid,eru.nickname,ecg.title,eru.id from ebk_rbac_user eru\n" +
                 "LEFT JOIN ebk_crm_group_user egu on egu.user_id=eru.id\n" +
                 "LEFT JOIN ebk_crm_groups ecg on ecg.id=egu.group_id\n" +
-                "where ecg.role=50 and ecg.direction=1 and eru.status=1";
+                "where ecg.role=50 and ecg.direction=1";
         Query qP=entityManager.createNativeQuery(sqlPerson);
         List<Object[]> person=qP.getResultList();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -368,8 +365,107 @@ public class PayClassServiceImpl implements PayClassService {
     @Override
     @SuppressWarnings("unchecked")
     public DataSet<PayPercentConversion> getPayPercentConversion(String data,DatatablesCriterias criterias){
-        String sql="";
-        return null;
+        String []cutData=data.split("\\+");
+        String bTime=cutData[0];
+        String tTime=cutData[1];
+        String ccMessage=cutData[2];
+        String group=cutData[3];
+        String[] cutGroup=group.split(",");
+        String allSmallSql=String.format( "select DISTINCT eor.user_id,eru.nickname,ecg.title,eor.sid from ebk_operate_record eor \n" +
+                "LEFT JOIN ebk_crm_groups ecg on eor.user_group=ecg.id\n" +
+                "LEFT JOIN ebk_rbac_user eru on eru.id=eor.user_id\n" +
+                "where eor.create_time >=%s  and eor.create_time <=%s\n" +
+                "and eor.type=0 and eor.adv_group=1 \n" +
+                "and ecg.role=50 and ecg.direction=1 and eor.operator_name='system'",bTime,tTime);
+        if(!ccMessage.equals("all")){
+            allSmallSql=allSmallSql+"\n"+"and eor.user_id="+ccMessage;
+        }
+        if (!group.equals("null")) {
+            String groupSql="and (ecg.title='"+cutGroup[0]+"'";
+            for(int i=1;i<cutGroup.length;i++){
+                groupSql=groupSql+" or ecg.title='"+cutGroup[i]+"'";
+            }
+            groupSql=groupSql+")";
+            allSmallSql = allSmallSql + "\n" +groupSql;
+        }
+        String allSql=String.format("select user_id,nickname,title,COUNT(sid)from(%s) re\n" +
+                "group by user_id",allSmallSql);
+        Query qAll=entityManager.createNativeQuery(allSql);
+        List<Object[]> listAll=qAll.getResultList();
+        String buySql=String.format("select user_id,COUNT(DISTINCT sid),SUM(tmoney),count(id) from(\n" +
+                "select DISTINCT eor.user_id,eor.sid,eao.tmoney,eao.id from ebk_operate_record eor \n" +
+                "LEFT JOIN ebk_acoin_orders eao on eor.user_id=eao.sale_adviser\n" +
+                "LEFT JOIN ebk_crm_groups ecg on eor.user_group=ecg.id\n" +
+                "where eor.create_time >=%s  and eor.create_time <=%s\n" +
+                "and eao.create_time >=%s  and eao.create_time <=%s\n" +
+                "and eor.sid=eao.sid and eao.sale_adviser=eor.user_id and eor.type=0 and eor.adv_group=1 and eao.payed=1\n" +
+                "and eao.order_flag=1 and ecg.role=50 and ecg.direction=1 and eor.operator_name='system'\n" +
+                ") re\n" +
+                "group by user_id",bTime,tTime,bTime,tTime);
+        Query qBuy=entityManager.createNativeQuery(buySql);
+        List<Object[]> listBuy=qBuy.getResultList();
+        String testSql=String.format("select user_id,COUNT(DISTINCT sid),sum(if(status=3,1,0)) from(\n" +
+                "select DISTINCT eor.user_id,eor.sid,ecr.status from ebk_operate_record eor \n" +
+                "LEFT JOIN ebk_crm_groups ecg on eor.user_group=ecg.id\n" +
+                "LEFT JOIN ebk_class_records ecr on ecr.sid=eor.sid\n" +
+                "where eor.create_time >=%s  and eor.create_time <=%s\n" +
+                "and ecr.begin_time>=%s and ecr.begin_time<=%s\n" +
+                "and ecr.sid=eor.sid and ecr.free_try=2 and eor.type=0 and eor.adv_group=1\n" +
+                "and ecg.role=50 and ecg.direction=1 and eor.operator_name='system') re \n" +
+                "group by user_id",bTime,tTime,bTime,tTime);
+        Query qTest=entityManager.createNativeQuery(testSql);
+        List<Object[]> listTest=qTest.getResultList();
+        ArrayList<PayPercentConversion> resultRows=new ArrayList<PayPercentConversion>();
+        for(Object[] aListAll:listAll){
+            PayPercentConversion payPercentConversion=new PayPercentConversion();
+            payPercentConversion.setCcid(aListAll[0].toString());
+            payPercentConversion.setCcname(aListAll[1].toString());
+            payPercentConversion.setCcgroup(aListAll[2].toString());
+            boolean buy=false;
+            for(Object[] aListBuy:listBuy){
+                if(aListAll[0].equals(aListBuy[0])){
+                    payPercentConversion.setAllpercent(Double.parseDouble(aListBuy[1].toString())/Double.parseDouble(aListAll[3].toString())*100);
+                    payPercentConversion.setPersonpercent(Double.parseDouble(aListBuy[2].toString())/Double.parseDouble(aListAll[3].toString()));
+                    if(!aListBuy[3].toString().equals("0")){
+                        payPercentConversion.setOnepercent(Double.parseDouble(aListBuy[2].toString())/Double.parseDouble(aListBuy[3].toString()));
+                    }else{
+                        payPercentConversion.setOnepercent(0);
+                    }
+                    buy=true;
+                    break;
+                }
+            }
+            if(!buy){
+                payPercentConversion.setAllpercent(0);
+                payPercentConversion.setPersonpercent(0);
+                payPercentConversion.setOnepercent(0);
+            }
+            boolean test=false;
+            for(Object[] aListTest:listTest){
+                if(aListAll[0].equals(aListTest[0])){
+                    payPercentConversion.setTestpercent(Double.parseDouble(aListTest[1].toString())/Double.parseDouble(aListAll[3].toString())*100);
+                    boolean buyClass=false;
+                    for(Object[] aListBuy:listBuy){
+                        if(aListBuy[0].equals(aListTest[0])){
+                            payPercentConversion.setBuypercent(Double.parseDouble(aListBuy[1].toString())/Double.parseDouble(aListTest[2].toString())*100);
+                            buyClass=true;
+                        }
+                    }
+                    if(!buyClass){
+                        payPercentConversion.setBuypercent(0);
+                    }
+                    test=true;
+                    break;
+                }
+            }
+            if(!test){
+                payPercentConversion.setTestpercent(0);
+            }
+            resultRows.add(payPercentConversion);
+        }
+        TableConvert tableConvert = new TableConvert(resultRows,criterias);
+        DataSet<PayPercentConversion> actions=tableConvert.getResultDataSet();
+        return actions;
     }
 
 
@@ -455,4 +551,5 @@ public class PayClassServiceImpl implements PayClassService {
     public Long getOldStudentCnt() {
         return oldStudentCnt;
     }
+
 }

@@ -306,7 +306,7 @@ public class PayClassServiceImpl implements PayClassService {
         String sql=String.format("select callagent,SUM(duration),SUM(billsec),count(id),sum(if(billsec>30,1,0))from agentcdr where calldate like '%s%%' group by callagent",data);
         Query q=callCenterEntityManager.createNativeQuery(sql);
         List<Object[]> number=q.getResultList();
-        String sqlPerson="select eru.ccid,eru.nickname,ecg.title from ebk_rbac_user eru\n" +
+        String sqlPerson="select eru.ccid,eru.nickname,ecg.title,eru.id from ebk_rbac_user eru\n" +
                 "LEFT JOIN ebk_crm_group_user egu on egu.user_id=eru.id\n" +
                 "LEFT JOIN ebk_crm_groups ecg on ecg.id=egu.group_id\n" +
                 "where ecg.role=50 and ecg.direction=1 and eru.status=1";
@@ -330,29 +330,30 @@ public class PayClassServiceImpl implements PayClassService {
             for (Object[] aPerson : person) {
                 if (aNumber[0].toString().equals(aPerson[0].toString())){
                     PayCallPhone payCallPhone = new PayCallPhone();
-                    payCallPhone.setCcid(aNumber[0].toString());
+                    payCallPhone.setCallid(aNumber[0].toString());
                     payCallPhone.setCcname(aPerson[1].toString());
                     payCallPhone.setCcgroup(aPerson[2].toString());
+                    payCallPhone.setCcid(aPerson[3].toString());
                     payCallPhone.setCalltime(aNumber[1].toString());
                     payCallPhone.setCallreltime(aNumber[2].toString());
-                    payCallPhone.setCallnumber(aNumber[3].toString());
-                    payCallPhone.setCallrelnumber(aNumber[4].toString());
+                    payCallPhone.setCallnumber(Integer.parseInt(aNumber[3].toString()));
+                    payCallPhone.setCallrelnumber(Integer.parseInt(aNumber[4].toString()));
                     boolean find=false;
                     for (Object[] aGoNumber : goNumber) {
                         if (aNumber[0].toString().equals(aGoNumber[0].toString())){
-                            payCallPhone.setCallnumber1(aGoNumber[1].toString());
-                            payCallPhone.setCallnumber2(String.valueOf(Integer.parseInt(aNumber[3].toString())-Integer.parseInt(aGoNumber[1].toString())));
-                            payCallPhone.setCallrelnumber1(aGoNumber[2].toString());
-                            payCallPhone.setCallrelnumber2(String.valueOf(Integer.parseInt(aNumber[4].toString())-Integer.parseInt(aGoNumber[2].toString())));
+                            payCallPhone.setCallnumber1(Integer.parseInt(aGoNumber[1].toString()));
+                            payCallPhone.setCallnumber2(Integer.parseInt(aNumber[3].toString())-Integer.parseInt(aGoNumber[1].toString()));
+                            payCallPhone.setCallrelnumber1(Integer.parseInt(aGoNumber[2].toString()));
+                            payCallPhone.setCallrelnumber2(Integer.parseInt(aNumber[4].toString())-Integer.parseInt(aGoNumber[2].toString()));
                             find=true;
                             break;
                         }
                     }
                     if(!find){
-                        payCallPhone.setCallnumber1("0");
-                        payCallPhone.setCallnumber2(aNumber[3].toString());
-                        payCallPhone.setCallrelnumber1("0");
-                        payCallPhone.setCallrelnumber2(aNumber[4].toString());
+                        payCallPhone.setCallnumber1(0);
+                        payCallPhone.setCallnumber2(Integer.parseInt(aNumber[3].toString()));
+                        payCallPhone.setCallrelnumber1(0);
+                        payCallPhone.setCallrelnumber2(Integer.parseInt(aNumber[4].toString()));
                     }
                     resultRow.add(payCallPhone);
                     break;

@@ -25,6 +25,7 @@
                         <thead>
                         <tr>
                             <th>CCID</th>
+                            <th>呼叫中心id</th>
                             <th>CC姓名</th>
                             <th>CC组</th>
                             <th>当日通话时长</th>
@@ -67,24 +68,20 @@
         time.datepicker("setDate", dateFormatted_to);
         createTable(time.datepicker('getFormattedDate'));
         time.on("changeDate", function () {
-            recover();
             createTable(time.datepicker('getFormattedDate'));
         });
 
     });
-    function recover() {
-        $('#costClassCnt').html('<span  class="cntNumber">  </span>');
-    }
     function createTable(data) {
         var table=$('#call_phone').DataTable({
             destroy: true,
             lengthMenu: [100,200],
-            order: [[5, "desc"]],
+            order: [[6, "desc"]],
             autoWidth: true,
             paging: true,
             processing: true,
             serverSide: true,
-            searching:false,
+            searching:true,
             filter: true,
             language: {
                 "lengthMenu": " _MENU_ ",
@@ -95,6 +92,7 @@
             },
             columns: [
                 {"data": "ccid"},
+                {"data": "callid"},
                 {"data": "ccname"},
                 {"data": "ccgroup"},
                 {"data": "calltime"},
@@ -108,7 +106,7 @@
             ],
             columnDefs:[
                 {
-                    "targets": 3,
+                    "targets": 4,
                     "render": function (data, type, row, meta) {
                         if (data < 86400) {
                             var dt = new Date("01/01/2000 0:00");
@@ -128,7 +126,7 @@
                         }
                     }
                 },{
-                    "targets": 4,
+                    "targets": 5,
                     "render": function (data, type, row, meta) {
                         if (data < 86400) {
                             var dt = new Date("01/01/2000 0:00");
@@ -138,10 +136,10 @@
                                     s = dt.getSeconds(),
                                     r = "";
                             if (h > 0) {
-                                r += (h > 9 ? h.toString() : "0" + h.toString()) + ":";
+                                r += (h > 9 ? h.toString() : "0" + h.toString()) + "小时";
                             }
-                            r += (m > 9 ? m.toString() : "0" + m.toString()) + ":"
-                            r += (s > 9 ? s.toString() : "0" + s.toString());
+                            r += (m > 9 ? m.toString() : "0" + m.toString()) + "分钟";
+                            r += (s > 9 ? s.toString() : "0" + s.toString()) + "秒";
                             return r;
                         } else {
                             return null;

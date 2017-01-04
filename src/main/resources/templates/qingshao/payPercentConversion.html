@@ -58,27 +58,6 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-2 height">
-        <p class="text-right control-label"><strong class="height">表格查看：</strong></p>
-    </div>
-    <div class="col-lg-10 height" id="table_show">
-        <span class="option-text active">销售额</span>
-        <span class="option-text">退款</span>
-    </div>
-</div>
-<div class="row" id="one_show">
-    <div class="col-lg-2 height">
-        <p class="text-right control-label"><strong class="height">销售额类别：</strong></p>
-    </div>
-    <div class="col-lg-10 height" id="sale_type">
-        <span class="option-text active">不限</span>
-        <span class="option-text">新分会员</span>
-        <span class="option-text">转介绍会员</span>
-        <span class="option-text">公库会员</span>
-        <span class="option-text">续费</span>
-    </div>
-</div>
-<div class="row">
     <div class="col-lg-2"></div>
     <div class="col-lg-10">
         <div class="col-lg-3 pull-right"><button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#sql">SQL查看</button></div>
@@ -89,27 +68,19 @@
     <div class="col-lg-1"></div>
     <div class="col-lg-10">
         <div class="panel panel-default">
-            <div style="float: right">
-            <span class="cnt">人数:
-                <span class="cntNumber" id="costClassCnt">
-                </span>
-            </span>
-                <span class="cnt">金额:
-                <span class="cntNumber" id="moneyCnt">
-                </span>
-            </span>
-            </div>
             <div class="panel-body">
                 <div class="dataTable_wrapper">
-                    <table class="table table-striped table-bordered table-hover" id="sale_message">
+                    <table class="table table-striped table-bordered table-hover" id="pay_percent_conversion">
                         <thead>
                         <tr>
-                            <th>学员ID</th>
-                            <th>学员昵称</th>
                             <th>CCID</th>
                             <th>CC昵称</th>
                             <th>CC组别</th>
-                            <th id="money"></th>
+                            <th>总转化率</th>
+                            <th>测评转化率</th>
+                            <th>会员均产</th>
+                            <th>单笔销售额</th>
+                            <th>买课转化率</th>
                         </tr>
                         </thead>
                     </table>
@@ -131,9 +102,6 @@
         $('.selectpicker').selectpicker();
         var beginTime = $('#begin-time');
         var toTime = $('#to-time');
-        var ccGroup = document.getElementById("group");
-        var showTable=$('#table_show');
-        var saleType=$('#sale_type');
         var ccInput=$('#cc_id_name');
         var date = new Date();
         var yDay;
@@ -155,7 +123,6 @@
             format: 'YYYY-MM-DD HH:mm',
             useCurrent: false
         });
-        show();
         createTable();
         beginTime.on("dp.change", function (e) {
             var bTime=$('#begin-time').find("> input").val();
@@ -172,27 +139,6 @@
                 recover();
                 createTable();
             }
-        });
-        showTable.find("> span").each(function (index) {
-            $(this).unbind('click');
-            $(this).on("click", function () {
-                $(this).addClass("active");
-                $(this).nextAll().removeClass("active");
-                $(this).prevAll().removeClass("active");
-                show();
-                recover();
-                createTable();
-            });
-        });
-        saleType.find("> span").each(function (index) {
-            $(this).unbind('click');
-            $(this).on("click", function () {
-                $(this).addClass("active");
-                $(this).nextAll().removeClass("active");
-                $(this).prevAll().removeClass("active");
-                recover();
-                createTable();
-            });
         });
         $('#allCC').click(function () {
             ccInput.val("");
@@ -241,20 +187,9 @@
     });
     function recover() {
         $('#costClassCnt').html('<span  class="cntNumber">  </span>');
-        $('#moneyCnt').html('<span  class="cntNumber">  </span>');
-    }
-    function show() {
-        var table=$('#table_show').find('span[class="option-text active"]').text();
-        if(table=="销售额"){
-            $('#one_show').show();
-            $('#money').text("购买金额");
-        }else{
-            $('#one_show').hide();
-            $('#money').text("退款金额");
-        }
     }
     function createTable() {
-        var table=$('#sale_message').DataTable({
+        var table=$('#pay_percent_conversion').DataTable({
             destroy: true,
             lengthMenu: [10, 25, 50, 100],
             order: [[5, "desc"]],
@@ -272,12 +207,14 @@
                 "infoFiltered": "(filtered from _MAX_ total records)"
             },
             columns: [
-                {"data": "sid"},
-                {"data": "sname"},
-                {"data": "ccid"},
-                {"data": "ccname"},
-                {"data": "ccgroup"},
-                {"data": "money"}
+                {"data":"ccid"},
+                {"data":"ccname"},
+                {"data":"ccgroup"},
+                {"data":"allpercent"},
+                {"data":"testpercent"},
+                {"data":"personpercent"},
+                {"data":"onepercent"},
+                {"data":"buypercent"}
             ],
             columnDefs:[
                 {
@@ -288,41 +225,17 @@
                 }
             ],
             ajax: {
-                url: '/class/get_pay_cc_sale_message/'+getData(),
+                url: '/class/get_pay_percent_conversion/'+getData(),
                 type: 'GET'
             }
         });
-        $('#sale_message').on( 'init.dt', function () {
-            getCnt();
+        $('#pay_percent_conversion').on( 'init.dt', function () {
             getSql();
         }).dataTable();
     }
-    function getCnt() {
-        $.ajax({
-            url: '/class/get_pay_cc_sale_message_cnt',
-            type:'GET',
-            data:'',
-            success:function (data) {
-                $('#costClassCnt').html('<span  class="cntNumber">'+data+'</span>');
-            },
-            error:function () {
-            }
-        });
-        $.ajax({
-            url: '/class/get_pay_cc_sale_message_money_cnt',
-            type:'GET',
-            data:'',
-            success:function (data) {
-                data=Math.round(parseFloat(data)*100)/100;
-                $('#moneyCnt').html('<span  class="cntNumber">'+data+'</span>');
-            },
-            error:function () {
-            }
-        });
-    }
     function getSql() {
         $.ajax({
-            url: '/class/get_pay_cc_sale_message_sql',
+            url: '/class/get_pay_percent_conversion_sql',
             type:'GET',
             data:'',
             success:function (data) {
@@ -352,14 +265,7 @@
             CCMessage=CC[0];
         }
         var group = $('#group').val();
-        var table=$('#table_show').find('span[class="option-text active"]').text();
-        var saleType;
-        if(table=="销售额"){
-            saleType=$('#sale_type').find('span[class="option-text active"]').text();
-        }else{
-            saleType="不限";
-        }
-        return bTime+"+"+tTime+"+"+CCMessage+"+"+group+"+"+table+"+"+saleType;
+        return bTime+"+"+tTime+"+"+CCMessage+"+"+group;
     }
     // ]]>
 </script>

@@ -5,8 +5,10 @@ import com.qa.data.visualization.entities.qingshao.*;
 import com.qa.data.visualization.repositories.qingshao.EbkCcRepository;
 import com.web.spring.datatable.DataSet;
 import com.web.spring.datatable.DatatablesCriterias;
+import com.web.spring.datatable.TableConvert;
 import com.web.spring.datatable.TableQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +42,8 @@ public class PayClassServiceImpl implements PayClassService {
     private EntityManager firstEntityManager;
     @PersistenceContext(unitName = "secondaryPersistenceUnit")
     private EntityManager entityManager;
+    @PersistenceContext(unitName = "thirdPersistenceUnit")
+    private EntityManager callCenterEntityManager;
     @Autowired
     private EbkCcRepository ebkCcRepository;
     @Override
@@ -234,9 +239,9 @@ public class PayClassServiceImpl implements PayClassService {
         String sql="select result.id as id,result.name as name,result.title as title,result.time as time,result.time as workage,max(result.money) as max,min(result.money) as min,avg(result.money) as avg,sum(result.money) as sum from \n" +
                 "(select eru.id as id,eru.nickname as name,ecg.title as title,eru.create_time as time,from_unixtime(eao.pay_time, '%Y-%m') as month,sum(eao.tmoney) as money from ebk_rbac_user eru \n" +
                 "LEFT JOIN ebk_crm_group_user ecgu on ecgu.user_id=eru.id\n" +
-                "LEFT JOIN ebk_crm_group ecg on ecg.id=ecgu.group_id\n" +
+                "LEFT JOIN ebk_crm_groups ecg on ecg.id=ecgu.group_id\n" +
                 "LEFT JOIN ebk_acoin_orders eao on eao.sale_adviser=eru.id\n" +
-                "where ecg.direction=1 and ecg.role=1 and eao.payed=1 and eru.status=1\n" +
+                "where ecg.direction=1 and ecg.role=50 and eao.payed=1 and eru.status=1\n" +
                 "group by eru.id,from_unixtime(eao.pay_time, '%Y-%m'))result\n" +
                 "group by result.id";
         TableQuery query=new TableQuery(entityManager,PayCCMessage.class,criterias,sql);
@@ -258,10 +263,10 @@ public class PayClassServiceImpl implements PayClassService {
                 "LEFT JOIN ebk_students es on eao.sid=es.id\n" +
                 "LEFT JOIN ebk_rbac_user eru on eao.sale_adviser=eru.id\n" +
                 "LEFT JOIN ebk_crm_group_user ecgu on ecgu.user_id=eru.id\n" +
-                "LEFT JOIN ebk_crm_group ecg on ecg.id=ecgu.group_id\n" +
-                "LEFT JOIN ebk_crm_adviser_public_store ecaps on ecaps.sid=eao.sid \n "+
+                "LEFT JOIN ebk_crm_groups ecg on ecg.id=ecgu.group_id\n" +
+                "LEFT JOIN ebk_operate_record eor on eor.sid=eao.sid \n "+
                 "where eao.pay_time>=%s and eao.pay_time<=%s\n" +
-                "and ecg.direction=1 and ecg.role=1 and eao.payed=1 and eru.status=1",bTime,tTime);
+                "and ecg.direction=1 and ecg.role=50 and eao.payed=1 and eru.status=1",bTime,tTime);
         if(!ccMessage.equals("all")){
             sql=sql+"\n"+"and eao.sale_adviser="+ccMessage;
         }
@@ -277,9 +282,9 @@ public class PayClassServiceImpl implements PayClassService {
             sql=sql+"\n"+"and eao.refunded=1";
         }else{
             switch (saleType){
-                case "新分会员":sql=sql+"\n"+"and (ecaps.adv_group is null or ecaps.adv_group!=1)";break;
+                case "新分会员":sql=sql+"\n"+"and (eor.adv_group is null or eor.adv_group!=1 or eor.type!=1)";break;
                 case "转介绍会员":sql=sql+"\n"+"and eao.order_type=2";break;
-                case "公库会员":sql=sql+"\n"+"and ecaps.adv_group=1";break;
+                case "公库会员":sql=sql+"\n"+"and eor.type=1 and eor.adv_group=1";break;
                 case "续费":sql=sql+"\n"+"and eao.order_flag=2";break;
             }
         }
@@ -297,9 +302,81 @@ public class PayClassServiceImpl implements PayClassService {
 
     @Override
     @SuppressWarnings("unchecked")
+    public DataSet<PayCallPhone> getPayCallPhone(String data,DatatablesCriterias criterias) throws ParseException {
+        String sql=String.format("select callagent,SUM(duration),SUM(billsec),count(id),sum(if(billsec>30,1,0))from agentcdr where calldate like '%s%%' group by callagent",data);
+        Query q=callCenterEntityManager.createNativeQuery(sql);
+        List<Object[]> number=q.getResultList();
+        String sqlPerson="select eru.ccid,eru.nickname,ecg.title from ebk_rbac_user eru\n" +
+                "LEFT JOIN ebk_crm_group_user egu on egu.user_id=eru.id\n" +
+                "LEFT JOIN ebk_crm_groups ecg on ecg.id=egu.group_id\n" +
+                "where ecg.role=50 and ecg.direction=1 and eru.status=1";
+        Query qP=entityManager.createNativeQuery(sqlPerson);
+        List<Object[]> person=qP.getResultList();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = simpleDateFormat.parse(data);
+        long ts = date.getTime();
+        String res = String.valueOf(ts/1000);
+        String numberGo=String.format("select callagent,count(callagent),sum(if(billsec>30,1,0)) from (\n" +
+               "select DISTINCT ag.callagent,ag.duration,ag.billsec from agentcdr ag \n" +
+               "LEFT JOIN ebk_students es on es.mobile=ag.callnumber\n" +
+               "LEFT JOIN ebk_operate_record eor on eor.sid=es.id\n" +
+               "where ag.calldate like '%s%%'\n" +
+               "and eor.type=1 and eor.adv_group=1 and eor.create_time<%s) re\n" +
+               "group by callagent",data,res);
+        Query qG=firstEntityManager.createNativeQuery(numberGo);
+        List<Object[]> goNumber=qG.getResultList();
+        ArrayList<PayCallPhone> resultRow=new ArrayList<PayCallPhone>();
+        for (Object[] aNumber : number) {
+            for (Object[] aPerson : person) {
+                if (aNumber[0].toString().equals(aPerson[0].toString())){
+                    PayCallPhone payCallPhone = new PayCallPhone();
+                    payCallPhone.setCcid(aNumber[0].toString());
+                    payCallPhone.setCcname(aPerson[1].toString());
+                    payCallPhone.setCcgroup(aPerson[2].toString());
+                    payCallPhone.setCalltime(aNumber[1].toString());
+                    payCallPhone.setCallreltime(aNumber[2].toString());
+                    payCallPhone.setCallnumber(aNumber[3].toString());
+                    payCallPhone.setCallrelnumber(aNumber[4].toString());
+                    boolean find=false;
+                    for (Object[] aGoNumber : goNumber) {
+                        if (aNumber[0].toString().equals(aGoNumber[0].toString())){
+                            payCallPhone.setCallnumber1(aGoNumber[1].toString());
+                            payCallPhone.setCallnumber2(String.valueOf(Integer.parseInt(aNumber[3].toString())-Integer.parseInt(aGoNumber[1].toString())));
+                            payCallPhone.setCallrelnumber1(aGoNumber[2].toString());
+                            payCallPhone.setCallrelnumber2(String.valueOf(Integer.parseInt(aNumber[4].toString())-Integer.parseInt(aGoNumber[2].toString())));
+                            find=true;
+                            break;
+                        }
+                    }
+                    if(!find){
+                        payCallPhone.setCallnumber1("0");
+                        payCallPhone.setCallnumber2(aNumber[3].toString());
+                        payCallPhone.setCallrelnumber1("0");
+                        payCallPhone.setCallrelnumber2(aNumber[4].toString());
+                    }
+                    resultRow.add(payCallPhone);
+                    break;
+                }
+            }
+        }
+        TableConvert tableConvert = new TableConvert(resultRow,criterias);
+        DataSet<PayCallPhone> actions=tableConvert.getResultDataSet();
+        return actions;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataSet<PayPercentConversion> getPayPercentConversion(String data,DatatablesCriterias criterias){
+        String sql="";
+        return null;
+    }
+
+
+    @Override
+    @SuppressWarnings("unchecked")
     public ArrayList getCcGroup(){
         ArrayList result=new ArrayList();
-        String sql="select title from ebk_crm_group where direction=1 and role=1";
+        String sql="select title from ebk_crm_groups where direction=1 and role=50";
         Query q=entityManager.createNativeQuery(sql);
         List list=q.getResultList();
         for(Object aList:list){

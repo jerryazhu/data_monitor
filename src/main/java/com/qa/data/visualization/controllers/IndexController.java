@@ -90,7 +90,7 @@ public class IndexController {
         if (templateName.contains("---")) {
             templateName = templateName.replaceAll("---", "/");
         }
-        if(templateName.equals("qingshao/paySaleMessage")){
+        if(templateName.equals("qingshao/paySaleMessage")||templateName.equals("qingshao/payPercentConversion")){
             ArrayList group=payClassService.getCcGroup();
             model.addAttribute("groupList", group);
         }

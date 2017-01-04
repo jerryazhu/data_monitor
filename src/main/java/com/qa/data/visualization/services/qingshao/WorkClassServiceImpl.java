@@ -442,7 +442,6 @@ public class WorkClassServiceImpl implements WorkClassService{
             data7= 0d;
         }
         wholeCnt.add(df.format(data7));
-        System.out.println(wholeCnt);
         return wholeCnt;
     }
 

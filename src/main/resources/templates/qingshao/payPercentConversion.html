@@ -108,7 +108,7 @@
         var tDay;
         if(date.getMonth()==0){
             yDay=(date.getFullYear()-1) + "-12-1 00:00";
-            tDay=(date.getFullYear()-1) + "-12-31 00:00";
+            tDay=(date.getFullYear()-1) + "-12-31 23:59";
         }else{
             yDay= date.getFullYear() + "-" + date.getMonth() + "-1 00:00";
             tDay= date.getFullYear() + "-" + date.getMonth() + "-" + getLastDay(date.getFullYear(), date.getMonth())+" 23:59";
@@ -142,16 +142,13 @@
         });
         $('#allCC').click(function () {
             ccInput.val("");
-            recover();
             createTable();
         });
         $('#groupAll').click(function () {
-            $('.selectpicker').selectpicker('val', 'Group');
-            recover();
+            $('.selectpicker').selectpicker('val', 'Nothing selected');
             createTable();
         });
         $('#group').on("change",function () {
-            recover();
             createTable();
         });
         ccInput.autocomplete({
@@ -185,9 +182,6 @@
             }
         });
     });
-    function recover() {
-        $('#costClassCnt').html('<span  class="cntNumber">  </span>');
-    }
     function createTable() {
         var table=$('#pay_percent_conversion').DataTable({
             destroy: true,
@@ -227,21 +221,6 @@
             ajax: {
                 url: '/class/get_pay_percent_conversion/'+getData(),
                 type: 'GET'
-            }
-        });
-        $('#pay_percent_conversion').on( 'init.dt', function () {
-            getSql();
-        }).dataTable();
-    }
-    function getSql() {
-        $.ajax({
-            url: '/class/get_pay_percent_conversion_sql',
-            type:'GET',
-            data:'',
-            success:function (data) {
-                $('#sql').html('<span >'+data.replace(/\n/g,'<br/>')+'</span>');
-            },
-            error:function () {
             }
         });
     }

@@ -320,21 +320,25 @@
             });
         });
         $('#studentAll').click(function () {
+            $('#studentAll').addClass("active");
             studentInput.val("");
             $('#costClassCnt').html('<span  class="cntNumber">  </span>');
             createTable();
         });
         $('#teacherAll').click(function () {
+            $('#teacherAll').addClass("active");
             teacherInput.val("");
             $('#costClassCnt').html('<span  class="cntNumber">  </span>');
             createTable();
         });
         $('#teacherGroupAll').click(function () {
+            $('#teacherGroupAll').addClass("active");
             $('.selectpicker').selectpicker('val', 'Nothing selected');
             $('#costClassCnt').html('<span  class="cntNumber">  </span>');
             createTable();
         });
         $('#group').on("change",function () {
+            $('#teacherGroupAll').removeClass("active");
             $('#costClassCnt').html('<span  class="cntNumber">  </span>');
             createTable();
         });
@@ -364,6 +368,7 @@
             onSelect: function (suggestion) {
                 $('#student-id-mobile').val(suggestion.value + "   "+suggestion.data);
                 $('#costClassCnt').html('<span  class="cntNumber">  </span>');
+                $('#studentAll').removeClass("active");
                 createTable();
                 console.log('You selected: ' + suggestion.value + "&nbsp;&nbsp;&nbsp;"+suggestion.data);
             }
@@ -394,6 +399,7 @@
             onSelect: function (suggestion) {
                 $('#teacher-id-email').val(suggestion.value + "   "+suggestion.data);
                 $('#costClassCnt').html('<span  class="cntNumber">  </span>');
+                $('#teacherAll').removeClass("active");
                 createTable();
                 console.log('You selected: ' + suggestion.value +"&nbsp;&nbsp;&nbsp;"+suggestion.data);
             }

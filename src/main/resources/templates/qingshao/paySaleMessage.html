@@ -195,16 +195,19 @@
             });
         });
         $('#allCC').click(function () {
+            $('#allCC').addClass("active");
             ccInput.val("");
             recover();
             createTable();
         });
         $('#groupAll').click(function () {
+            $("#groupAll").addClass("active");
             $('.selectpicker').selectpicker('val', 'Nothing selected');
             recover();
             createTable();
         });
         $('#group').on("change",function () {
+            $('#groupAll').removeClass("active");
             recover();
             createTable();
         });
@@ -233,6 +236,7 @@
             },
             onSelect: function (suggestion) {
                 $('#cc_id_name').val(suggestion.value + "   "+suggestion.data);
+                $('#allCC').removeClass("active");
                 recover();
                 createTable();
                 console.log('You selected: ' + suggestion.value + "&nbsp;&nbsp;&nbsp;"+suggestion.data);

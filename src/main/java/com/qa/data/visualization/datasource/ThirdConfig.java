@@ -32,7 +32,7 @@ public class ThirdConfig {
     private JpaProperties jpaProperties;
 
     @Bean(name = "entityManagerThird")
-    public EntityManager entityManagerThird(EntityManagerFactoryBuilder builder) {
+    public EntityManager entityManager(EntityManagerFactoryBuilder builder) {
         return entityManagerFactoryThird(builder).getObject().createEntityManager();
     }
 

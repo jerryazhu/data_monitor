@@ -203,7 +203,7 @@ function createHighStock(element, url, map, duration) {
         });
     });
 }
-function createTimeHighStock(element, url1, url2,url3, by, type) {
+function createTimeHighStock(element, url1, url2,url3, by, type,bookStatus) {
     var date = new Date();
     var dateformatted_to;
     var dateformatted_from;
@@ -227,7 +227,7 @@ function createTimeHighStock(element, url1, url2,url3, by, type) {
         success:function () {
             $.ajax({
                 type: "get",
-                url: url2 + time,
+                url: url2 + bookStatus,
                 data: "",
                 datatype: "json",
                 success: function (returnData) {
@@ -238,7 +238,7 @@ function createTimeHighStock(element, url1, url2,url3, by, type) {
                     var id=[];
                     returnData.forEach(function (element) {
                         names.push(element[0]);
-                        id.push(element[1]);
+                        id.push(element[2]);
                     });
                     /**
                      * Create the chart when all data is loaded

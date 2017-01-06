@@ -256,15 +256,18 @@ public class CostClassController {
     @ResponseBody
     public ArrayList getBook(@PathVariable String data) throws Exception {
         ArrayList<Object> list = new ArrayList<Object>();
-        LinkedHashMap<String, String> book = bookClassService.getBook(data);
-        for (Map.Entry<String, String> entry : book.entrySet()) {
-            Object[] array = new Object[2];
-            array[0] = entry.getKey();
-            array[1] = Integer.parseInt(entry.getValue());
+        LinkedHashMap<String, ArrayList> book = bookClassService.getBook(data);
+        for (Map.Entry<String, ArrayList> entry : book.entrySet()) {
+            Object[] array = new Object[3];
+            ArrayList result= entry.getValue();
+            for(int i=0;i<3;i++){
+                array[i]=result.get(i);
+            }
             list.add(array);
         }
         return list;
     }
+
 
     @RequestMapping("/get_book_month_choose/{data}")
     @ResponseBody
@@ -290,7 +293,6 @@ public class CostClassController {
     @ResponseBody
     public ArrayList getBookChooseClassStock(@PathVariable String data) throws Exception {
         ArrayList<Object> list = new ArrayList<Object>();
-        String now = String.valueOf(System.currentTimeMillis());
         LinkedHashMap<String, String> payRegionStock = bookClassService.getBookChooseClassStock(data);
         for (Map.Entry<String, String> entry : payRegionStock.entrySet()) {
             Object[] array = new Object[2];
@@ -387,7 +389,7 @@ public class CostClassController {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
         DataSet<BookChooseClassStock> actions = bookClassService.getBookRankChooseCompareSql(criterias, data);
         String[] cutData = data.split("---");
-        if (cutData[cutData.length - 1].equals("sql")) {
+        if (cutData[3].equals("sql")) {
             return null;
         } else {
             return DatatablesResponse.build(actions, criterias);

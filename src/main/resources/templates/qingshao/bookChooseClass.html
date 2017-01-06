@@ -12,6 +12,13 @@
 <div class="row">
     <div class="col-lg-12">
         <div style="float:right">
+            <select id="book_status" class="selectpicker">
+                <option class="all">所有教材</option>
+                <option class="on">上架中教材</option>
+                <option class="down">已下架教材</option>
+            </select>
+        </div>
+        <div style="float:right">
             <div class="input-group input-daterange">
                 <input id="from_date" type="text" class="form-control" value=""/>
                 <span class="input-group-addon">to</span>
@@ -59,6 +66,11 @@
             </div>
         </div>
         <div style="float: right">
+            <select id="book_status_two" class="selectpicker">
+                <option class="all">所有教材</option>
+                <option class="on">上架中教材</option>
+                <option class="down">已下架教材</option>
+            </select>
             <select id='book_choose_class_time' class="selectpicker">
                 <option>month</option>
                 <option>week</option>
@@ -108,6 +120,7 @@
         var book_url="/class/get_book/";
         var book_month_choose_element=$('#book_month_choose');
         var book_month_choose_url="/class/get_book_month_choose/";
+        var book_status=$('#book_status').find("option:selected").attr("class");
         var fromDate=$('#from_date');
         var toDate=$('#to_date');
         fromDate.datepicker({
@@ -134,23 +147,37 @@
         dateformatted_to = date.getFullYear() + "-" + (date.getMonth()+1) + "-1";
         fromDate.datepicker('setDate', dateformatted_from);
         toDate.datepicker('setDate', dateformatted_to);
-        var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');
-        createDifferentHighchart(book_month_choose_element,book_month_choose_url,data,data);
+        var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate')+"---"+book_status;
+        var title=fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate')+"---"+($('#book_status').find("option:selected").val());
+        createDifferentHighchart(book_month_choose_element,book_month_choose_url,data,title);
         createTable(data);
         fromDate.on("changeDate", function () {
-            var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');
-            createDifferentHighchart(book_month_choose_element,book_month_choose_url,data,data);
+            var book_status=$('#book_status').find("option:selected").attr("class");
+            var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate')+"---"+book_status;
+            var title=fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate')+"---"+($('#book_status').find("option:selected").val());
+            createDifferentHighchart(book_month_choose_element,book_month_choose_url,data,title);
             createTable(data);
         });
         toDate.on("changeDate", function () {
-            var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate');
-            createDifferentHighchart(book_month_choose_element,book_month_choose_url,data,data);
+            var book_status=$('#book_status').find("option:selected").attr("class");
+            var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate')+"---"+book_status;
+            var title=fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate')+"---"+($('#book_status').find("option:selected").val());
+            createDifferentHighchart(book_month_choose_element,book_month_choose_url,data,title);
+            createTable(data);
+        });
+        $('#book_status').on('change', function (){
+            var book_status=$('#book_status').find("option:selected").attr("class");
+            var data = fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate')+"---"+book_status;
+            var title=fromDate.datepicker('getFormattedDate') + "---" + toDate.datepicker('getFormattedDate')+"---"+($('#book_status').find("option:selected").val());
+            book_month_choose_element.html("");
+            createDifferentHighchart(book_month_choose_element,book_month_choose_url,data,title);
             createTable(data);
         });
 
         var book_choose_class_stock_element=$('#book_choose_class_stock');
         var book_choose_class_stock_url="/class/get_book_choose_class_stock/";
         var book_choose_class_stock_sql_url="/class/get_book_choose_class_stock_sql/";
+        var book_status_two=$('#book_status_two').find("option:selected").attr("class");
         var bookChooseClassTime=$('#book_choose_class_time').find("option:selected").val();
         var fromDate1=$('#from_date1');
         var toDate1=$('#to_date1');
@@ -177,33 +204,47 @@
         fromDate1.datepicker('setDate', dateformatted_from1);
         toDate1.datepicker('setDate', dateformatted_to1);
         var time = fromDate1.datepicker('getFormattedDate') + "---" + toDate1.datepicker('getFormattedDate');
-        createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time+"---sql");
-        createStockTable(time);
+        createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time+"---sql---"+book_status_two,book_status_two);
+        createStockTable(time+"---data---"+book_status_two);
         $('#book_choose_class_time').on('change', function () {
             var bookChooseClassTime=$('#book_choose_class_time').find("option:selected").val();
+            var book_status_two=$('#book_status_two').find("option:selected").attr("class");
             var time = fromDate1.datepicker('getFormattedDate') + "---" + toDate1.datepicker('getFormattedDate');
-            createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time+"---sql");
-            createStockTable(time);
+            createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time+"---sql---"+book_status_two,book_status_two);
+            createStockTable(time+"---data---"+book_status_two);
         });
         fromDate1.on("changeDate", function () {
             book_choose_class_stock_element.html("");
             var bookChooseClassTime=$('#book_choose_class_time').find("option:selected").val();
             var time = fromDate1.datepicker('getFormattedDate') + "---" + toDate1.datepicker('getFormattedDate');
+            var book_status_two=$('#book_status_two').find("option:selected").attr("class");
             var bTime=fromDate1.datepicker('getFormattedDate');
             if(dateToUnix(bTime) < dateToUnix(dateformatted_from1)){
-                createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time+"---sql");
-                createStockTable(time);
+                createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time+"---sql---"+book_status_two,book_status_two);
+                createStockTable(time+"---data---"+book_status_two);
             }
         });
         toDate1.on("changeDate", function () {
             book_choose_class_stock_element.html("");
             var bookChooseClassTime=$('#book_choose_class_time').find("option:selected").val();
             var time = fromDate1.datepicker('getFormattedDate') + "---" + toDate1.datepicker('getFormattedDate');
+            var book_status_two=$('#book_status_two').find("option:selected").attr("class");
             var bTime=fromDate1.datepicker('getFormattedDate');
             if(dateToUnix(bTime) < dateToUnix(dateformatted_from1)){
-                createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time);
-                createStockTable(time);
+                createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time,"all");
+                createStockTable(time+"---data---"+book_status_two);
             }
+        });
+        $('#book_status_two').on('change', function (){
+            book_choose_class_stock_element.html("");
+            var book_status_two=$('#book_status_two').find("option:selected").attr("class");
+            if(book_status_two=="down"){
+                $('#book_choose_class_time.selectpicker').selectpicker('val', 'week');
+            }
+            var bookChooseClassTime=$('#book_choose_class_time').find("option:selected").val();
+            var time = fromDate1.datepicker('getFormattedDate') + "---" + toDate1.datepicker('getFormattedDate');
+            createTimeHighStock(book_choose_class_stock_element,book_choose_class_stock_sql_url,book_url, book_choose_class_stock_url, bookChooseClassTime,time+"---sql---"+book_status_two,book_status_two);
+            createStockTable(time+"---data---"+book_status_two);
         });
     });
     function createTable(data) {
@@ -269,7 +310,7 @@
                 }
             ],
             ajax: {
-                url: '/class/get_book_choose_class_stock_sql/'+data+"---data",
+                url: '/class/get_book_choose_class_stock_sql/'+data,
                 type: 'GET'
             }
         });

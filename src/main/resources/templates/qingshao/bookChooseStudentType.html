@@ -139,17 +139,23 @@
             format: 'YYYY-MM-DD HH:mm',
             useCurrent: false
         });
-        var bTime=$('#begin-time').find("> input").val();
-        var tTime=$('#to-time').find("> input").val();
+//        var bTime=$('#begin-time').find("> input").val();
+//        var tTime=$('#to-time').find("> input").val();
         var books=document.getElementById("book");
-        var time=bTime+"---"+tTime;
+//        var time=bTime+"---"+tTime;
         $.ajax({
-            url: '/class/get_book/'+time,
+            url: '/class/get_book/'+"all",
             type:'GET',
             data:'',
             success:function (data) {
                 data.forEach(function (element) {
-                    var objOption = new Option(element[0]);
+                    var remark;
+                    if(element[1]=="1"){
+                        remark="【上架中】";
+                    }else{
+                        remark="【已下架】"
+                    }
+                    var objOption = new Option(remark+element[0]);
                     books.add(objOption);
                 });
                 $('.selectpicker').selectpicker();
@@ -289,6 +295,9 @@
             }
         }
         var chooseBook= $('#book').find("option:selected").val();
+        if(chooseBook!="不限"){
+            chooseBook=chooseBook.substring(5);
+        }
         var classStatus=$('#class_status').find('span[class="option-text active"]').text();
         var combo=$('#combo').find('span[class="option-text active"]').text();
         switch (combo){
@@ -298,23 +307,13 @@
             case "三天/周 二节/天":combo='32';break;
             case "自由课":combo='00';break;
         }
-        var date=new Date();
-        var dateformatted_to;
-        var dateformatted_from;
-        if(date.getMonth()==0){
-            dateformatted_from = (date.getFullYear()-1) + "-12-"+(date.getDate()-1);
-        }else{
-            dateformatted_from = date.getFullYear() + "-" + date.getMonth() + "-"+(date.getDate()-1);
-        }
-        dateformatted_to=date.getFullYear() + "-" + (date.getMonth()+1) + "-"+(date.getDate()-1);
-        var timeBook = dateformatted_from + "---" + dateformatted_to;
             $.ajax({
-                url: '/class/get_book/' + timeBook,
+                url: '/class/get_book/' + "all",
                 type: 'GET',
                 success: function (data) {
                     data.forEach(function (element) {
-                        if (chooseBook == element[0]) {
-                            chooseBook = element[1];
+                        if(chooseBook==element[0]){
+                            chooseBook=element[2];
                         }
                     });
                     var dataAll=bTime+"+"+tTime+"+"+chooseBook+"+"+classStatus+"+"+combo;

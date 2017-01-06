@@ -32,7 +32,7 @@ public class BookClassServiceImpl implements BookClassService {
 
     @Override
     @RequestMapping
-//    @Cacheable(value = "get_book", keyGenerator = "wiselyKeyGenerator")
+    @Cacheable(value = "get_book", keyGenerator = "wiselyKeyGenerator")
     public LinkedHashMap<String, ArrayList> getBook(String data) throws ParseException {
         LinkedHashMap<String, ArrayList> map = new LinkedHashMap<String, ArrayList>();
         String s=null;
@@ -84,7 +84,7 @@ public class BookClassServiceImpl implements BookClassService {
     @Override
     @RequestMapping
     @SuppressWarnings("unchecked")
-//    @Cacheable(value = "get_book_month_choose", keyGenerator = "wiselyKeyGenerator")
+    @Cacheable(value = "get_book_month_choose", keyGenerator = "wiselyKeyGenerator")
     public ArrayList getBookMonthChoose(String data) throws ParseException {
         ArrayList bookName = new ArrayList();
         ArrayList number0 = new ArrayList();

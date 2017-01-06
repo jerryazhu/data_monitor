@@ -138,10 +138,6 @@
                             url:"/pc/get_pc_api_response/"+rIdx ,
                             type:"GET",
                             success:function (data) {
-                                if(data.indexOf("Log in with your account") > -1){
-                                    window.location.href="/login";
-                                    return;
-                                }
                                 res=data.replace(/\n/g,'<br/>');
                                 row.child( format( row.data(),res) ).show();
                             },

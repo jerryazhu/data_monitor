@@ -129,6 +129,11 @@
                 <option>week</option>
                 <option>day</option>
             </select>
+            <select id="book_status" class="selectpicker">
+                <option id="all">所有教材</option>
+                <option id="on">上架中教材</option>
+                <option id="down">已下架教材</option>
+            </select>
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -189,7 +194,6 @@
         $('#tTimeInput').val(tDay);
         beginTime.datetimepicker({
             format: 'YYYY-MM-DD HH:mm',
-//            startDate: "2016-10-14 10:00",
             useCurrent: false
         });
         toTime.datetimepicker({
@@ -222,15 +226,22 @@
         var time = dateformatted_from + "---" + dateformatted_to;
         var books=document.getElementById("book");
         $.ajax({
-            url: '/class/get_book/'+time,
+            url: '/class/get_book/'+"all",
             type:'GET',
             data:'',
             success:function (data) {
                 data.forEach(function (element) {
-                    var objOption = new Option(element[0]);
+                    var remark;
+                    if(element[1]=="1"){
+                        remark="【上架中】";
+                    }else{
+                        remark="【已下架】"
+                    }
+                    var objOption = new Option(remark+element[0]);
                     books.add(objOption);
                 });
                 $('.selectpicker').selectpicker();
+                $('#book.selectpicker').selectpicker('val', '【上架中】Smile Junior 青少系列日常生活口语教程');
                 createDraw();
                 createCompare();
             },
@@ -267,7 +278,7 @@
     }
     function createDraw() {
         $('.selectpicker').selectpicker();
-        var chooseBook= $('#book').find("option:selected").val();
+        var chooseBook= $('#book').find("option:selected").val().substring(5);
         var studentLevel=$('#studentLevels').find('span[class="option-text active"]').text();
         var bTime=$('#begin-time').find("> input").val();
         var tTime=$('#to-time').find("> input").val();
@@ -279,7 +290,7 @@
         var date = new Date();
         var age_url="/class/get_book_rank_age/";
         var limitTime;
-        if(date.getMonth()==1){
+        if(date.getMonth()==0){
             limitTime=(date.getFullYear()-1)+"-11-1 00:00";
         }else{
             limitTime=date.getFullYear() + "-" + (date.getMonth()-1) + "-1 00:00";
@@ -298,12 +309,12 @@
         var timeBook = dateformatted_from + "---" + dateformatted_to;
         var title=bTime+"---"+tTime+"---"+chooseBook+"---"+studentLevel;
         $.ajax({
-            url: '/class/get_book/'+timeBook,
+            url: '/class/get_book/'+"all",
             type:'GET',
             success:function (data) {
                 data.forEach(function (element) {
                     if(chooseBook==element[0]){
-                        chooseBook=element[1];
+                        chooseBook=element[2];
                     }
                 });
                 var time=bTime+"---"+tTime;
@@ -311,7 +322,6 @@
                 createTable(dataAll);
                 createDifferentHighchart(class_element,class_url,dataAll,title);
                 createAgeHighchart(age_element,age_url,dataAll,title);
-
             }
         });
 
@@ -401,18 +411,30 @@
         var compare_url="/class/get_book_rank_choose_class_compare/";
         var compare_url_sql="/class/get_book_rank_choose_class_compare_sql/";
         var compare=$('#compare_select').find("option:selected").val();
+        var book_status=$('#book_status').find("option:selected").attr("id");
         var bTime=$('#begin-time').find("> input").val();
         var tTime=$('#to-time').find("> input").val();
         var chooseBook= $('#book').find("option:selected").val();
         var studentLevel=$('#studentLevels').find('span[class="option-text active"]').text();
         var data=bTime+"---"+tTime+"---"+studentLevel;
-        createTimeHighStock(compare_element,compare_url_sql,book_url,compare_url,compare,data+"---sql");
-        createStockTable(data);
+        createTimeHighStock(compare_element,compare_url_sql,book_url,compare_url,compare,data+"---sql---"+book_status,book_status);
+        createStockTable(data+"---data---"+book_status);
         $('#compare_select').on('change', function () {
             var compare=$('#compare_select').find("option:selected").val();
-            createStockTable(data);
-            createTimeHighStock(compare_element,compare_url_sql,book_url,compare_url,compare,data+"---sql");
+            var book_status=$('#book_status').find("option:selected").attr("id");
+            compare_element.html("");
+            createTimeHighStock(compare_element,compare_url_sql,book_url,compare_url,compare,data+"---sql---"+book_status,book_status);
         });
+        $('#book_status').on('change',function () {
+            var book_status=$('#book_status').find("option:selected").attr("id");
+            if(book_status=="down"){
+                $('#compare_select.selectpicker').selectpicker('val', 'week');
+            }
+            var compare=$('#compare_select').find("option:selected").val();
+            compare_element.html("");
+            createStockTable(data+"---data---"+book_status);
+            createTimeHighStock(compare_element,compare_url_sql,book_url,compare_url,compare,data+"---sql---"+book_status,book_status);
+        })
     }
     function createStockTable(data) {
         var table=$('#book_rank_choose_class_compare_table').DataTable({
@@ -446,7 +468,7 @@
                 }
             ],
             ajax: {
-                url: '/class/get_book_rank_choose_class_compare_sql/'+data+"---data",
+                url: '/class/get_book_rank_choose_class_compare_sql/'+data,
                 type: 'GET'
             }
         });
@@ -454,12 +476,7 @@
     function addBooks(obj,data) {
         //添加 li
         var span = document.createElement("span");
-        //设置 li 属性，如 id
-        if(data=='Smile Junior 青少系列日常生活口语教程'){
-            span.setAttribute("class","option-text active");
-        }else{
-            span.setAttribute("class", "option-text");
-        }
+        span.setAttribute("class", "option-text");
         span.innerHTML = data;
         obj.append(span);
     }

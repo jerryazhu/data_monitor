@@ -1,5 +1,6 @@
 package com.qa.data.visualization.services.qingshao;
 
+import com.mysql.fabric.xmlrpc.base.Data;
 import com.qa.data.visualization.entities.qingshao.*;
 import com.qa.data.visualization.repositories.qingshao.EbkStudentsRepository;
 import com.qa.data.visualization.repositories.qingshao.EbkTeachersRepository;
@@ -27,6 +28,7 @@ public class ManageClassServiceImpl implements ManageClassService {
     private String wholeSql;
     private Long costSaClassCnt;
     private String wholeSaSql;
+    private String memoClassSql;
     @PersistenceContext(unitName = "primaryPersistenceUnit")
     private EntityManager firstEntityManager;
     @PersistenceContext(unitName = "secondaryPersistenceUnit")
@@ -390,6 +392,29 @@ public class ManageClassServiceImpl implements ManageClassService {
 
     @Override
     @SuppressWarnings("unchecked")
+    public DataSet<ManagerMemoClass> getMemoClass(String data,DatatablesCriterias criterias){
+        String[] cutData=data.split("\\+");
+        String bTime=cutData[0];
+        String tTime=cutData[1];
+        String sid=cutData[2];
+        String cid=cutData[3];
+        String sql=String.format("select DISTINCT ecr.id as cid,ecr.begin_time as begintime,ecr.sid as sid,ecr.sname as sname,ecr.tid as tid,ecr.tname as tname from ebk_class_records ecr\n" +
+                "LEFT JOIN ebk_student_info esi on esi.sid=ecr.sid\n" +
+                "where ecr.begin_time >=%s and ecr.begin_time<=%s\n" +
+                "and ecr.status=3 and esi.study_aim=1",bTime,tTime);
+        if(!sid.equals("all")){
+            sql=sql+"\n"+"and ecr.sid="+sid;
+        }
+        if(!cid.equals("all")){
+            sql=sql+"\n"+"and ecr.id like '%"+cid+"%'";
+        }
+        memoClassSql=sql;
+        TableQuery query = new TableQuery(entityManager, ManagerMemoClass.class, criterias, sql);
+        return query.getResultDataSet();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
     public String getWholeSql() {
         return wholeSql;
     }
@@ -400,6 +425,11 @@ public class ManageClassServiceImpl implements ManageClassService {
         return wholeSaSql;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public String getMemoClassSql(){
+        return memoClassSql;
+    }
     @Override
     @SuppressWarnings("unchecked")
     public Long getCostClassCnt() {

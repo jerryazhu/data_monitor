@@ -26,8 +26,6 @@ public interface PayClassService {
 
     DataSet<PayPercentConversion> getPayPercentConversion(String data,DatatablesCriterias criterias);
 
-    ArrayList getClassMemo(String data);
-
     ArrayList getCcGroup();
 
     List<AutoComplete> getCcAutoComplete(String query);

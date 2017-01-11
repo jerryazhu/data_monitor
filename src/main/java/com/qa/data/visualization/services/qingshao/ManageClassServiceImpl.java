@@ -29,6 +29,7 @@ public class ManageClassServiceImpl implements ManageClassService {
     private Long costSaClassCnt;
     private String wholeSaSql;
     private String memoClassSql;
+    private String commentClassSql;
     @PersistenceContext(unitName = "primaryPersistenceUnit")
     private EntityManager firstEntityManager;
     @PersistenceContext(unitName = "secondaryPersistenceUnit")
@@ -415,6 +416,58 @@ public class ManageClassServiceImpl implements ManageClassService {
 
     @Override
     @SuppressWarnings("unchecked")
+    public DataSet<ManagerCommentClass> getManagerCommentClass(String data,DatatablesCriterias criterias){
+        String[] cutData=data.split("\\+");
+        String bTime=cutData[0];
+        String tTime=cutData[1];
+        String comment=cutData[2];
+        String comment_time=cutData[3];
+        String sql=String.format("select ecr.id as cid,ecr.begin_time as ctime,ecr.sid as sid,ecr.sname as sname,ecr.tid as tid,ecr.tname as tname,ecc.choice as choice,ecc.comment as comment,ecc.cmt_time as ptime from ebk_class_records ecr\n" +
+                "LEFT JOIN ebk_student_info esi on ecr.sid=esi.sid\n" +
+                "LEFT JOIN ebk_class_comments ecc on ecc.cid=ecr.id\n" +
+                "where ecr.begin_time>=%s and ecr.begin_time<=%s\n" +
+                "and esi.study_aim=1 and ecr.status=3",bTime,tTime);
+        if(!comment.equals("不限")){
+            switch (comment){
+                case "好评":sql=sql+"\n"+"and ecc.choice>0";break;
+                case "中评":sql=sql+"\n"+"and ecc.choice=0";break;
+                case "差评":sql=sql+"\n"+"and ecc.choice<0";break;
+            }
+        }
+        if(!comment_time.equals("不限")){
+            switch (comment_time){
+                case "课后半小时":sql=sql+"\n"+"and ecc.cmt_time<=(ecr.begin_time+2820)";break;
+                case "课后半小时至当天午夜":sql=sql+"\n"+"and ecc.cmt_time>(ecr.begin_time+2820)  and (UNIX_TIMESTAMP(from_unixtime(ecr.begin_time+1020,'%Y-%m-%d'))+86400)>=ecc.cmt_time";break;
+                case "次日内":sql=sql+"\n"+"and ecc.cmt_time>(UNIX_TIMESTAMP(from_unixtime(ecr.begin_time+1020,'%Y-%m-%d'))+86400)  and (UNIX_TIMESTAMP(from_unixtime(ecr.begin_time+1020,'%Y-%m-%d'))+172800)>=ecc.cmt_time";break;
+                case "次日外1周内":sql=sql+"\n"+"and ecc.cmt_time>(UNIX_TIMESTAMP(from_unixtime(ecr.begin_time+1020,'%Y-%m-%d'))+172800)  and (UNIX_TIMESTAMP(from_unixtime(ecr.begin_time+1020,'%Y-%m-%d'))+691200)>=ecc.cmt_time";break;
+                case "1周外":sql=sql+"\n"+"and ecc.cmt_time>(UNIX_TIMESTAMP(from_unixtime(ecr.begin_time+1020,'%Y-%m-%d'))+691200)";break;
+            }
+        }
+        commentClassSql=sql;
+        TableQuery query=new TableQuery(entityManager,ManagerCommentClass.class,criterias,sql);
+        return query.getResultDataSet();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public ArrayList getClassMemo(String data){
+        ArrayList result=new ArrayList();
+        int s=Integer.parseInt(data)/1000000;
+        String sql=String.format("select submit_memo_time,memo_words,memo_phrases from ebk_class_memo_%s where cid=%s",s,data);
+        Query q = entityManager.createNativeQuery(sql);
+        List<Object[]> list = q.getResultList();
+        if(list.size()==0){
+            result.add("无备注");
+        }
+        for(Object[] objects:list){
+            result.add(objects[0].toString());
+            result.add(objects[1].toString());
+            result.add(objects[2].toString());
+        }
+        return result;
+    }
+    @Override
+    @SuppressWarnings("unchecked")
     public String getWholeSql() {
         return wholeSql;
     }
@@ -430,6 +483,13 @@ public class ManageClassServiceImpl implements ManageClassService {
     public String getMemoClassSql(){
         return memoClassSql;
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public String getCommentClassSql(){
+        return commentClassSql;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public Long getCostClassCnt() {

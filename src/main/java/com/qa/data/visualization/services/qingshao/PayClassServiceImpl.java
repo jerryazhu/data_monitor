@@ -469,24 +469,6 @@ public class PayClassServiceImpl implements PayClassService {
         return actions;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public ArrayList getClassMemo(String data){
-        ArrayList result=new ArrayList();
-        int s=Integer.parseInt(data)/1000000;
-        String sql=String.format("select submit_memo_time,memo_words,memo_phrases from ebk_class_memo_%s where cid=%s",s,data);
-        Query q = entityManager.createNativeQuery(sql);
-        List<Object[]> list = q.getResultList();
-        if(list.size()==0){
-            result.add("无备注");
-        }
-        for(Object[] objects:list){
-            result.add(objects[0].toString());
-            result.add(objects[1].toString());
-            result.add(objects[2].toString());
-        }
-        return result;
-    }
 
     @Override
     @SuppressWarnings("unchecked")

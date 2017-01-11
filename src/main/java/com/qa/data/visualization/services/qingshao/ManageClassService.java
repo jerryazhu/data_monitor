@@ -27,6 +27,10 @@ public interface ManageClassService {
 
     DataSet<ManagerMemoClass> getMemoClass(String data,DatatablesCriterias criterias);
 
+    DataSet<ManagerCommentClass> getManagerCommentClass(String data,DatatablesCriterias criterias);
+
+    ArrayList getClassMemo(String data);
+
     Long getCostClassCnt();
 
     Long getCostSaClassCnt();
@@ -36,4 +40,6 @@ public interface ManageClassService {
     String getWholeSaSql();
 
     String getMemoClassSql();
+
+    String getCommentClassSql();
 }

@@ -94,6 +94,22 @@ public class CostClassController {
         return DatatablesResponse.build(dataSet,criterias);
     }
 
+    @RequestMapping(value="/get_class_memo/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public ArrayList getClassMemo(@PathVariable String data) throws Exception {
+        return manageClassService.getClassMemo(data);
+    }
+
+    @RequestMapping(value = "/get_comment_class/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public DatatablesResponse getCommentClass(@PathVariable String data,HttpServletRequest request){
+        DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
+        DataSet<ManagerCommentClass> dataSet=manageClassService.getManagerCommentClass(data,criterias);
+        return DatatablesResponse.build(dataSet,criterias);
+    }
+
     @RequestMapping("/get_new_student/{data}")
     @ResponseBody
     public DatatablesResponse<PayStudent> getNewStudent(@PathVariable String data, HttpServletRequest request) throws ParseException {
@@ -171,6 +187,10 @@ public class CostClassController {
     public String getMemoClassSql(){
         return manageClassService.getMemoClassSql();
     }
+
+    @RequestMapping("/get_comment_class_sql")
+    @ResponseBody
+    public String getCommentClassSql(){return manageClassService.getCommentClassSql();}
 
     @RequestMapping("/get_new_student_sql")
     @ResponseBody
@@ -543,13 +563,6 @@ public class CostClassController {
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
         DataSet<PayPercentConversion> actions=payClassService.getPayPercentConversion(data,criterias);
         return DatatablesResponse.build(actions,criterias);
-    }
-
-    @RequestMapping(value="/get_class_memo/{data}")
-    @ResponseBody
-    @SuppressWarnings("unchecked")
-    public ArrayList getClassMemo(@PathVariable String data) throws Exception {
-        return payClassService.getClassMemo(data);
     }
 
 }

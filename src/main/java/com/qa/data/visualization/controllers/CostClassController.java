@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.Data;
 import java.text.ParseException;
 import java.util.*;
 
@@ -83,6 +84,14 @@ public class CostClassController {
         DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
         DataSet<ManagerCostSaClass> dataSet = manageClassService.getCostSaClass(data, criterias);
         return DatatablesResponse.build(dataSet, criterias);
+    }
+
+    @RequestMapping("/get_memo_class/{data}")
+    @ResponseBody
+    public DatatablesResponse<ManagerMemoClass> getMemoClass(@PathVariable String data,HttpServletRequest request){
+        DatatablesCriterias criterias = DatatablesCriterias.getFromRequest(request);
+        DataSet<ManagerMemoClass> dataSet=manageClassService.getMemoClass(data,criterias);
+        return DatatablesResponse.build(dataSet,criterias);
     }
 
     @RequestMapping("/get_new_student/{data}")
@@ -155,6 +164,12 @@ public class CostClassController {
     @ResponseBody
     public String getWholeSaSql() {
         return manageClassService.getWholeSaSql();
+    }
+
+    @RequestMapping("/get_memo_class_sql")
+    @ResponseBody
+    public String getMemoClassSql(){
+        return manageClassService.getMemoClassSql();
     }
 
     @RequestMapping("/get_new_student_sql")
@@ -528,6 +543,13 @@ public class CostClassController {
         DatatablesCriterias criterias=DatatablesCriterias.getFromRequest(request);
         DataSet<PayPercentConversion> actions=payClassService.getPayPercentConversion(data,criterias);
         return DatatablesResponse.build(actions,criterias);
+    }
+
+    @RequestMapping(value="/get_class_memo/{data}")
+    @ResponseBody
+    @SuppressWarnings("unchecked")
+    public ArrayList getClassMemo(@PathVariable String data) throws Exception {
+        return payClassService.getClassMemo(data);
     }
 
 }

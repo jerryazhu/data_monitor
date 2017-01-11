@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -77,7 +79,10 @@ public class WebActionServiceImpl implements WebActionService {
 
     @Override
     public DataSet<WebCrmActionGroupCount> findCrmGroupCountWithDatatablesCriterias(DatatablesCriterias criterias){
-        String sql="select controller,method,count(id) as count from ABC360_WEB_CRM_ACTION_LAST_MONTH_WITH_TODAY_TBL group by controller,method";
+        Date d=new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String now=df.format(new Date(d.getTime() - 7 * 24 * 60 * 60 * 1000));
+        String sql=String.format("select controller,method,count(id) as count from ABC360_WEB_CRM_ACTION_LAST_MONTH_WITH_TODAY_TBL where time>'%s' group by controller,method",now);
         TableQuery query = new TableQuery(entityManager, WebCrmActionGroupCount.class, criterias, sql);
         return query.getResultDataSet();
     }
